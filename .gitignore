@@ -1,0 +1,31 @@
+# Gradle and build outputs
+.gradle/
+build/
+build_cli/
+out/
+bin/
+
+# APK and packaging artifacts
+*.apk
+*.idsig
+*.zip
+unaligned.apk
+compiled_res.zip
+
+# Keystores & signing keys
+*.keystore
+*.jks
+
+# IDE and Editor files
+.idea/
+*.iml
+.vscode/
+*.swp
+*~
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Android Studio local properties
+local.properties

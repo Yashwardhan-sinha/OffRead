@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand Accents -->
+    <color name="primary">#14B8A6</color>
+    <color name="primary_dark">#0D9488</color>
+    <color name="primary_light">#2DD4BF</color>
+    <color name="primary_container">#134E4A</color>
+    <color name="on_primary_container">#99F6E4</color>
+    <color name="accent">#F59E0B</color>
+
+    <!-- Dark Theme Palette (Modern Slate Dark) -->
+    <color name="background">#0F172A</color>
+    <color name="surface">#1E293B</color>
+    <color name="surface_variant">#334155</color>
+    <color name="surface_card">#1E293B</color>
+    <color name="surface_elevated">#263346</color>
+    <color name="divider">#334155</color>
+
+    <!-- Typography -->
+    <color name="text_primary">#F8FAFC</color>
+    <color name="text_secondary">#94A3B8</color>
+    <color name="text_muted">#64748B</color>
+
+    <!-- Tags & Categories -->
+    <color name="tag_tech">#38BDF8</color>
+    <color name="tag_science">#34D399</color>
+    <color name="tag_philosophy">#A78BFA</color>
+    <color name="tag_productivity">#FBBF24</color>
+
+    <!-- Status & Functional -->
+    <color name="success">#10B981</color>
+    <color name="warning">#F59E0B</color>
+    <color name="danger">#EF4444</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="translucent_overlay">#80000000</color>
+</resources>

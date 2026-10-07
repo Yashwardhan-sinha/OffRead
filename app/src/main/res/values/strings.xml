@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OffRead</string>
+    <string name="app_tagline">Offline Distraction-Free Reader</string>
+
+    <!-- Navigation & Tabs -->
+    <string name="tab_all">All</string>
+    <string name="tab_unread">Unread</string>
+    <string name="tab_favorites">Favorites</string>
+    <string name="tab_archive">Archive</string>
+
+    <!-- Search & Filters -->
+    <string name="search_hint">Search articles, tags, authors…</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sort_newest">Newest first</string>
+    <string name="sort_oldest">Oldest first</string>
+    <string name="sort_reading_time">Shortest read</string>
+    <string name="sort_title">Title (A-Z)</string>
+
+    <!-- Actions -->
+    <string name="action_add">Add Article</string>
+    <string name="action_search">Search</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_stats">Insights</string>
+    <string name="action_favorite">Favorite</string>
+    <string name="action_unfavorite">Unfavorite</string>
+    <string name="action_archive">Archive</string>
+    <string name="action_unarchive">Move to Unread</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_share">Share</string>
+    <string name="action_speed_read">Speed Read</string>
+    <string name="action_tts">Listen (TTS)</string>
+    <string name="action_appearance">Appearance</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+
+    <!-- Reader Settings -->
+    <string name="appearance_title">Reader Appearance</string>
+    <string name="theme_light">Paper</string>
+    <string name="theme_sepia">Sepia</string>
+    <string name="theme_dark">Slate</string>
+    <string name="theme_black">AMOLED</string>
+    <string name="font_serif">Serif</string>
+    <string name="font_sans">Sans</string>
+    <string name="font_mono">Mono</string>
+    <string name="font_size">Font Size</string>
+    <string name="line_spacing">Line Spacing</string>
+    <string name="keep_screen_on">Keep Screen On</string>
+    <string name="fullscreen_mode">Fullscreen Mode</string>
+
+    <!-- Add Article Screen -->
+    <string name="add_article_title">Add to OffRead</string>
+    <string name="tab_url">Web URL</string>
+    <string name="tab_text">Write / Paste</string>
+    <string name="url_input_hint">https://example.com/article</string>
+    <string name="fetch_and_save">Fetch &amp; Save Offline</string>
+    <string name="fetching_article">Extracting article content…</string>
+    <string name="title_hint">Article Title</string>
+    <string name="author_hint">Author (optional)</string>
+    <string name="category_hint">Category / Tags (comma separated)</string>
+    <string name="content_hint">Paste article text or markdown here…</string>
+
+    <!-- Audio Player (TTS) -->
+    <string name="tts_playing">Playing audio reader</string>
+    <string name="tts_paused">Audio reader paused</string>
+    <string name="tts_speed">Speed</string>
+
+    <!-- Speed Reader (RSVP) -->
+    <string name="speed_reader_title">Speed Reader (RSVP)</string>
+    <string name="wpm_label">WPM</string>
+    <string name="press_play_to_start">Tap Play to start speed reading</string>
+
+    <!-- Statistics -->
+    <string name="stats_title">Reading Insights</string>
+    <string name="stat_articles_saved">Saved</string>
+    <string name="stat_articles_read">Finished</string>
+    <string name="stat_words_read">Words Read</string>
+    <string name="stat_time_read">Time Reading</string>
+    <string name="stat_streak">Day Streak</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings &amp; Backup</string>
+    <string name="pref_export_library">Export Library (JSON)</string>
+    <string name="pref_export_desc">Backup all saved articles to a local JSON file</string>
+    <string name="pref_import_library">Import Library (JSON)</string>
+    <string name="pref_import_desc">Restore articles from a JSON backup</string>
+    <string name="pref_restore_samples">Load Sample Articles</string>
+    <string name="pref_restore_samples_desc">Add curated timeless articles to library</string>
+    <string name="pref_clear_all">Clear Entire Library</string>
+    <string name="pref_clear_all_desc">Permanently remove all articles and statistics</string>
+
+    <!-- Empty States -->
+    <string name="empty_articles_title">Your library is empty</string>
+    <string name="empty_articles_subtitle">Save any web article or note to read distraction-free offline.</string>
+    <string name="empty_search_title">No articles found</string>
+    <string name="empty_search_subtitle">Try a different search query or tag.</string>
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand Accents -->
+    <color name="primary">#0D9488</color>
+    <color name="primary_dark">#0F766E</color>
+    <color name="primary_light">#14B8A6</color>
+    <color name="primary_container">#CCFBF1</color>
+    <color name="on_primary_container">#115E59</color>
+    <color name="accent">#D97706</color>
+
+    <!-- Light Theme Palette (Clean Editorial Paper) -->
+    <color name="background">#F8FAFC</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F1F5F9</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="surface_elevated">#F8FAFC</color>
+    <color name="divider">#E2E8F0</color>
+
+    <!-- Typography -->
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#475569</color>
+    <color name="text_muted">#94A3B8</color>
+
+    <!-- Tags & Categories -->
+    <color name="tag_tech">#0284C7</color>
+    <color name="tag_science">#059669</color>
+    <color name="tag_philosophy">#7C3AED</color>
+    <color name="tag_productivity">#D97706</color>
+
+    <!-- Status & Functional -->
+    <color name="success">#10B981</color>
+    <color name="warning">#F59E0B</color>
+    <color name="danger">#EF4444</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="translucent_overlay">#80000000</color>
+</resources>
