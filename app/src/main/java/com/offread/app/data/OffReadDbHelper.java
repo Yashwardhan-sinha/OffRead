@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class OffReadDbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "offread.db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     // Table: articles
     public static final String TABLE_ARTICLES = "articles";
@@ -29,6 +29,9 @@ public class OffReadDbHelper extends SQLiteOpenHelper {
     public static final String COL_CREATED_AT = "created_at";
     public static final String COL_UPDATED_AT = "updated_at";
     public static final String COL_LAST_READ_AT = "last_read_at";
+    public static final String COL_CANONICAL_URL = "canonical_url";
+    public static final String COL_PUBLISHED_DATE = "published_date";
+    public static final String COL_IMAGE_URL = "image_url";
 
     // Table: highlights
     public static final String TABLE_HIGHLIGHTS = "highlights";
@@ -67,7 +70,10 @@ public class OffReadDbHelper extends SQLiteOpenHelper {
                     COL_TAGS + " TEXT, " +
                     COL_CREATED_AT + " INTEGER, " +
                     COL_UPDATED_AT + " INTEGER, " +
-                    COL_LAST_READ_AT + " INTEGER" +
+                    COL_LAST_READ_AT + " INTEGER, " +
+                    COL_CANONICAL_URL + " TEXT, " +
+                    COL_PUBLISHED_DATE + " TEXT, " +
+                    COL_IMAGE_URL + " TEXT" +
                     ");";
 
     private static final String SQL_CREATE_HIGHLIGHTS =
@@ -103,10 +109,20 @@ public class OffReadDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_HIGHLIGHTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_READING_LOGS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ARTICLES);
-        onCreate(db);
+        if (oldVersion < 2) {
+            try {
+                db.execSQL("ALTER TABLE " + TABLE_ARTICLES + " ADD COLUMN " + COL_CANONICAL_URL + " TEXT;");
+            } catch (Exception ignored) {
+            }
+            try {
+                db.execSQL("ALTER TABLE " + TABLE_ARTICLES + " ADD COLUMN " + COL_PUBLISHED_DATE + " TEXT;");
+            } catch (Exception ignored) {
+            }
+            try {
+                db.execSQL("ALTER TABLE " + TABLE_ARTICLES + " ADD COLUMN " + COL_IMAGE_URL + " TEXT;");
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     @Override

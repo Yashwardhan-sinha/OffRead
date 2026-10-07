@@ -125,6 +125,14 @@
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="bold" />
+
+                <ProgressBar
+                    android:id="@+id/progress_article"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <!-- Status Notice Banner -->
@@ -167,6 +175,18 @@
                     android:text="OffRead Reader • Ready for extraction"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
+
+                <!-- Article Featured Hero Image -->
+                <ImageView
+                    android:id="@+id/img_article_cover"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:adjustViewBounds="true"
+                    android:maxHeight="260dp"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    android:contentDescription="Article Featured Image" />
 
                 <View
                     android:layout_width="match_parent"

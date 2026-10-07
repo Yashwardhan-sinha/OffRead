@@ -27,6 +27,9 @@ public class Article implements Serializable {
     private long createdAt;
     private long updatedAt;
     private long lastReadAt;
+    private String canonicalUrl;
+    private String publishedDate;
+    private String imageUrl;
 
     public Article() {
         this.title = "";
@@ -40,6 +43,9 @@ public class Article implements Serializable {
         this.tags = "";
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = System.currentTimeMillis();
+        this.canonicalUrl = "";
+        this.publishedDate = "";
+        this.imageUrl = "";
     }
 
     public Article(long id, String title, String author, String url, String domain,
@@ -66,6 +72,9 @@ public class Article implements Serializable {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.lastReadAt = lastReadAt;
+        this.canonicalUrl = "";
+        this.publishedDate = "";
+        this.imageUrl = "";
     }
 
     public long getId() { return id; }
@@ -125,6 +134,15 @@ public class Article implements Serializable {
     public long getLastReadAt() { return lastReadAt; }
     public void setLastReadAt(long lastReadAt) { this.lastReadAt = lastReadAt; }
 
+    public String getCanonicalUrl() { return canonicalUrl == null ? "" : canonicalUrl; }
+    public void setCanonicalUrl(String canonicalUrl) { this.canonicalUrl = canonicalUrl; }
+
+    public String getPublishedDate() { return publishedDate == null ? "" : publishedDate; }
+    public void setPublishedDate(String publishedDate) { this.publishedDate = publishedDate; }
+
+    public String getImageUrl() { return imageUrl == null ? "" : imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
     public JSONObject toJson() throws JSONException {
         JSONObject obj = new JSONObject();
         obj.put("id", id);
@@ -146,6 +164,9 @@ public class Article implements Serializable {
         obj.put("createdAt", createdAt);
         obj.put("updatedAt", updatedAt);
         obj.put("lastReadAt", lastReadAt);
+        obj.put("canonicalUrl", canonicalUrl);
+        obj.put("publishedDate", publishedDate);
+        obj.put("imageUrl", imageUrl);
         return obj;
     }
 
@@ -170,6 +191,9 @@ public class Article implements Serializable {
         a.createdAt = obj.optLong("createdAt", System.currentTimeMillis());
         a.updatedAt = obj.optLong("updatedAt", System.currentTimeMillis());
         a.lastReadAt = obj.optLong("lastReadAt", 0);
+        a.canonicalUrl = obj.optString("canonicalUrl", "");
+        a.publishedDate = obj.optString("publishedDate", "");
+        a.imageUrl = obj.optString("imageUrl", "");
         return a;
     }
 }

@@ -57,17 +57,23 @@ public class ShareReceiverActivity extends Activity {
             executor.execute(() -> {
                 try {
                     ReadabilityResult res = ArticleExtractor.fetchFromUrl(finalUrl);
+
+                    String domain = (res.getSiteName() != null && !res.getSiteName().isEmpty()) ?
+                            res.getSiteName() : TextAnalysisUtil.extractDomain(finalUrl);
+                    String articleUrl = (res.getCanonicalUrl() != null && !res.getCanonicalUrl().isEmpty()) ?
+                            res.getCanonicalUrl() : finalUrl;
+
                     Article a = new Article();
                     a.setTitle(res.getTitle());
                     a.setAuthor(res.getAuthor());
-                    a.setUrl(finalUrl);
-                    a.setDomain(TextAnalysisUtil.extractDomain(finalUrl));
+                    a.setUrl(articleUrl);
+                    a.setDomain(domain);
                     a.setContent(res.getContent());
                     a.setPlainText(res.getPlainText());
                     a.setExcerpt(res.getExcerpt());
                     a.setWordCount(res.getWordCount());
                     a.setReadingTimeMinutes(res.getReadingTimeMinutes());
-                    a.setCategory(TextAnalysisUtil.extractDomain(finalUrl));
+                    a.setCategory(domain);
                     repo.insertArticle(a);
 
                     runOnUiThread(() -> {

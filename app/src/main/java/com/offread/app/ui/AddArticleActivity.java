@@ -147,17 +147,22 @@ public class AddArticleActivity extends Activity {
             try {
                 ReadabilityResult result = ArticleExtractor.fetchFromUrl(finalUrl);
 
+                String domain = (result.getSiteName() != null && !result.getSiteName().isEmpty()) ?
+                        result.getSiteName() : TextAnalysisUtil.extractDomain(finalUrl);
+                String articleUrl = (result.getCanonicalUrl() != null && !result.getCanonicalUrl().isEmpty()) ?
+                        result.getCanonicalUrl() : finalUrl;
+
                 Article article = new Article();
                 article.setTitle(result.getTitle());
                 article.setAuthor(result.getAuthor());
-                article.setUrl(finalUrl);
-                article.setDomain(TextAnalysisUtil.extractDomain(finalUrl));
+                article.setUrl(articleUrl);
+                article.setDomain(domain);
                 article.setContent(result.getContent());
                 article.setPlainText(result.getPlainText());
                 article.setExcerpt(result.getExcerpt());
                 article.setWordCount(result.getWordCount());
                 article.setReadingTimeMinutes(result.getReadingTimeMinutes());
-                article.setCategory(TextAnalysisUtil.extractDomain(finalUrl));
+                article.setCategory(domain);
                 article.setTags(tags);
 
                 long id = repository.insertArticle(article);

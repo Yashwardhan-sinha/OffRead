@@ -61,6 +61,9 @@ public class ArticleRepository {
         cv.put(OffReadDbHelper.COL_CREATED_AT, article.getCreatedAt());
         cv.put(OffReadDbHelper.COL_UPDATED_AT, article.getUpdatedAt());
         cv.put(OffReadDbHelper.COL_LAST_READ_AT, article.getLastReadAt());
+        cv.put(OffReadDbHelper.COL_CANONICAL_URL, article.getCanonicalUrl());
+        cv.put(OffReadDbHelper.COL_PUBLISHED_DATE, article.getPublishedDate());
+        cv.put(OffReadDbHelper.COL_IMAGE_URL, article.getImageUrl());
 
         long id = db.insert(OffReadDbHelper.TABLE_ARTICLES, null, cv);
         article.setId(id);
@@ -87,6 +90,9 @@ public class ArticleRepository {
         cv.put(OffReadDbHelper.COL_TAGS, article.getTags());
         cv.put(OffReadDbHelper.COL_UPDATED_AT, System.currentTimeMillis());
         cv.put(OffReadDbHelper.COL_LAST_READ_AT, article.getLastReadAt());
+        cv.put(OffReadDbHelper.COL_CANONICAL_URL, article.getCanonicalUrl());
+        cv.put(OffReadDbHelper.COL_PUBLISHED_DATE, article.getPublishedDate());
+        cv.put(OffReadDbHelper.COL_IMAGE_URL, article.getImageUrl());
 
         int count = db.update(OffReadDbHelper.TABLE_ARTICLES, cv,
                 OffReadDbHelper.COL_ID + " = ?", new String[]{String.valueOf(article.getId())});
@@ -366,6 +372,31 @@ public class ArticleRepository {
         a.setCreatedAt(c.getLong(c.getColumnIndexOrThrow(OffReadDbHelper.COL_CREATED_AT)));
         a.setUpdatedAt(c.getLong(c.getColumnIndexOrThrow(OffReadDbHelper.COL_UPDATED_AT)));
         a.setLastReadAt(c.getLong(c.getColumnIndexOrThrow(OffReadDbHelper.COL_LAST_READ_AT)));
+
+        int canonicalIdx = c.getColumnIndex(OffReadDbHelper.COL_CANONICAL_URL);
+        if (canonicalIdx != -1) a.setCanonicalUrl(c.getString(canonicalIdx));
+
+        int pubDateIdx = c.getColumnIndex(OffReadDbHelper.COL_PUBLISHED_DATE);
+        if (pubDateIdx != -1) a.setPublishedDate(c.getString(pubDateIdx));
+
+        int imgUrlIdx = c.getColumnIndex(OffReadDbHelper.COL_IMAGE_URL);
+        if (imgUrlIdx != -1) a.setImageUrl(c.getString(imgUrlIdx));
+
         return a;
+    }
+
+    public Article getArticleByUrl(String url) {
+        if (url == null || url.trim().isEmpty()) return null;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db.query(OffReadDbHelper.TABLE_ARTICLES, null,
+                OffReadDbHelper.COL_URL + " = ? OR " + OffReadDbHelper.COL_CANONICAL_URL + " = ?",
+                new String[]{url.trim(), url.trim()}, null, null, null, "1");
+        if (c != null && c.moveToFirst()) {
+            Article a = mapCursorToArticle(c);
+            c.close();
+            return a;
+        }
+        if (c != null) c.close();
+        return null;
     }
 }
