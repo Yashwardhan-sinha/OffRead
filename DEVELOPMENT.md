@@ -8,7 +8,7 @@ The recovered project is intended to live at:
 ~/Projects/OffRead
 ~~~
 
-The current recovery worktree is under ~/Projects/OffRead-recovery/worktree until the final promotion step is complete.
+The recovered worktree has been promoted to ~/Projects/OffRead. The untouched original GitHub clone is preserved at ~/Projects/OffRead-github-baseline.
 
 ## Termux prerequisites
 
