@@ -1,48 +1,74 @@
 package com.offread.app.data;
 
+/* JADX INFO: loaded from: classes.dex */
 public class ReadingStats {
-    private int totalArticles;
     private int finishedArticles;
-    private int totalWordsRead;
-    private int totalSecondsRead;
     private int streakDays;
+    private int totalArticles;
+    private int totalSecondsRead;
+    private int totalWordsRead;
 
     public ReadingStats() {
     }
 
-    public ReadingStats(int totalArticles, int finishedArticles, int totalWordsRead, int totalSecondsRead, int streakDays) {
-        this.totalArticles = totalArticles;
-        this.finishedArticles = finishedArticles;
-        this.totalWordsRead = totalWordsRead;
-        this.totalSecondsRead = totalSecondsRead;
-        this.streakDays = streakDays;
+    public ReadingStats(int i, int i2, int i3, int i4, int i5) {
+        this.totalArticles = i;
+        this.finishedArticles = i2;
+        this.totalWordsRead = i3;
+        this.totalSecondsRead = i4;
+        this.streakDays = i5;
     }
 
-    public int getTotalArticles() { return totalArticles; }
-    public void setTotalArticles(int totalArticles) { this.totalArticles = totalArticles; }
+    public int getTotalArticles() {
+        return this.totalArticles;
+    }
 
-    public int getFinishedArticles() { return finishedArticles; }
-    public void setFinishedArticles(int finishedArticles) { this.finishedArticles = finishedArticles; }
+    public void setTotalArticles(int i) {
+        this.totalArticles = i;
+    }
 
-    public int getTotalWordsRead() { return totalWordsRead; }
-    public void setTotalWordsRead(int totalWordsRead) { this.totalWordsRead = totalWordsRead; }
+    public int getFinishedArticles() {
+        return this.finishedArticles;
+    }
 
-    public int getTotalSecondsRead() { return totalSecondsRead; }
-    public void setTotalSecondsRead(int totalSecondsRead) { this.totalSecondsRead = totalSecondsRead; }
+    public void setFinishedArticles(int i) {
+        this.finishedArticles = i;
+    }
 
-    public int getStreakDays() { return streakDays; }
-    public void setStreakDays(int streakDays) { this.streakDays = streakDays; }
+    public int getTotalWordsRead() {
+        return this.totalWordsRead;
+    }
+
+    public void setTotalWordsRead(int i) {
+        this.totalWordsRead = i;
+    }
+
+    public int getTotalSecondsRead() {
+        return this.totalSecondsRead;
+    }
+
+    public void setTotalSecondsRead(int i) {
+        this.totalSecondsRead = i;
+    }
+
+    public int getStreakDays() {
+        return this.streakDays;
+    }
+
+    public void setStreakDays(int i) {
+        this.streakDays = i;
+    }
 
     public String getFormattedReadingTime() {
-        int minutes = totalSecondsRead / 60;
-        if (minutes < 60) {
-            return minutes + "m";
+        int i = this.totalSecondsRead / 60;
+        if (i < 60) {
+            return i + "m";
         }
-        int hours = minutes / 60;
-        int remMin = minutes % 60;
-        if (remMin == 0) {
-            return hours + "h";
+        int i2 = i / 60;
+        int i3 = i % 60;
+        if (i3 == 0) {
+            return i2 + "h";
         }
-        return hours + "h " + remMin + "m";
+        return i2 + "h " + i3 + "m";
     }
 }

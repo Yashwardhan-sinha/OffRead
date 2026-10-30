@@ -5,108 +5,145 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/* JADX INFO: loaded from: classes.dex */
 public class MiniJson {
+    private static final int MAX_DEPTH = 64;
 
-    public static Object parse(String json) {
-        if (json == null) return null;
-        String trimmed = json.trim();
-        if (trimmed.isEmpty()) return null;
-        return new Parser(trimmed).parseValue();
+    public static Object parse(String str) {
+        if (str == null) {
+            return null;
+        }
+        String strTrim = str.trim();
+        if (strTrim.isEmpty()) {
+            return null;
+        }
+        Parser parser = new Parser(strTrim);
+        Object value = parser.parseValue();
+        if (parser.nestedTooDeep) {
+            return null;
+        }
+        return value;
     }
 
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object> parseObject(String json) {
-        Object res = parse(json);
-        if (res instanceof Map) {
-            return (Map<String, Object>) res;
+    public static Map<String, Object> parseObject(String str) {
+        Object obj = parse(str);
+        if (obj instanceof Map) {
+            return (Map) obj;
         }
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public static List<Object> parseArray(String json) {
-        Object res = parse(json);
-        if (res instanceof List) {
-            return (List<Object>) res;
+    public static List<Object> parseArray(String str) {
+        Object obj = parse(str);
+        if (obj instanceof List) {
+            return (List) obj;
         }
         return null;
     }
 
     private static class Parser {
-        private final String src;
         private final int len;
+        private final String src;
         private int idx = 0;
+        private int depth = 0;
+        private boolean nestedTooDeep = false;
 
-        Parser(String src) {
-            this.src = src;
-            this.len = src.length();
+        Parser(String str) {
+            this.src = str;
+            this.len = str.length();
         }
 
         Object parseValue() {
             skipWhitespace();
-            if (idx >= len) return null;
+            if (this.idx >= this.len) {
+                return null;
+            }
+            int i = this.depth;
+            if (i >= 64) {
+                this.nestedTooDeep = true;
+                return null;
+            }
+            this.depth = i + 1;
+            try {
+                return parseValueAtDepth();
+            } finally {
+                this.depth--;
+            }
+        }
 
-            char c = src.charAt(idx);
-            if (c == '{') {
+        Object parseValueAtDepth() {
+            char cCharAt = this.src.charAt(this.idx);
+            if (cCharAt == '{') {
                 return parseObject();
-            } else if (c == '[') {
+            }
+            if (cCharAt == '[') {
                 return parseArray();
-            } else if (c == '"' || c == '\'') {
+            }
+            if (cCharAt == '\"' || cCharAt == '\'') {
                 return parseString();
-            } else if (c == 't' || c == 'f') {
+            }
+            if (cCharAt == 't' || cCharAt == 'f') {
                 return parseBoolean();
-            } else if (c == 'n') {
+            }
+            if (cCharAt == 'n') {
                 return parseNull();
-            } else if (c == '-' || Character.isDigit(c)) {
+            }
+            if (cCharAt == '-' || Character.isDigit(cCharAt)) {
                 return parseNumber();
             }
             return null;
         }
 
         private Map<String, Object> parseObject() {
-            idx++; // skip '{'
-            Map<String, Object> map = new HashMap<>();
+            String string;
+            this.idx++;
+            HashMap map = new HashMap();
             skipWhitespace();
-            if (idx < len && src.charAt(idx) == '}') {
-                idx++;
+            int i = this.idx;
+            if (i < this.len && this.src.charAt(i) == '}') {
+                this.idx++;
                 return map;
             }
-
-            while (idx < len) {
+            while (this.idx < this.len) {
                 skipWhitespace();
-                if (idx >= len) break;
-                if (src.charAt(idx) == '}') {
-                    idx++;
+                int i2 = this.idx;
+                if (i2 >= this.len) {
                     break;
                 }
-
-                String key = "";
-                char c = src.charAt(idx);
-                if (c == '"' || c == '\'') {
-                    key = parseString();
+                if (this.src.charAt(i2) == '}') {
+                    this.idx++;
+                    return map;
+                }
+                char cCharAt = this.src.charAt(this.idx);
+                if (cCharAt == '\"' || cCharAt == '\'') {
+                    string = parseString();
                 } else {
-                    int start = idx;
-                    while (idx < len && src.charAt(idx) != ':' && !Character.isWhitespace(src.charAt(idx))) {
-                        idx++;
+                    int i3 = this.idx;
+                    while (true) {
+                        int i4 = this.idx;
+                        if (i4 >= this.len || this.src.charAt(i4) == ':' || Character.isWhitespace(this.src.charAt(this.idx))) {
+                            break;
+                        }
+                        this.idx++;
                     }
-                    key = src.substring(start, idx);
+                    string = this.src.substring(i3, this.idx);
                 }
-
                 skipWhitespace();
-                if (idx < len && src.charAt(idx) == ':') {
-                    idx++; // skip ':'
+                int i5 = this.idx;
+                if (i5 < this.len && this.src.charAt(i5) == ':') {
+                    this.idx++;
                 }
-
-                Object val = parseValue();
-                map.put(key, val);
-
+                map.put(string, parseValue());
                 skipWhitespace();
-                if (idx < len && src.charAt(idx) == ',') {
-                    idx++; // skip ','
-                } else if (idx < len && src.charAt(idx) == '}') {
-                    idx++;
-                    break;
+                int i6 = this.idx;
+                if (i6 < this.len && this.src.charAt(i6) == ',') {
+                    this.idx++;
                 } else {
+                    int i7 = this.idx;
+                    if (i7 >= this.len || this.src.charAt(i7) != '}') {
+                        break;
+                    }
+                    this.idx++;
                     break;
                 }
             }
@@ -114,135 +151,168 @@ public class MiniJson {
         }
 
         private List<Object> parseArray() {
-            idx++; // skip '['
-            List<Object> list = new ArrayList<>();
+            this.idx++;
+            ArrayList arrayList = new ArrayList();
             skipWhitespace();
-            if (idx < len && src.charAt(idx) == ']') {
-                idx++;
-                return list;
+            int i = this.idx;
+            if (i < this.len && this.src.charAt(i) == ']') {
+                this.idx++;
+                return arrayList;
             }
-
-            while (idx < len) {
+            while (this.idx < this.len) {
                 skipWhitespace();
-                if (idx >= len) break;
-                if (src.charAt(idx) == ']') {
-                    idx++;
+                int i2 = this.idx;
+                if (i2 >= this.len) {
                     break;
                 }
-
-                Object val = parseValue();
-                list.add(val);
-
+                if (this.src.charAt(i2) == ']') {
+                    this.idx++;
+                    return arrayList;
+                }
+                arrayList.add(parseValue());
                 skipWhitespace();
-                if (idx < len && src.charAt(idx) == ',') {
-                    idx++; // skip ','
-                } else if (idx < len && src.charAt(idx) == ']') {
-                    idx++;
-                    break;
+                int i3 = this.idx;
+                if (i3 < this.len && this.src.charAt(i3) == ',') {
+                    this.idx++;
                 } else {
+                    int i4 = this.idx;
+                    if (i4 >= this.len || this.src.charAt(i4) != ']') {
+                        break;
+                    }
+                    this.idx++;
                     break;
                 }
             }
-            return list;
+            return arrayList;
         }
 
+        /* JADX WARN: Code duplicated, block: B:45:0x00bd  */
         private String parseString() {
-            char quote = src.charAt(idx);
-            idx++; // skip quote
-            StringBuilder sb = new StringBuilder();
-
-            while (idx < len) {
-                char c = src.charAt(idx);
-                if (c == quote) {
-                    idx++;
-                    break;
+            char quote = this.src.charAt(this.idx++);
+            StringBuilder result = new StringBuilder();
+            while (this.idx < this.len) {
+                char current = this.src.charAt(this.idx++);
+                if (current == quote) return result.toString();
+                if (current != '\\') {
+                    result.append(current);
+                    continue;
                 }
-                if (c == '\\' && idx + 1 < len) {
-                    idx++;
-                    char esc = src.charAt(idx);
-                    if (esc == '"') sb.append('"');
-                    else if (esc == '\'') sb.append('\'');
-                    else if (esc == '\\') sb.append('\\');
-                    else if (esc == '/') sb.append('/');
-                    else if (esc == 'b') sb.append('\b');
-                    else if (esc == 'f') sb.append('\f');
-                    else if (esc == 'n') sb.append('\n');
-                    else if (esc == 'r') sb.append('\r');
-                    else if (esc == 't') sb.append('\t');
-                    else if (esc == 'u' && idx + 4 < len) {
-                        try {
-                            String hex = src.substring(idx + 1, idx + 5);
-                            int code = Integer.parseInt(hex, 16);
-                            sb.append((char) code);
-                            idx += 4;
-                        } catch (Exception e) {
-                            sb.append('u');
-                        }
-                    } else {
-                        sb.append(esc);
-                    }
-                    idx++;
-                } else {
-                    sb.append(c);
-                    idx++;
+                if (this.idx >= this.len) break;
+                char escaped = this.src.charAt(this.idx++);
+                switch (escaped) {
+                    case '"': result.append('"'); break;
+                    case '\'': result.append('\''); break;
+                    case '\\': result.append('\\'); break;
+                    case '/': result.append('/'); break;
+                    case 'b': result.append('\b'); break;
+                    case 'f': result.append('\f'); break;
+                    case 'n': result.append('\n'); break;
+                    case 'r': result.append('\r'); break;
+                    case 't': result.append('\t'); break;
+                    case 'u':
+                        if (this.idx + 4 <= this.len) {
+                            try {
+                                result.append((char) Integer.parseInt(this.src.substring(this.idx, this.idx + 4), 16));
+                                this.idx += 4;
+                            } catch (NumberFormatException ignored) {
+                                result.append('u');
+                            }
+                        } else result.append('u');
+                        break;
+                    default: result.append(escaped); break;
                 }
             }
-            return sb.toString();
+            return result.toString();
         }
 
         private Boolean parseBoolean() {
-            if (src.startsWith("true", idx)) {
-                idx += 4;
+            if (this.src.startsWith("true", this.idx)) {
+                this.idx += 4;
                 return Boolean.TRUE;
-            } else if (src.startsWith("false", idx)) {
-                idx += 5;
-                return Boolean.FALSE;
             }
-            return null;
+            if (!this.src.startsWith("false", this.idx)) {
+                return null;
+            }
+            this.idx += 5;
+            return Boolean.FALSE;
         }
 
         private Object parseNull() {
-            if (src.startsWith("null", idx)) {
-                idx += 4;
+            if (!this.src.startsWith("null", this.idx)) {
+                return null;
             }
+            this.idx += 4;
             return null;
         }
 
         private Number parseNumber() {
-            int start = idx;
-            if (idx < len && src.charAt(idx) == '-') idx++;
-            while (idx < len && Character.isDigit(src.charAt(idx))) idx++;
-            boolean isFloat = false;
-            if (idx < len && src.charAt(idx) == '.') {
-                isFloat = true;
-                idx++;
-                while (idx < len && Character.isDigit(src.charAt(idx))) idx++;
+            boolean z;
+            int i = this.idx;
+            boolean z2 = true;
+            if (i < this.len && this.src.charAt(i) == '-') {
+                this.idx++;
             }
-            if (idx < len && (src.charAt(idx) == 'e' || src.charAt(idx) == 'E')) {
-                isFloat = true;
-                idx++;
-                if (idx < len && (src.charAt(idx) == '+' || src.charAt(idx) == '-')) idx++;
-                while (idx < len && Character.isDigit(src.charAt(idx))) idx++;
-            }
-            String numStr = src.substring(start, idx);
-            try {
-                if (isFloat) {
-                    return Double.parseDouble(numStr);
-                } else {
-                    long l = Long.parseLong(numStr);
-                    if (l >= Integer.MIN_VALUE && l <= Integer.MAX_VALUE) {
-                        return (int) l;
-                    }
-                    return l;
+            while (true) {
+                int i2 = this.idx;
+                if (i2 >= this.len || !Character.isDigit(this.src.charAt(i2))) {
+                    break;
                 }
-            } catch (Exception e) {
+                this.idx++;
+            }
+            int i3 = this.idx;
+            if (i3 >= this.len || this.src.charAt(i3) != '.') {
+                z = false;
+            } else {
+                this.idx++;
+                while (true) {
+                    int i4 = this.idx;
+                    if (i4 >= this.len || !Character.isDigit(this.src.charAt(i4))) {
+                        break;
+                    }
+                    this.idx++;
+                }
+                z = true;
+            }
+            int i5 = this.idx;
+            if (i5 >= this.len || !(this.src.charAt(i5) == 'e' || this.src.charAt(this.idx) == 'E')) {
+                z2 = z;
+            } else {
+                int i6 = this.idx + 1;
+                this.idx = i6;
+                if (i6 < this.len && (this.src.charAt(i6) == '+' || this.src.charAt(this.idx) == '-')) {
+                    this.idx++;
+                }
+                while (true) {
+                    int i7 = this.idx;
+                    if (i7 >= this.len || !Character.isDigit(this.src.charAt(i7))) {
+                        break;
+                    }
+                    this.idx++;
+                }
+            }
+            String strSubstring = this.src.substring(i, this.idx);
+            try {
+                if (z2) {
+                    return Double.valueOf(Double.parseDouble(strSubstring));
+                }
+                long j = Long.parseLong(strSubstring);
+                if (j >= -2147483648L && j <= 2147483647L) {
+                    return Integer.valueOf((int) j);
+                }
+                return Long.valueOf(j);
+            } catch (Exception unused) {
                 return 0;
             }
         }
 
         private void skipWhitespace() {
-            while (idx < len && Character.isWhitespace(src.charAt(idx))) {
-                idx++;
+            while (true) {
+                int i = this.idx;
+                if (i >= this.len || !Character.isWhitespace(this.src.charAt(i))) {
+                    return;
+                } else {
+                    this.idx++;
+                }
             }
         }
     }

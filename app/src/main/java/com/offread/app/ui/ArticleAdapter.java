@@ -1,145 +1,194 @@
 package com.offread.app.ui;
 
+import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.offread.app.R;
 import com.offread.app.data.Article;
-
+import com.offread.app.util.ThemeManager;
 import java.util.ArrayList;
 import java.util.List;
 
+/* JADX INFO: loaded from: classes.dex */
 public class ArticleAdapter extends BaseAdapter {
-
-    public interface OnArticleActionListener {
-        void onArticleClick(Article article);
-        void onFavoriteToggle(Article article);
-        void onArchiveToggle(Article article);
-    }
-
+    private List<Article> articles = new ArrayList();
     private final Context context;
     private final LayoutInflater inflater;
-    private List<Article> articles = new ArrayList<>();
     private final OnArticleActionListener listener;
 
-    public ArticleAdapter(Context context, OnArticleActionListener listener) {
-        this.context = context;
-        this.inflater = LayoutInflater.from(context);
-        this.listener = listener;
+    public interface OnArticleActionListener {
+        void onArchiveToggle(Article article);
+
+        void onArticleClick(Article article);
+
+        void onBookmarkToggle(Article article);
     }
 
-    public void setArticles(List<Article> articles) {
-        this.articles = articles != null ? articles : new ArrayList<>();
+    public ArticleAdapter(Context context, OnArticleActionListener onArticleActionListener) {
+        this.context = context;
+        this.inflater = LayoutInflater.from(context);
+        this.listener = onArticleActionListener;
+    }
+
+    public void setArticles(List<Article> list) {
+        if (list == null) {
+            list = new ArrayList<>();
+        }
+        this.articles = list;
         notifyDataSetChanged();
     }
 
-    @Override
+    public List<Article> getArticles() {
+        return this.articles;
+    }
+
+    @Override // android.widget.Adapter
     public int getCount() {
-        return articles.size();
+        return this.articles.size();
     }
 
-    @Override
-    public Article getItem(int position) {
-        return articles.get(position);
+    @Override // android.widget.Adapter
+    public Article getItem(int i) {
+        return this.articles.get(i);
     }
 
-    @Override
-    public long getItemId(int position) {
-        return articles.get(position).getId();
+    @Override // android.widget.Adapter
+    public long getItemId(int i) {
+        return this.articles.get(i).getId();
     }
 
     private static class ViewHolder {
-        TextView tvDomain;
-        TextView tvReadingTime;
-        ImageButton btnFavorite;
-        ImageButton btnArchive;
-        TextView tvTitle;
-        TextView tvExcerpt;
-        ProgressBar progressRead;
-        TextView tvProgress;
+        ImageButton archive;
+        ImageButton bookmark;
+        ImageView cover;
+        TextView domain;
+        TextView excerpt;
+        ProgressBar progress;
+        TextView progressLabel;
+        View progressRow;
+        TextView readingTime;
+        TextView title;
+
+        private ViewHolder() {
+        }
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.item_article, parent, false);
-            holder = new ViewHolder();
-            holder.tvDomain = convertView.findViewById(R.id.tv_item_domain);
-            holder.tvReadingTime = convertView.findViewById(R.id.tv_item_reading_time);
-            holder.btnFavorite = convertView.findViewById(R.id.btn_item_favorite);
-            holder.btnArchive = convertView.findViewById(R.id.btn_item_archive);
-            holder.tvTitle = convertView.findViewById(R.id.tv_item_title);
-            holder.tvExcerpt = convertView.findViewById(R.id.tv_item_excerpt);
-            holder.progressRead = convertView.findViewById(R.id.progress_item_read);
-            holder.tvProgress = convertView.findViewById(R.id.tv_item_progress);
-            convertView.setTag(holder);
+    /* JADX WARN: Multi-variable type inference failed */
+    @Override // android.widget.Adapter
+    public View getView(int i, View view, ViewGroup viewGroup) {
+        ViewHolder viewHolder;
+        if (view == null) {
+            view = this.inflater.inflate(R.layout.item_article, viewGroup, false);
+            viewHolder = new ViewHolder();
+            viewHolder.cover = (ImageView) view.findViewById(R.id.img_article_cover);
+            viewHolder.domain = (TextView) view.findViewById(R.id.tv_item_domain);
+            viewHolder.readingTime = (TextView) view.findViewById(R.id.tv_item_reading_time);
+            viewHolder.title = (TextView) view.findViewById(R.id.tv_item_title);
+            viewHolder.excerpt = (TextView) view.findViewById(R.id.tv_item_excerpt);
+            viewHolder.progressLabel = (TextView) view.findViewById(R.id.tv_item_progress);
+            viewHolder.progress = (ProgressBar) view.findViewById(R.id.progress_item_read);
+            viewHolder.progressRow = view.findViewById(R.id.row_item_progress);
+            viewHolder.bookmark = (ImageButton) view.findViewById(R.id.btn_item_favorite);
+            viewHolder.archive = (ImageButton) view.findViewById(R.id.btn_item_archive);
+            view.setTag(viewHolder);
         } else {
-            holder = (ViewHolder) convertView.getTag();
+            viewHolder = (ViewHolder) view.getTag();
         }
-
-        final Article article = getItem(position);
-
-        String domain = article.getDomain();
-        if (domain == null || domain.isEmpty()) {
-            domain = article.getCategory();
+        final Article item = getItem(i);
+        Context context = this.context;
+        Activity activity = context instanceof Activity ? (Activity) context : null;
+        int iColor = ThemeManager.color(activity, R.attr.colorIcon);
+        int iColor2 = ThemeManager.color(activity, R.attr.colorAccent);
+        int iColor3 = ThemeManager.color(activity, R.attr.colorSuccess);
+        int iColor4 = ThemeManager.color(activity, R.attr.colorTextMuted);
+        String domain = item.getDomain();
+        if (domain.isEmpty()) {
+            domain = item.getCategory();
         }
-        holder.tvDomain.setText(domain);
-
-        int time = article.getReadingTimeMinutes();
-        holder.tvReadingTime.setText(time + " min read • " + article.getWordCount() + " words");
-
-        holder.tvTitle.setText(article.getTitle());
-        holder.tvExcerpt.setText(article.getExcerpt());
-
-        if (article.isFavorite()) {
-            holder.btnFavorite.setImageResource(R.drawable.ic_star_filled);
-            holder.btnFavorite.setColorFilter(Color.parseColor("#F59E0B"));
+        viewHolder.domain.setText(domain);
+        String str = item.getReadingTimeMinutes() + " min • " + item.getWordCount() + " words";
+        String str2 = ReadingDateFormatter.format(this.context, item.getLastReadAt());
+        if (!str2.isEmpty()) {
+            str = str + " • " + str2;
+        }
+        viewHolder.readingTime.setText(str);
+        viewHolder.title.setText(item.getTitle());
+        String excerpt = item.getExcerpt();
+        viewHolder.excerpt.setText(excerpt);
+        viewHolder.excerpt.setVisibility(excerpt.isEmpty() ? 8 : 0);
+        RemoteImageLoader.into(viewHolder.cover, item.getImageUrl());
+        viewHolder.bookmark.setImageResource(item.isFavorite() ? R.drawable.ic_bookmark_filled : R.drawable.ic_bookmark);
+        viewHolder.bookmark.setColorFilter(item.isFavorite() ? iColor2 : iColor);
+        viewHolder.bookmark.setContentDescription(this.context.getString(item.isFavorite() ? R.string.action_unbookmark : R.string.action_bookmark));
+        viewHolder.archive.setImageResource(item.isArchived() ? R.drawable.ic_unarchive : R.drawable.ic_archive);
+        ImageButton imageButton = viewHolder.archive;
+        if (item.isArchived()) {
+            iColor = iColor2;
+        }
+        imageButton.setColorFilter(iColor);
+        viewHolder.archive.setContentDescription(this.context.getString(item.isArchived() ? R.string.action_unarchive : R.string.action_archive));
+        int progressPercent = item.getProgressPercent();
+        viewHolder.progress.setProgress(progressPercent);
+        if (item.isArchived() || progressPercent >= 95) {
+            viewHolder.progressLabel.setText(R.string.progress_finished);
+            viewHolder.progressLabel.setTextColor(iColor3);
+        } else if (progressPercent > 0) {
+            viewHolder.progressLabel.setText(this.context.getString(R.string.progress_percent, Integer.valueOf(progressPercent)));
+            viewHolder.progressLabel.setTextColor(iColor4);
         } else {
-            holder.btnFavorite.setImageResource(R.drawable.ic_star);
-            holder.btnFavorite.setColorFilter(Color.parseColor("#94A3B8"));
+            viewHolder.progressLabel.setText(R.string.progress_unread);
+            viewHolder.progressLabel.setTextColor(iColor4);
         }
-
-        if (article.isArchived()) {
-            holder.btnArchive.setImageResource(R.drawable.ic_unarchive);
-            holder.btnArchive.setColorFilter(Color.parseColor("#0D9488"));
-        } else {
-            holder.btnArchive.setImageResource(R.drawable.ic_archive);
-            holder.btnArchive.setColorFilter(Color.parseColor("#94A3B8"));
-        }
-
-        int progress = article.getProgressPercent();
-        holder.progressRead.setProgress(progress);
-        if (article.isArchived() || progress >= 95) {
-            holder.tvProgress.setText("Finished");
-            holder.tvProgress.setTextColor(Color.parseColor("#10B981"));
-        } else if (progress > 0) {
-            holder.tvProgress.setText(progress + "% read");
-            holder.tvProgress.setTextColor(Color.parseColor("#38BDF8"));
-        } else {
-            holder.tvProgress.setText("Unread");
-            holder.tvProgress.setTextColor(Color.parseColor("#64748B"));
-        }
-
-        convertView.setOnClickListener(v -> {
-            if (listener != null) listener.onArticleClick(article);
+        viewHolder.progressRow.setVisibility(progressPercent <= 0 ? 8 : 0);
+        view.setOnClickListener(new View.OnClickListener() { // from class: com.offread.app.ui.ArticleAdapter.0
+            @Override // android.view.View.OnClickListener
+            public final void onClick(View view2) {
+                ArticleAdapter.this.lambda$getView$0(item, view2);
+            }
         });
-
-        holder.btnFavorite.setOnClickListener(v -> {
-            if (listener != null) listener.onFavoriteToggle(article);
+        viewHolder.bookmark.setOnClickListener(new View.OnClickListener() { // from class: com.offread.app.ui.ArticleAdapter.1
+            @Override // android.view.View.OnClickListener
+            public final void onClick(View view2) {
+                ArticleAdapter.this.lambda$getView$1(item, view2);
+            }
         });
-
-        holder.btnArchive.setOnClickListener(v -> {
-            if (listener != null) listener.onArchiveToggle(article);
+        viewHolder.archive.setOnClickListener(new View.OnClickListener() { // from class: com.offread.app.ui.ArticleAdapter.2
+            @Override // android.view.View.OnClickListener
+            public final void onClick(View view2) {
+                ArticleAdapter.this.lambda$getView$2(item, view2);
+            }
         });
+        return view;
+    }
 
-        return convertView;
+    /* JADX INFO: Access modifiers changed from: private */
+    public /* synthetic */ void lambda$getView$0(Article article, View view) {
+        OnArticleActionListener onArticleActionListener = this.listener;
+        if (onArticleActionListener != null) {
+            onArticleActionListener.onArticleClick(article);
+        }
+    }
+
+    /* JADX INFO: Access modifiers changed from: private */
+    public /* synthetic */ void lambda$getView$1(Article article, View view) {
+        OnArticleActionListener onArticleActionListener = this.listener;
+        if (onArticleActionListener != null) {
+            onArticleActionListener.onBookmarkToggle(article);
+        }
+    }
+
+    /* JADX INFO: Access modifiers changed from: private */
+    public /* synthetic */ void lambda$getView$2(Article article, View view) {
+        OnArticleActionListener onArticleActionListener = this.listener;
+        if (onArticleActionListener != null) {
+            onArticleActionListener.onArchiveToggle(article);
+        }
     }
 }

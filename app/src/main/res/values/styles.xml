@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppearanceChip">
+        <item name="android:textSize">13.0sp</item>
+        <item name="android:textColor">?colorTextSecondary</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/bg_chip</item>
+        <item name="android:paddingTop">6.0dp</item>
+        <item name="android:paddingBottom">6.0dp</item>
+        <item name="android:layout_width">0.0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/touch_target</item>
+        <item name="android:layout_weight">1.0</item>
+    </style>
+    <style name="Chip">
+        <item name="android:textSize">@dimen/text_row_summary</item>
+        <item name="android:textColor">?colorTextSecondary</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/bg_chip</item>
+        <item name="android:paddingTop">8.0dp</item>
+        <item name="android:paddingBottom">8.0dp</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:layout_width">0.0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/touch_target</item>
+        <item name="android:layout_weight">1.0</item>
+        <item name="android:paddingStart">14.0dp</item>
+        <item name="android:paddingEnd">14.0dp</item>
+        <item name="android:layout_marginEnd">8.0dp</item>
+    </style>
+    <style name="ChipRow">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">6.0dp</item>
+        <item name="android:layout_marginBottom">10.0dp</item>
+        <item name="android:layout_marginStart">@dimen/card_padding</item>
+        <item name="android:layout_marginEnd">@dimen/card_padding</item>
+    </style>
+    <style name="SettingsCard">
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/bg_card</item>
+        <item name="android:paddingTop">4.0dp</item>
+        <item name="android:paddingBottom">4.0dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="SettingsRowIcon">
+        <item name="android:layout_width">@dimen/icon_size</item>
+        <item name="android:layout_height">@dimen/icon_size</item>
+        <item name="android:tint">?colorIcon</item>
+        <item name="android:contentDescription">@null</item>
+        <item name="android:layout_marginStart">12.0dp</item>
+    </style>
+    <style name="SettingsRowSummary">
+        <item name="android:textSize">@dimen/text_row_summary</item>
+        <item name="android:textColor">?colorTextSecondary</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">2.0dp</item>
+        <item name="android:layout_marginBottom">8.0dp</item>
+        <item name="android:layout_marginStart">@dimen/card_padding</item>
+        <item name="android:layout_marginEnd">@dimen/card_padding</item>
+    </style>
+    <style name="SettingsRowTitle">
+        <item name="android:textSize">@dimen/text_row_title</item>
+        <item name="android:textColor">?colorTextPrimary</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10.0dp</item>
+        <item name="android:layout_marginStart">@dimen/card_padding</item>
+        <item name="android:layout_marginEnd">@dimen/card_padding</item>
+    </style>
+    <style name="SettingsRowTitleInline">
+        <item name="android:textSize">@dimen/text_row_title</item>
+        <item name="android:textColor">?colorTextPrimary</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="SettingsSectionTitle">
+        <item name="android:textSize">@dimen/text_section_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?colorTextMuted</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/section_gap</item>
+        <item name="android:layout_marginBottom">8.0dp</item>
+        <item name="android:letterSpacing">0.06</item>
+    </style>
+    <style name="SettingsTapRow">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">?android:selectableItemBackground</item>
+        <item name="android:paddingTop">10.0dp</item>
+        <item name="android:paddingBottom">10.0dp</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/touch_target</item>
+        <item name="android:paddingStart">@dimen/card_padding</item>
+        <item name="android:paddingEnd">@dimen/card_padding</item>
+    </style>
+    <style name="Theme.OffRead" parent="@style/Theme.OffRead.Light" />
+    <style name="Theme.OffRead.Alert.Dark" parent="@style/Theme.OffRead.Dialog.Dark">
+        <item name="android:textColorPrimary">@color/text_primary_dark</item>
+        <item name="android:textColorSecondary">@color/text_secondary_dark</item>
+        <item name="android:windowBackground">@drawable/bg_alert_panel</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:textColorHint">@color/text_muted_dark</item>
+        <item name="android:colorControlActivated">@color/primary_dark_mode</item>
+        <item name="android:colorControlHighlight">@color/divider_dark</item>
+    </style>
+    <style name="Theme.OffRead.Alert.Light" parent="@style/Theme.OffRead.Dialog.Light">
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:windowBackground">@drawable/bg_alert_panel</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:textColorHint">@color/text_muted</item>
+        <item name="android:colorControlActivated">@color/primary</item>
+        <item name="android:colorControlHighlight">@color/divider</item>
+    </style>
+    <style name="Theme.OffRead.Base.Dark" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:textColorPrimary">?colorTextPrimary</item>
+        <item name="android:textColorSecondary">?colorTextSecondary</item>
+        <item name="android:windowBackground">?colorBackground</item>
+        <item name="android:textColorHint">?colorTextMuted</item>
+        <item name="android:editTextColor">?colorTextPrimary</item>
+        <item name="android:colorControlActivated">?colorAccent</item>
+        <item name="android:colorControlHighlight">?colorDivider</item>
+        <item name="android:colorPrimary">?colorAccent</item>
+        <item name="android:colorPrimaryDark">?colorBackground</item>
+        <item name="android:colorAccent">?colorAccent</item>
+        <item name="android:statusBarColor">?colorBackground</item>
+        <item name="android:navigationBarColor">?colorBackground</item>
+    </style>
+    <style name="Theme.OffRead.Base.Light" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:textColorPrimary">?colorTextPrimary</item>
+        <item name="android:textColorSecondary">?colorTextSecondary</item>
+        <item name="android:windowBackground">?colorBackground</item>
+        <item name="android:textColorHint">?colorTextMuted</item>
+        <item name="android:editTextColor">?colorTextPrimary</item>
+        <item name="android:colorControlActivated">?colorAccent</item>
+        <item name="android:colorControlHighlight">?colorDivider</item>
+        <item name="android:colorPrimary">?colorAccent</item>
+        <item name="android:colorPrimaryDark">?colorBackground</item>
+        <item name="android:colorAccent">?colorAccent</item>
+        <item name="android:statusBarColor">?colorBackground</item>
+        <item name="android:navigationBarColor">?colorBackground</item>
+    </style>
+    <style name="Theme.OffRead.Dark" parent="@style/Theme.OffRead.Base.Dark">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="colorAccent">@color/primary_dark_mode</item>
+        <item name="colorAccentContainer">@color/primary_container_dark</item>
+        <item name="colorBackground">@color/background_dark</item>
+        <item name="colorChip">@color/surface_variant_dark</item>
+        <item name="colorChipActive">@color/primary_container_dark</item>
+        <item name="colorDanger">@color/danger_dark</item>
+        <item name="colorDivider">@color/divider_dark</item>
+        <item name="colorHighlight">@color/accent_dark</item>
+        <item name="colorIcon">@color/text_secondary_dark</item>
+        <item name="colorIconActive">@color/primary_dark_mode</item>
+        <item name="colorOnAccent">@color/on_primary_dark_mode</item>
+        <item name="colorOnAccentContainer">@color/on_primary_container_dark</item>
+        <item name="colorSuccess">@color/success_dark</item>
+        <item name="colorSurface">@color/surface_dark</item>
+        <item name="colorSurfaceCard">@color/surface_card_dark</item>
+        <item name="colorSurfaceElevated">@color/surface_elevated_dark</item>
+        <item name="colorSurfaceVariant">@color/surface_variant_dark</item>
+        <item name="colorTextMuted">@color/text_muted_dark</item>
+        <item name="colorTextPrimary">@color/text_primary_dark</item>
+        <item name="colorTextSecondary">@color/text_secondary_dark</item>
+    </style>
+    <style name="Theme.OffRead.Dialog" parent="@style/Theme.OffRead.Dialog.Light" />
+    <style name="Theme.OffRead.Dialog.Dark" parent="@android:style/Theme.Material.Dialog.NoActionBar">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/surface_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="colorAccent">@color/primary_dark_mode</item>
+        <item name="colorAccentContainer">@color/primary_container_dark</item>
+        <item name="colorBackground">@color/background_dark</item>
+        <item name="colorChip">@color/surface_variant_dark</item>
+        <item name="colorChipActive">@color/primary_container_dark</item>
+        <item name="colorDanger">@color/danger_dark</item>
+        <item name="colorDivider">@color/divider_dark</item>
+        <item name="colorHighlight">@color/accent_dark</item>
+        <item name="colorIcon">@color/text_secondary_dark</item>
+        <item name="colorIconActive">@color/primary_dark_mode</item>
+        <item name="colorOnAccent">@color/on_primary_dark_mode</item>
+        <item name="colorOnAccentContainer">@color/on_primary_container_dark</item>
+        <item name="colorSuccess">@color/success_dark</item>
+        <item name="colorSurface">@color/surface_dark</item>
+        <item name="colorSurfaceCard">@color/surface_card_dark</item>
+        <item name="colorSurfaceElevated">@color/surface_elevated_dark</item>
+        <item name="colorSurfaceVariant">@color/surface_variant_dark</item>
+        <item name="colorTextMuted">@color/text_muted_dark</item>
+        <item name="colorTextPrimary">@color/text_primary_dark</item>
+        <item name="colorTextSecondary">@color/text_secondary_dark</item>
+    </style>
+    <style name="Theme.OffRead.Dialog.Light" parent="@android:style/Theme.Material.Light.Dialog.NoActionBar">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/surface</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="colorAccentContainer">@color/primary_container</item>
+        <item name="colorBackground">@color/background</item>
+        <item name="colorChip">@color/surface_variant</item>
+        <item name="colorChipActive">@color/primary_container</item>
+        <item name="colorDanger">@color/danger</item>
+        <item name="colorDivider">@color/divider</item>
+        <item name="colorHighlight">@color/accent</item>
+        <item name="colorIcon">@color/text_secondary</item>
+        <item name="colorIconActive">@color/primary</item>
+        <item name="colorOnAccent">@color/white</item>
+        <item name="colorOnAccentContainer">@color/on_primary_container</item>
+        <item name="colorSuccess">@color/success</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorSurfaceCard">@color/surface_card</item>
+        <item name="colorSurfaceElevated">@color/surface_elevated</item>
+        <item name="colorSurfaceVariant">@color/surface_variant</item>
+        <item name="colorTextMuted">@color/text_muted</item>
+        <item name="colorTextPrimary">@color/text_primary</item>
+        <item name="colorTextSecondary">@color/text_secondary</item>
+    </style>
+    <style name="Theme.OffRead.Light" parent="@style/Theme.OffRead.Base.Light">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="colorAccentContainer">@color/primary_container</item>
+        <item name="colorBackground">@color/background</item>
+        <item name="colorChip">@color/surface_variant</item>
+        <item name="colorChipActive">@color/primary_container</item>
+        <item name="colorDanger">@color/danger</item>
+        <item name="colorDivider">@color/divider</item>
+        <item name="colorHighlight">@color/accent</item>
+        <item name="colorIcon">@color/text_secondary</item>
+        <item name="colorIconActive">@color/primary</item>
+        <item name="colorOnAccent">@color/white</item>
+        <item name="colorOnAccentContainer">@color/on_primary_container</item>
+        <item name="colorSuccess">@color/success</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorSurfaceCard">@color/surface_card</item>
+        <item name="colorSurfaceElevated">@color/surface_elevated</item>
+        <item name="colorSurfaceVariant">@color/surface_variant</item>
+        <item name="colorTextMuted">@color/text_muted</item>
+        <item name="colorTextPrimary">@color/text_primary</item>
+        <item name="colorTextSecondary">@color/text_secondary</item>
+    </style>
+</resources>

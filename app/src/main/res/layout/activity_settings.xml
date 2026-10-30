@@ -1,205 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background"
-    android:orientation="vertical">
-
-    <!-- Top Action Bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="16dp">
-
-        <ImageButton
-            android:id="@+id/btn_settings_back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_back"
-            android:tint="@color/text_primary"
-            android:contentDescription="@string/action_cancel" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:text="@string/settings_title"
-            android:textColor="@color/text_primary"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="36dp">
-
-            <!-- Data & Backup Header -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DATA &amp; BACKUP"
-                android:textColor="@color/primary_light"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <!-- Export Card -->
-            <LinearLayout
-                android:id="@+id/card_setting_export"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/pref_export_library"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/pref_export_desc"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+<LinearLayout android:orientation="vertical" android:background="?colorBackground" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textSize="@dimen/text_screen_title" android:textStyle="bold" android:textColor="?colorTextPrimary" android:gravity="center_vertical" android:background="?colorSurface" android:layout_width="match_parent" android:layout_height="@dimen/toolbar_height" android:text="@string/settings_title" android:paddingStart="@dimen/screen_padding" android:paddingEnd="@dimen/screen_padding" />
+    <ScrollView android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_weight="1.0">
+        <LinearLayout android:orientation="vertical" android:id="@id/settings_column" android:padding="@dimen/screen_padding" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <TextView android:text="@string/settings_category_appearance" style="@style/SettingsSectionTitle" />
+            <LinearLayout style="@style/SettingsCard">
+                <TextView android:text="@string/pref_theme" style="@style/SettingsRowTitle" />
+                <LinearLayout style="@style/ChipRow">
+                    <TextView android:id="@id/chip_theme_system" android:text="@string/theme_system" style="@style/Chip" />
+                    <TextView android:id="@id/chip_theme_light" android:text="@string/theme_mode_light" style="@style/Chip" />
+                    <TextView android:id="@id/chip_theme_dark" android:text="@string/theme_mode_dark" style="@style/Chip" />
+                </LinearLayout>
             </LinearLayout>
-
-            <!-- Import Card -->
-            <LinearLayout
-                android:id="@+id/card_setting_import"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/pref_import_library"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/pref_import_desc"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+            <TextView android:text="@string/settings_category_reading" style="@style/SettingsSectionTitle" />
+            <LinearLayout style="@style/SettingsCard">
+                <TextView android:text="@string/font_size" style="@style/SettingsRowTitle" />
+                <LinearLayout style="@style/ChipRow">
+                    <TextView android:id="@id/chip_font_small" android:text="@string/font_small" style="@style/Chip" />
+                    <TextView android:id="@id/chip_font_medium" android:text="@string/font_medium" style="@style/Chip" />
+                    <TextView android:id="@id/chip_font_large" android:text="@string/font_large" style="@style/Chip" />
+                </LinearLayout>
+                <TextView android:text="@string/pref_reading_width" style="@style/SettingsRowTitle" />
+                <LinearLayout style="@style/ChipRow">
+                    <TextView android:id="@id/chip_width_normal" android:text="@string/width_normal" style="@style/Chip" />
+                    <TextView android:id="@id/chip_width_wide" android:text="@string/width_wide" style="@style/Chip" />
+                </LinearLayout>
             </LinearLayout>
-
-            <!-- Curated Samples Card -->
-            <LinearLayout
-                android:id="@+id/card_setting_samples"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/pref_restore_samples"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/pref_restore_samples_desc"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+            <TextView android:text="@string/settings_category_read_aloud" style="@style/SettingsSectionTitle" />
+            <LinearLayout style="@style/SettingsCard">
+                <TextView android:text="@string/pref_tts_language" style="@style/SettingsRowTitle" />
+                <LinearLayout android:id="@id/row_tts_language" style="@style/SettingsTapRow">
+                    <TextView android:textSize="@dimen/text_row_title" android:textColor="?colorOnAccentContainer" android:ellipsize="end" android:gravity="center_vertical" android:id="@id/tv_tts_language_value" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/tts_language_auto" android:maxLines="2" android:layout_weight="1.0" />
+                    <TextView android:textSize="@dimen/text_row_summary" android:textColor="?colorTextMuted" android:ellipsize="end" android:gravity="end|center" android:id="@id/tv_tts_engine_state" android:layout_width="wrap_content" android:layout_height="wrap_content" android:maxLines="1" android:layout_marginStart="12.0dp" />
+                </LinearLayout>
+                <TextView android:id="@id/tv_tts_language_hint" style="@style/SettingsRowSummary" />
+                <TextView android:text="@string/pref_tts_speed" style="@style/SettingsRowTitle" />
+                <LinearLayout style="@style/ChipRow">
+                    <TextView android:id="@id/chip_speed_75" android:text="@string/speed_75" style="@style/Chip" />
+                    <TextView android:id="@id/chip_speed_100" android:text="@string/speed_100" style="@style/Chip" />
+                    <TextView android:id="@id/chip_speed_125" android:text="@string/speed_125" style="@style/Chip" />
+                    <TextView android:id="@id/chip_speed_150" android:text="@string/speed_150" style="@style/Chip" />
+                </LinearLayout>
             </LinearLayout>
-
-            <!-- Clear All Card -->
-            <LinearLayout
-                android:id="@+id/card_setting_clear"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/pref_clear_all"
-                    android:textColor="@color/danger"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/pref_clear_all_desc"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+            <TextView android:text="@string/settings_category_data" style="@style/SettingsSectionTitle" />
+            <LinearLayout style="@style/SettingsCard">
+                <LinearLayout android:id="@id/row_export" style="@style/SettingsTapRow">
+                    <TextView android:layout_width="0.0dp" android:text="@string/pref_export_library" android:layout_weight="1.0" style="@style/SettingsRowTitleInline" />
+                    <ImageView android:src="@drawable/ic_export_file" style="@style/SettingsRowIcon" />
+                </LinearLayout>
+                <TextView android:text="@string/pref_export_desc" style="@style/SettingsRowSummary" />
+                <LinearLayout android:id="@id/row_import" style="@style/SettingsTapRow">
+                    <TextView android:layout_width="0.0dp" android:text="@string/pref_import_library" android:layout_weight="1.0" style="@style/SettingsRowTitleInline" />
+                    <ImageView android:src="@drawable/ic_import_file" style="@style/SettingsRowIcon" />
+                </LinearLayout>
+                <TextView android:text="@string/pref_import_desc" style="@style/SettingsRowSummary" />
+                <LinearLayout android:id="@id/row_samples" style="@style/SettingsTapRow">
+                    <TextView android:layout_width="0.0dp" android:text="@string/pref_restore_samples" android:layout_weight="1.0" style="@style/SettingsRowTitleInline" />
+                    <ImageView android:src="@drawable/ic_book" style="@style/SettingsRowIcon" />
+                </LinearLayout>
+                <TextView android:text="@string/pref_restore_samples_desc" style="@style/SettingsRowSummary" />
+                <View android:background="?colorDivider" android:layout_width="match_parent" android:layout_height="1.0dp" android:layout_marginTop="6.0dp" android:layout_marginStart="@dimen/card_padding" android:layout_marginEnd="@dimen/card_padding" />
+                <LinearLayout android:id="@id/row_clear" android:layout_marginTop="6.0dp" style="@style/SettingsTapRow">
+                    <TextView android:textColor="?colorDanger" android:layout_width="0.0dp" android:text="@string/pref_clear_all" android:layout_weight="1.0" style="@style/SettingsRowTitleInline" />
+                    <ImageView android:src="@drawable/ic_delete" android:tint="?colorDanger" style="@style/SettingsRowIcon" />
+                </LinearLayout>
+                <TextView android:text="@string/pref_clear_all_desc" style="@style/SettingsRowSummary" />
             </LinearLayout>
-
-            <!-- About Section -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:text="ABOUT OFFREAD"
-                android:textColor="@color/primary_light"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="OffRead v1.0.0"
-                    android:textColor="@color/text_primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="100% Offline-First. No ads, no trackers, zero bloat. Read without distractions anywhere, anytime."
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    android:lineSpacingMultiplier="1.3" />
+            <TextView android:text="@string/settings_category_about" style="@style/SettingsSectionTitle" />
+            <LinearLayout style="@style/SettingsCard">
+                <TextView android:id="@id/tv_about_version" style="@style/SettingsRowTitle" />
+                <TextView android:text="@string/about_body" style="@style/SettingsRowSummary" />
+                <TextView android:id="@id/tv_about_library" style="@style/SettingsRowSummary" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+    <com.offread.app.ui.BottomNavBar android:id="@id/nav_bar" android:background="@drawable/bg_nav_bar" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/nav_bar_height" />
 </LinearLayout>

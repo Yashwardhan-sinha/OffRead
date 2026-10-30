@@ -1,135 +1,105 @@
 #!/data/data/com.termux/files/usr/bin/bash
-set -e
+set -Eeuo pipefail
 
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT"
+SDK_ROOT="${ANDROID_SDK_ROOT:-$HOME/Android/Sdk}"
+API="${ANDROID_API:-35}"
+BT="${ANDROID_BUILD_TOOLS:-35.0.0}"
+ANDROID_JAR="$SDK_ROOT/platforms/android-$API/android.jar"
+TOOLS="$SDK_ROOT/build-tools/$BT"
+AAPT2="$(command -v aapt2)"
+D8="$TOOLS/d8"
+ZIPALIGN="$(command -v zipalign || true)"
+APKSIGNER="$(command -v apksigner)"
+KEYSTORE="$ROOT/offread-dev.keystore"
+BUILD_DIR="$ROOT/build_cli"
 ACTION="${1:-all}"
-ANDROID_JAR="/data/data/com.termux/files/home/android-sdk/platforms/android-33/android.jar"
-BUILD_DIR="build_cli"
-MIN_SDK="24"
-TARGET_SDK="33"
-VERSION_CODE="1"
-VERSION_NAME="1.0.0"
 
-clean_build() {
-    echo "=== Cleaning Build Artifacts ==="
-    rm -rf "$BUILD_DIR" compiled_res.zip unaligned.apk *.apk *.idsig
-    echo "Clean complete."
-}
+for f in "$ANDROID_JAR" "$AAPT2" "$D8" "$APKSIGNER"; do
+  [ -e "$f" ] || { echo "Missing required build tool: $f" >&2; exit 2; }
+done
+command -v javac >/dev/null || { echo 'Missing javac' >&2; exit 2; }
+command -v java >/dev/null || { echo 'Missing java' >&2; exit 2; }
+command -v python3 >/dev/null || { echo 'Missing python3' >&2; exit 2; }
 
-compile_resources_and_code() {
-    mkdir -p "$BUILD_DIR/gen" "$BUILD_DIR/classes" "$BUILD_DIR/dex"
-
-    echo "[1/4] Compiling Android Resources with AAPT2..."
-    aapt2 compile --dir app/src/main/res -o compiled_res.zip
-
-    echo "[2/4] Linking Resources & Generating R.java..."
-    aapt2 link -I "$ANDROID_JAR" \
-        --manifest app/src/main/AndroidManifest.xml \
-        --min-sdk-version "$MIN_SDK" \
-        --target-sdk-version "$TARGET_SDK" \
-        --version-code "$VERSION_CODE" \
-        --version-name "$VERSION_NAME" \
-        -o unaligned.apk \
-        --java "$BUILD_DIR/gen" \
-        compiled_res.zip \
-        --auto-add-overlay
-
-    echo "[3/4] Compiling Java Source Files with javac..."
-    JAVA_FILES=$(find app/src/main/java "$BUILD_DIR/gen" -name "*.java")
-    javac -encoding UTF-8 -source 17 -target 17 \
-        -cp "$ANDROID_JAR" \
-        -d "$BUILD_DIR/classes" \
-        $JAVA_FILES
+compile_main() {
+  rm -rf "$BUILD_DIR/gen" "$BUILD_DIR/classes" "$BUILD_DIR/dex"
+  rm -f "$BUILD_DIR/unaligned.apk" "$BUILD_DIR/aligned.apk" "$BUILD_DIR/compiled_res.zip"
+  mkdir -p "$BUILD_DIR/gen" "$BUILD_DIR/classes" "$BUILD_DIR/dex"
+  "$AAPT2" compile --dir app/src/main/res -o "$BUILD_DIR/compiled_res.zip"
+  "$AAPT2" link -I "$ANDROID_JAR" \
+    --manifest app/src/main/AndroidManifest.xml \
+    --min-sdk-version 24 --target-sdk-version 33 \
+    --version-code 2 --version-name '1.0.0-rot1' \
+    -o "$BUILD_DIR/unaligned.apk" --java "$BUILD_DIR/gen" \
+    "$BUILD_DIR/compiled_res.zip" --auto-add-overlay
+  mapfile -t JAVA_FILES < <(find app/src/main/java "$BUILD_DIR/gen" -name '*.java' -type f | sort)
+  javac -encoding UTF-8 --release 17 -Xlint:deprecation \
+    -cp "$ANDROID_JAR" -d "$BUILD_DIR/classes" "${JAVA_FILES[@]}"
 }
 
 run_tests() {
-    echo "=== Running OffRead Unit Tests ==="
-    compile_resources_and_code
-
-    mkdir -p "$BUILD_DIR/test_classes"
-    javac -encoding UTF-8 -source 17 -target 17 \
-        -cp "$ANDROID_JAR:$BUILD_DIR/classes" \
-        -d "$BUILD_DIR/test_classes" \
-        app/src/test/java/com/offread/app/UnitTestSuite.java
-
+  compile_main
+  mkdir -p "$BUILD_DIR/test_classes"
+  mapfile -t TEST_FILES < <(find app/src/test/java -name '*.java' -type f | sort)
+  if ((${#TEST_FILES[@]})); then
+    javac -encoding UTF-8 --release 17 \
+      -cp "$ANDROID_JAR:$BUILD_DIR/classes" \
+      -d "$BUILD_DIR/test_classes" "${TEST_FILES[@]}"
     java -cp "$ANDROID_JAR:$BUILD_DIR/classes:$BUILD_DIR/test_classes" \
-        com.offread.app.UnitTestSuite
+      com.offread.app.UnitTestSuite
+  else
+    echo 'No JVM unit tests found.'
+  fi
 }
 
 build_apk() {
-    BUILD_TYPE="${1:-release}"
-    echo "=== Building OffRead ($BUILD_TYPE) APK ==="
-
-    if [ "$BUILD_TYPE" = "debug" ]; then
-        OUT_APK="app-debug.apk"
-    else
-        OUT_APK="OffRead-release.apk"
-    fi
-
-    compile_resources_and_code
-
-    echo "[4/5] Compiling DEX bytecode with D8..."
-    CLASS_FILES=$(find "$BUILD_DIR/classes" -name "*.class")
-    D8_FLAG="--release"
-    if [ "$BUILD_TYPE" = "debug" ]; then
-        D8_FLAG="--debug"
-    fi
-    d8 --lib "$ANDROID_JAR" \
-       --min-api "$MIN_SDK" \
-       $D8_FLAG \
-       --output "$BUILD_DIR/dex" \
-       $CLASS_FILES
-
-    echo "[5/5] Packaging and Signing APK..."
-    python3 -c "
-import zipfile, os
-with zipfile.ZipFile('unaligned.apk', 'a', compression=zipfile.ZIP_DEFLATED) as apk:
-    dex_path = os.path.join('$BUILD_DIR/dex', 'classes.dex')
-    apk.write(dex_path, 'classes.dex')
-print('  classes.dex added successfully')
-"
-
-    KEYSTORE="offread.keystore"
-    if [ ! -f "$KEYSTORE" ]; then
-        keytool -genkeypair -v -keystore "$KEYSTORE" \
-            -storepass offreadapp -alias offread -keypass offreadapp \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -dname "CN=OffRead, OU=App, O=OffRead, L=Global, S=Earth, C=US"
-    fi
-
-    apksigner sign --ks "$KEYSTORE" \
-        --ks-pass pass:offreadapp \
-        --ks-key-alias offread \
-        --key-pass pass:offreadapp \
-        --out "$OUT_APK" \
-        unaligned.apk
-
-    apksigner verify --verbose "$OUT_APK"
-
-    if [ "$BUILD_TYPE" = "release" ]; then
-        cp -f "$OUT_APK" "OffRead.apk"
-        [ -f "${OUT_APK}.idsig" ] && cp -f "${OUT_APK}.idsig" "OffRead.apk.idsig"
-    fi
-
-    echo "=== BUILD SUCCESSFUL: $OUT_APK ==="
-    ls -lh "$OUT_APK"
+  TYPE="${1:-debug}"
+  compile_main
+  mapfile -t CLASS_FILES < <(find "$BUILD_DIR/classes" -name '*.class' -type f | sort)
+  D8_FLAGS=(--release)
+  if [ "$TYPE" = debug ]; then D8_FLAGS=(--debug); fi
+  bash "$D8" -JXmx768M --lib "$ANDROID_JAR" --min-api 24 "${D8_FLAGS[@]}" \
+    --output "$BUILD_DIR/dex" "${CLASS_FILES[@]}"
+  python3 - "$BUILD_DIR/unaligned.apk" "$BUILD_DIR/dex/classes.dex" <<'PY'
+import sys, zipfile
+apk, dex = sys.argv[1:]
+with zipfile.ZipFile(apk, 'a', compression=zipfile.ZIP_DEFLATED) as z:
+    z.write(dex, 'classes.dex')
+PY
+  if [ -n "$ZIPALIGN" ]; then
+    "$ZIPALIGN" -f 4 "$BUILD_DIR/unaligned.apk" "$BUILD_DIR/aligned.apk"
+  else
+    echo "zipalign unavailable for this Termux architecture; preserving valid unaligned APK for now."
+    cp "$BUILD_DIR/unaligned.apk" "$BUILD_DIR/aligned.apk"
+  fi
+  if [ ! -f "$KEYSTORE" ]; then
+    echo 'Creating a separate development signing key (not the original app key).'
+    KEY_PASS="$(od -An -N24 -tx1 /dev/urandom | tr -d ' \n')"
+    printf '%s\n' "$KEY_PASS" > "$ROOT/.offread-dev-keypass"
+    chmod 600 "$ROOT/.offread-dev-keypass"
+    keytool -genkeypair -noprompt -keystore "$KEYSTORE" \
+      -storepass "$KEY_PASS" -keypass "$KEY_PASS" -alias offread-dev \
+      -keyalg RSA -keysize 2048 -validity 10000 \
+      -dname 'CN=OffRead Development, OU=Development, O=OffRead, C=IN'
+  fi
+  KEY_PASS="$(cat "$ROOT/.offread-dev-keypass")"
+  OUT="$BUILD_DIR/OffRead-$TYPE.apk"
+  "$APKSIGNER" sign --ks "$KEYSTORE" --ks-pass "pass:$KEY_PASS" \
+    --ks-key-alias offread-dev --key-pass "pass:$KEY_PASS" \
+    --out "$OUT" "$BUILD_DIR/aligned.apk"
+  "$APKSIGNER" verify --verbose "$OUT"
+  sha256sum "$OUT" > "$OUT.sha256"
+  echo "Built: $OUT"
+  ls -lh "$OUT" "$OUT.sha256"
 }
 
 case "$ACTION" in
-    clean)
-        clean_build
-        ;;
-    test)
-        run_tests
-        ;;
-    debug)
-        build_apk "debug"
-        ;;
-    release)
-        build_apk "release"
-        ;;
-    all|*)
-        run_tests
-        build_apk "debug"
-        build_apk "release"
-        ;;
+  clean) rm -rf "$BUILD_DIR" ;;
+  test) run_tests ;;
+  debug) build_apk debug ;;
+  release) build_apk release ;;
+  all) run_tests; build_apk debug; build_apk release ;;
+  *) echo "Usage: $0 {clean|test|debug|release|all}" >&2; exit 2 ;;
 esac

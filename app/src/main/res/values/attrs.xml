@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorAccent" format="color" />
+    <attr name="colorAccentContainer" format="color" />
+    <attr name="colorBackground" format="color" />
+    <attr name="colorChip" format="color" />
+    <attr name="colorChipActive" format="color" />
+    <attr name="colorDanger" format="color" />
+    <attr name="colorDivider" format="color" />
+    <attr name="colorHighlight" format="color" />
+    <attr name="colorIcon" format="color" />
+    <attr name="colorIconActive" format="color" />
+    <attr name="colorOnAccent" format="color" />
+    <attr name="colorOnAccentContainer" format="color" />
+    <attr name="colorSuccess" format="color" />
+    <attr name="colorSurface" format="color" />
+    <attr name="colorSurfaceCard" format="color" />
+    <attr name="colorSurfaceElevated" format="color" />
+    <attr name="colorSurfaceVariant" format="color" />
+    <attr name="colorTextMuted" format="color" />
+    <attr name="colorTextPrimary" format="color" />
+    <attr name="colorTextSecondary" format="color" />
+</resources>

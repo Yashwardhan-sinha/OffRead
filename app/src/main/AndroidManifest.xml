@@ -1,94 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.offread.app"
-    android:versionCode="1"
-    android:versionName="1.0.0">
-
-    <uses-sdk
-        android:minSdkVersion="24"
-        android:targetSdkVersion="33" />
-
-    <supports-screens
-        android:smallScreens="true"
-        android:normalScreens="true"
-        android:largeScreens="true"
-        android:xlargeScreens="true"
-        android:anyDensity="true"
-        android:resizeable="true" />
-
-    <!-- Permissions -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <application
-        android:name=".OffReadApp"
-        android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/ic_launcher"
-        android:roundIcon="@drawable/ic_launcher_round"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.OffRead">
-
-        <!-- Main Dashboard Activity -->
-        <activity
-            android:name=".ui.MainActivity"
-            android:exported="true"
-            android:launchMode="singleTop">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:compileSdkVersion="33" android:compileSdkVersionCodename="13" package="com.offread.app" platformBuildVersionCode="33" platformBuildVersionName="13">
+    <supports-screens android:anyDensity="true" android:largeScreens="true" android:normalScreens="true" android:resizeable="true" android:smallScreens="true" android:xlargeScreens="true"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <application android:allowBackup="false" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:name=".OffReadApp" android:roundIcon="@drawable/ic_launcher_round" android:supportsRtl="true" android:theme="@style/Theme.OffRead">
+        <activity android:exported="true" android:launchMode="singleTop" android:name=".ui.MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
-        <!-- Reader Activity -->
-        <activity
-            android:name=".ui.ReaderActivity"
-            android:exported="false"
-            android:parentActivityName=".ui.MainActivity"
-            android:configChanges="orientation|screenSize" />
-
-        <!-- Speed Reader RSVP Activity -->
-        <activity
-            android:name=".ui.SpeedReaderActivity"
-            android:exported="false"
-            android:parentActivityName=".ui.ReaderActivity"
-            android:configChanges="orientation|screenSize" />
-
-        <!-- Add Article Activity -->
-        <activity
-            android:name=".ui.AddArticleActivity"
-            android:exported="false"
-            android:parentActivityName=".ui.MainActivity"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Share Target Receiver Activity -->
-        <activity
-            android:name=".ui.ShareReceiverActivity"
-            android:exported="true"
-            android:theme="@style/Theme.OffRead.Dialog"
-            android:noHistory="true"
-            android:excludeFromRecents="true">
+        <activity android:configChanges="orientation|screenSize" android:exported="false" android:name=".ui.ReaderActivity" android:parentActivityName=".ui.MainActivity"/>
+        <activity android:exported="false" android:name=".ui.BookmarksActivity" android:parentActivityName=".ui.MainActivity"/>
+        <activity android:configChanges="orientation|screenSize" android:exported="false" android:name=".ui.SpeedReaderActivity" android:parentActivityName=".ui.ReaderActivity"/>
+        <activity android:exported="false" android:name=".ui.AddArticleActivity" android:parentActivityName=".ui.MainActivity" android:windowSoftInputMode="adjustResize"/>
+        <activity android:excludeFromRecents="true" android:exported="true" android:name=".ui.ShareReceiverActivity" android:noHistory="true" android:theme="@style/Theme.OffRead.Dialog">
             <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
             </intent-filter>
         </activity>
-
-        <!-- Statistics & Reading Insights Activity -->
-        <activity
-            android:name=".ui.StatisticsActivity"
-            android:exported="false"
-            android:parentActivityName=".ui.MainActivity" />
-
-        <!-- Settings & Backup Activity -->
-        <activity
-            android:name=".ui.SettingsActivity"
-            android:exported="false"
-            android:parentActivityName=".ui.MainActivity" />
-
+        <activity android:exported="false" android:name=".ui.StatisticsActivity" android:parentActivityName=".ui.MainActivity"/>
+        <activity android:exported="false" android:name=".ui.SettingsActivity" android:parentActivityName=".ui.MainActivity"/>
+        <provider android:authorities="com.offread.app.backup" android:exported="false" android:grantUriPermissions="true" android:name=".data.BackupFileProvider"/>
     </application>
 </manifest>

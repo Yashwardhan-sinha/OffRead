@@ -1,244 +1,273 @@
 package com.offread.app.parser;
 
+import com.offread.app.data.AppPreferences;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
-import java.util.regex.Pattern;
+import java.util.function.Predicate;
 
+/* JADX INFO: loaded from: classes.dex */
 public class ReadabilityEngine {
-
-    private static final Pattern NEGATIVE_PATTERN = Pattern.compile(
-            "(?i)(ad|ads|advert|advertisement|banner|combx|comment|comments|community|disqus|extra|" +
-                    "foot|footer|menu|nav|remark|rss|shoutbox|sidebar|sponsor|sponsored|ad-break|" +
-                    "pagination|pager|popup|modal|newsletter|subscribe|subscription|social|share|" +
-                    "share-bar|sharing|cookie|consent|toast|tracker|outbrain|taboola|widget|related|" +
-                    "related-posts|recommendations|trending|promo)"
-    );
-
-    private static final Pattern POSITIVE_PATTERN = Pattern.compile(
-            "(?i)(article|body|content|entry|main|post|story|prose|blog-post|markdown|text|page)"
-    );
-
-    private static final Set<String> UNWANTED_TAGS = new HashSet<>(Arrays.asList(
-            "script", "style", "noscript", "template", "svg", "canvas", "applet",
-            "object", "embed", "form", "input", "button", "select", "textarea",
-            "nav", "footer", "aside", "dialog", "iframe"
-    ));
+    private static final Set<String> UNWANTED_TAGS = new HashSet(Arrays.asList("script", "style", "noscript", "template", "svg", "canvas", "applet", "object", "embed", "form", "input", "button", "select", "textarea", "nav", "footer", "aside", "dialog", "iframe"));
 
     public static class ExtractionResult {
-        public String markdown = "";
-        public String plainText = "";
+        public String markdown = AppPreferences.TTS_LANGUAGE_AUTO;
+        public String plainText = AppPreferences.TTS_LANGUAGE_AUTO;
     }
 
-    public static ExtractionResult extractContent(HtmlNode root, String sourceUrl, String articleTitle) {
-        ExtractionResult result = new ExtractionResult();
-        if (root == null) return result;
-
-        // 1. Pre-cleaning unwanted elements
-        cleanUnwantedElements(root);
-
-        // 2. Score candidates
-        scoreCandidates(root);
-
-        // 3. Select winning container
-        HtmlNode winner = selectBestCandidate(root);
-        if (winner == null) {
-            winner = root;
+    public static ExtractionResult extractContent(HtmlNode htmlNode, String str, String str2) {
+        ExtractionResult extractionResult = new ExtractionResult();
+        if (htmlNode == null) {
+            return extractionResult;
         }
-
-        // 4. Clone and prune winner
-        HtmlNode cleanTree = winner.cloneTree();
-        pruneWinnerTree(cleanTree, articleTitle);
-
-        // 5. Generate Markdown and Plain Text
-        StringBuilder mdBuilder = new StringBuilder();
-        StringBuilder ptBuilder = new StringBuilder();
-
-        formatNode(cleanTree, mdBuilder, ptBuilder, sourceUrl);
-
-        result.markdown = cleanFormatting(mdBuilder.toString());
-        result.plainText = cleanFormatting(ptBuilder.toString());
-
-        return result;
+        AdFilter.removeAdElements(htmlNode);
+        cleanUnwantedElements(htmlNode);
+        scoreCandidates(htmlNode);
+        HtmlNode htmlNodeSelectBestCandidate = selectBestCandidate(htmlNode);
+        if (htmlNodeSelectBestCandidate != null) {
+            htmlNode = htmlNodeSelectBestCandidate;
+        }
+        HtmlNode htmlNodeCloneTree = htmlNode.cloneTree();
+        pruneWinnerTree(htmlNodeCloneTree, str2);
+        StringBuilder sb = new StringBuilder();
+        StringBuilder sb2 = new StringBuilder();
+        formatNode(htmlNodeCloneTree, sb, sb2, str);
+        extractionResult.markdown = TextNormalizer.normalizeArticle(sb.toString());
+        extractionResult.plainText = TextNormalizer.normalizeArticle(sb2.toString());
+        return extractionResult;
     }
 
-    private static void cleanUnwantedElements(HtmlNode node) {
-        List<HtmlNode> toRemove = new ArrayList<>();
-        for (HtmlNode child : node.getChildren()) {
-            if (UNWANTED_TAGS.contains(child.getTagName())) {
-                toRemove.add(child);
-                continue;
-            }
-
-            // Check negative class / ID pattern
-            String clsAndId = child.getClassName() + " " + child.getId();
-            if (NEGATIVE_PATTERN.matcher(clsAndId).find() && !POSITIVE_PATTERN.matcher(clsAndId).find()) {
-                toRemove.add(child);
-                continue;
-            }
-
-            cleanUnwantedElements(child);
-        }
-
-        for (HtmlNode dead : toRemove) {
-            node.removeChild(dead);
-        }
-    }
-
-    private static void scoreCandidates(HtmlNode root) {
-        List<HtmlNode> candidates = root.findAll(n -> {
-            String tag = n.getTagName();
-            return "p".equals(tag) || "blockquote".equals(tag) || "pre".equals(tag) ||
-                    "code".equals(tag) || "div".equals(tag) || "section".equals(tag) ||
-                    "article".equals(tag) || "li".equals(tag);
-        });
-
-        for (HtmlNode node : candidates) {
-            int textLen = node.getTextLength();
-            if (textLen < 20) continue;
-
-            double score = 0.0;
-            String tag = node.getTagName();
-
-            switch (tag) {
-                case "p":
-                    score += 10.0;
-                    break;
-                case "blockquote":
-                case "pre":
-                case "code":
-                    score += 15.0;
-                    break;
-                case "li":
-                    score += 3.0;
-                    break;
-                default:
-                    score += 5.0;
-                    break;
-            }
-
-            // Length score
-            score += Math.min(50.0, textLen / 25.0);
-
-            // Punctuation score (prose clauses)
-            score += (node.countPunctuation() * 3.0);
-
-            // Class / ID weights
-            String clsAndId = node.getClassName() + " " + node.getId();
-            if (POSITIVE_PATTERN.matcher(clsAndId).find()) {
-                score += 25.0;
-            }
-            if (NEGATIVE_PATTERN.matcher(clsAndId).find()) {
-                score -= 25.0;
-            }
-
-            // Link density penalty
-            double linkDensity = node.calculateLinkDensity();
-            if (linkDensity > 0.5) {
-                score *= 0.2;
-            } else if (linkDensity > 0.3) {
-                score *= 0.5;
+    private static void cleanUnwantedElements(HtmlNode htmlNode) {
+        ArrayList arrayList = new ArrayList();
+        for (HtmlNode htmlNode2 : htmlNode.getChildren()) {
+            if (UNWANTED_TAGS.contains(htmlNode2.getTagName())) {
+                arrayList.add(htmlNode2);
+            } else if (AdFilter.looksLikeBoilerplate(htmlNode2) && !AdFilter.looksLikeArticleContent(htmlNode2)) {
+                arrayList.add(htmlNode2);
             } else {
-                score *= (1.0 - linkDensity);
+                cleanUnwantedElements(htmlNode2);
             }
+        }
+        Iterator it = arrayList.iterator();
+        while (it.hasNext()) {
+            htmlNode.removeChild((HtmlNode) it.next());
+        }
+    }
 
-            node.addReadabilityScore(score);
-
-            // Propagate up to parent and grandparent
-            HtmlNode parent = node.getParent();
-            if (parent != null) {
-                parent.addReadabilityScore(score);
-                HtmlNode grandParent = parent.getParent();
-                if (grandParent != null) {
-                    grandParent.addReadabilityScore(score * 0.5);
+    private static void scoreCandidates(HtmlNode htmlNode) {
+        double d;
+        for (HtmlNode htmlNode2 : htmlNode.findAll(new Predicate<HtmlNode>() {
+            @Override
+            public boolean test(HtmlNode obj) {
+                return ReadabilityEngine.lambda$scoreCandidates$0(obj);
+            }
+        })) {
+            int textLength = htmlNode2.getTextLength();
+            if (textLength >= 20) {
+                String tagName = htmlNode2.getTagName();
+                tagName.hashCode();
+                switch (tagName) {
+                    case "p":
+                        d = 10.0d;
+                        break;
+                    case "li":
+                        d = 3.0d;
+                        break;
+                    case "pre":
+                    case "code":
+                    case "blockquote":
+                        d = 15.0d;
+                        break;
+                    default:
+                        d = 5.0d;
+                        break;
+                }
+                double dMin = d + Math.min(50.0d, ((double) textLength) / 25.0d) + (((double) htmlNode2.countPunctuation()) * 3.0d);
+                if (AdFilter.looksLikeArticleContent(htmlNode2)) {
+                    dMin += 25.0d;
+                }
+                if (AdFilter.looksLikeBoilerplate(htmlNode2)) {
+                    dMin -= 25.0d;
+                }
+                double dCalculateLinkDensity = htmlNode2.calculateLinkDensity();
+                double d2 = dCalculateLinkDensity > 0.5d ? dMin * 0.2d : dCalculateLinkDensity > 0.3d ? dMin * 0.5d : dMin * (1.0d - dCalculateLinkDensity);
+                htmlNode2.addReadabilityScore(d2);
+                HtmlNode parent = htmlNode2.getParent();
+                if (parent != null) {
+                    parent.addReadabilityScore(d2);
+                    HtmlNode parent2 = parent.getParent();
+                    if (parent2 != null) {
+                        parent2.addReadabilityScore(d2 * 0.5d);
+                    }
                 }
             }
         }
     }
 
-    private static HtmlNode selectBestCandidate(HtmlNode root) {
-        HtmlNode best = null;
-        double maxScore = 0.0;
+    static /* synthetic */ boolean lambda$scoreCandidates$0(HtmlNode htmlNode) {
+        String tagName = htmlNode.getTagName();
+        return "p".equals(tagName) || "blockquote".equals(tagName) || "pre".equals(tagName) || "code".equals(tagName) || "div".equals(tagName) || "section".equals(tagName) || "article".equals(tagName) || "li".equals(tagName);
+    }
 
-        List<HtmlNode> allNodes = root.findAll(n -> n.getReadabilityScore() > 0);
-        for (HtmlNode node : allNodes) {
-            if (node.getReadabilityScore() > maxScore) {
-                maxScore = node.getReadabilityScore();
-                best = node;
+    static /* synthetic */ boolean lambda$selectBestCandidate$1(HtmlNode htmlNode) {
+        return htmlNode.getReadabilityScore() > 0.0d;
+    }
+
+    private static HtmlNode selectBestCandidate(HtmlNode htmlNode) {
+        HtmlNode htmlNode2 = null;
+        double readabilityScore = 0.0d;
+        for (HtmlNode htmlNode3 : htmlNode.findAll(new Predicate<HtmlNode>() {
+            @Override
+            public boolean test(HtmlNode obj) {
+                return ReadabilityEngine.lambda$selectBestCandidate$1(obj);
+            }
+        })) {
+            if (htmlNode3.getReadabilityScore() > readabilityScore) {
+                readabilityScore = htmlNode3.getReadabilityScore();
+                htmlNode2 = htmlNode3;
             }
         }
-
-        if (best != null && maxScore >= 20.0) {
-            return best;
+        if (htmlNode2 != null && readabilityScore >= 20.0d) {
+            return htmlNode2;
         }
-
-        // Semantic fallbacks
-        HtmlNode article = root.findFirst(n -> "article".equals(n.getTagName()));
-        if (article != null && article.getTextLength() > 50) {
-            return article;
-        }
-
-        HtmlNode main = root.findFirst(n -> "main".equals(n.getTagName()));
-        if (main != null && main.getTextLength() > 50) {
-            return main;
-        }
-
-        HtmlNode classMatch = root.findFirst(n -> {
-            String cls = n.getClassName().toLowerCase(Locale.ROOT);
-            return cls.contains("article-body") || cls.contains("post-content") ||
-                    cls.contains("entry-content") || cls.contains("story-body") ||
-                    cls.contains("content-body");
+        HtmlNode htmlNodeFindFirst = htmlNode.findFirst(new Predicate() { // from class: com.offread.app.parser.ReadabilityEngine.1
+            @Override // java.util.function.Predicate
+            public final boolean test(Object obj) {
+                return ReadabilityEngine.lambda$selectBestCandidate$2((HtmlNode) obj);
+            }
         });
-        if (classMatch != null && classMatch.getTextLength() > 50) {
-            return classMatch;
+        if (htmlNodeFindFirst != null && htmlNodeFindFirst.getTextLength() > 50) {
+            return htmlNodeFindFirst;
         }
-
-        HtmlNode body = root.findFirst(n -> "body".equals(n.getTagName()));
-        if (body != null && body.getTextLength() > 50) {
-            return body;
+        HtmlNode htmlNodeFindFirst2 = htmlNode.findFirst(new Predicate() { // from class: com.offread.app.parser.ReadabilityEngine.2
+            @Override // java.util.function.Predicate
+            public final boolean test(Object obj) {
+                return ReadabilityEngine.lambda$selectBestCandidate$3((HtmlNode) obj);
+            }
+        });
+        if (htmlNodeFindFirst2 != null && htmlNodeFindFirst2.getTextLength() > 50) {
+            return htmlNodeFindFirst2;
         }
-
-        return root;
+        HtmlNode htmlNodeFindFirst3 = htmlNode.findFirst(new Predicate() { // from class: com.offread.app.parser.ReadabilityEngine.3
+            @Override // java.util.function.Predicate
+            public final boolean test(Object obj) {
+                return ReadabilityEngine.lambda$selectBestCandidate$4((HtmlNode) obj);
+            }
+        });
+        if (htmlNodeFindFirst3 != null && htmlNodeFindFirst3.getTextLength() > 50) {
+            return htmlNodeFindFirst3;
+        }
+        HtmlNode htmlNodeFindFirst4 = htmlNode.findFirst(new Predicate() { // from class: com.offread.app.parser.ReadabilityEngine.4
+            @Override // java.util.function.Predicate
+            public final boolean test(Object obj) {
+                return ReadabilityEngine.lambda$selectBestCandidate$5((HtmlNode) obj);
+            }
+        });
+        return (htmlNodeFindFirst4 == null || htmlNodeFindFirst4.getTextLength() <= 50) ? htmlNode : htmlNodeFindFirst4;
     }
 
-    private static void pruneWinnerTree(HtmlNode node, String articleTitle) {
-        List<HtmlNode> toRemove = new ArrayList<>();
-        for (HtmlNode child : node.getChildren()) {
-            // Remove high link-density blocks inside the article (e.g. inline ads, read next links)
-            double linkDensity = child.calculateLinkDensity();
-            if (linkDensity > 0.4 && child.getTextLength() > 40 && !"blockquote".equals(child.getTagName())) {
-                toRemove.add(child);
-                continue;
-            }
+    static /* synthetic */ boolean lambda$selectBestCandidate$2(HtmlNode htmlNode) {
+        return "article".equals(htmlNode.getTagName());
+    }
 
-            // Remove headers with high link density
-            String tag = child.getTagName();
-            if (tag.startsWith("h") && tag.length() == 2 && linkDensity > 0.25) {
-                toRemove.add(child);
-                continue;
-            }
+    static /* synthetic */ boolean lambda$selectBestCandidate$3(HtmlNode htmlNode) {
+        return "main".equals(htmlNode.getTagName());
+    }
 
-            // Remove redundant title H1 if matches extracted article title
-            if ("h1".equals(tag) && articleTitle != null && !articleTitle.isEmpty()) {
-                String h1Text = child.getInnerText().trim();
-                if (h1Text.equalsIgnoreCase(articleTitle) || articleTitle.toLowerCase(Locale.ROOT).contains(h1Text.toLowerCase(Locale.ROOT))) {
-                    toRemove.add(child);
-                    continue;
+    static /* synthetic */ boolean lambda$selectBestCandidate$4(HtmlNode htmlNode) {
+        String lowerCase = htmlNode.getClassName().toLowerCase(Locale.ROOT);
+        return lowerCase.contains("article-body") || lowerCase.contains("post-content") || lowerCase.contains("entry-content") || lowerCase.contains("story-body") || lowerCase.contains("content-body");
+    }
+
+    static /* synthetic */ boolean lambda$selectBestCandidate$5(HtmlNode htmlNode) {
+        return "body".equals(htmlNode.getTagName());
+    }
+
+    private static void pruneWinnerTree(HtmlNode htmlNode, String str) {
+        ArrayList arrayList = new ArrayList();
+        for (HtmlNode htmlNode2 : htmlNode.getChildren()) {
+            String innerText = htmlNode2.getInnerText();
+            if ((AdFilter.isAdPlaceholderText(innerText) || TextNormalizer.scrubInvisible(innerText).trim().isEmpty()) && !"img".equals(htmlNode2.getTagName()) && !"picture".equals(htmlNode2.getTagName())) {
+                arrayList.add(htmlNode2);
+            } else {
+                double dCalculateLinkDensity = htmlNode2.calculateLinkDensity();
+                if (dCalculateLinkDensity > 0.4d && htmlNode2.getTextLength() > 40 && !"blockquote".equals(htmlNode2.getTagName())) {
+                    arrayList.add(htmlNode2);
+                } else {
+                    String tagName = htmlNode2.getTagName();
+                    if (tagName.startsWith("h") && tagName.length() == 2 && dCalculateLinkDensity > 0.25d) {
+                        arrayList.add(htmlNode2);
+                    } else {
+                        if ("h1".equals(tagName) && str != null && !str.isEmpty()) {
+                            String strTrim = htmlNode2.getInnerText().trim();
+                            if (strTrim.equalsIgnoreCase(str) || str.toLowerCase(Locale.ROOT).contains(strTrim.toLowerCase(Locale.ROOT))) {
+                                arrayList.add(htmlNode2);
+                            }
+                        }
+                        pruneWinnerTree(htmlNode2, str);
+                    }
                 }
             }
-
-            // Recursively prune
-            pruneWinnerTree(child, articleTitle);
         }
-
-        for (HtmlNode dead : toRemove) {
-            node.removeChild(dead);
+        Iterator it = arrayList.iterator();
+        while (it.hasNext()) {
+            htmlNode.removeChild((HtmlNode) it.next());
         }
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Code duplicated, block: B:152:0x02b7 A[LOOP:0: B:150:0x02b1->B:152:0x02b7, LOOP_END] */
+    /* JADX WARN: Code duplicated, block: B:155:0x02cf  */
+    /* JADX WARN: Code duplicated, block: B:156:0x02d3  */
+    /* JADX WARN: Code duplicated, block: B:159:0x02dc  */
+    /* JADX WARN: Code duplicated, block: B:160:0x02e0  */
+    /* JADX WARN: Code duplicated, block: B:163:0x02e7  */
+    /* JADX WARN: Code duplicated, block: B:164:0x02eb  */
+    /* JADX WARN: Code duplicated, block: B:167:0x02f4  */
+    /* JADX WARN: Code duplicated, block: B:168:0x02f8  */
+    /* JADX WARN: Code duplicated, block: B:171:0x0301  */
+    /* JADX WARN: Code duplicated, block: B:172:0x0305  */
+    /* JADX WARN: Code duplicated, block: B:175:0x030e  */
+    /* JADX WARN: Code duplicated, block: B:176:0x0311  */
+    /* JADX WARN: Code duplicated, block: B:179:0x031a  */
+    /* JADX WARN: Code duplicated, block: B:180:0x031c  */
+    /* JADX WARN: Code duplicated, block: B:183:0x0323  */
+    /* JADX WARN: Code duplicated, block: B:184:0x0325  */
+    /* JADX WARN: Code duplicated, block: B:187:0x032c  */
+    /* JADX WARN: Code duplicated, block: B:188:0x032e  */
+    /* JADX WARN: Code duplicated, block: B:191:0x0335  */
+    /* JADX WARN: Code duplicated, block: B:192:0x0337  */
+    /* JADX WARN: Code duplicated, block: B:195:0x033e  */
+    /* JADX WARN: Code duplicated, block: B:196:0x0341  */
+    /* JADX WARN: Code duplicated, block: B:199:0x0348  */
+    /* JADX WARN: Code duplicated, block: B:200:0x034b  */
+    /* JADX WARN: Code duplicated, block: B:203:0x0353  */
+    /* JADX WARN: Code duplicated, block: B:204:0x0356  */
+    /* JADX WARN: Code duplicated, block: B:207:0x035e  */
+    /* JADX WARN: Code duplicated, block: B:210:0x0364  */
+    /* JADX WARN: Code duplicated, block: B:212:0x036e  */
+    /* JADX WARN: Code duplicated, block: B:214:0x0374  */
+    /* JADX WARN: Code duplicated, block: B:216:0x037d  */
+    /* JADX WARN: Code duplicated, block: B:218:0x0384  */
+    /* JADX WARN: Code duplicated, block: B:220:0x038e  */
+    /* JADX WARN: Code duplicated, block: B:222:0x0395  */
+    /* JADX WARN: Code duplicated, block: B:224:0x039b  */
+    /* JADX WARN: Code duplicated, block: B:254:? A[SYNTHETIC] */
+    /* JADX WARN: Code duplicated, block: B:255:? A[SYNTHETIC] */
+    /* JADX WARN: Code duplicated, block: B:256:? A[SYNTHETIC] */
+    /* JADX WARN: Code duplicated, block: B:257:? A[SYNTHETIC] */
+    /* JADX WARN: Code duplicated, block: B:258:? A[SYNTHETIC] */
+    /* JADX WARN: Code duplicated, block: B:259:? A[SYNTHETIC] */
+    /* JADX WARN: Code duplicated, block: B:260:? A[SYNTHETIC] */
+    /* JADX WARN: Code duplicated, block: B:261:? A[SYNTHETIC] */
+    /* JADX WARN: Code duplicated, block: B:262:? A[SYNTHETIC] */
+    /* JADX WARN: Code duplicated, block: B:263:? A[SYNTHETIC] */
+    /* JADX WARN: Code duplicated, block: B:264:? A[SYNTHETIC] */
+    /* JADX WARN: Code duplicated, block: B:265:? A[SYNTHETIC] */
+    /* JADX WARN: Code duplicated, block: B:266:? A[SYNTHETIC] */
     private static void formatNode(HtmlNode node, StringBuilder md, StringBuilder pt, String sourceUrl) {
         if (node.isTextNode()) {
             String text = node.getText();
@@ -393,50 +422,50 @@ public class ReadabilityEngine {
         }
     }
 
-    private static void formatImage(HtmlNode img, StringBuilder md, String sourceUrl) {
-        String src = img.getAttribute("src");
-        if (src.isEmpty()) {
-            src = img.getAttribute("data-src");
+    private static void formatImage(HtmlNode htmlNode, StringBuilder sb, String str) {
+                String attribute = htmlNode.getAttribute("src");
+                if (attribute.isEmpty()) {
+                    attribute = htmlNode.getAttribute("data-src");
+                }
+                if (attribute.isEmpty()) {
+                    return;
+                }
+                String strResolveImageUrl = ArticleContentBlocks.resolveImageUrl(attribute, str);
+                if (strResolveImageUrl.isEmpty()) {
+                    return;
+                }
+                String attribute2 = htmlNode.getAttribute("alt");
+                if (attribute2.isEmpty()) {
+                    attribute2 = "Image";
+                }
+                sb.append("\n\n![");
+                sb.append(attribute2);
+                sb.append("](");
+                sb.append(strResolveImageUrl);
+                sb.append(")\n\n");
+            }
+
+            private static void formatLink(HtmlNode htmlNode, StringBuilder sb, StringBuilder sb2, String str) {
+                String attribute = htmlNode.getAttribute("href");
+                String strTrim = htmlNode.getInnerText().trim();
+                if (strTrim.isEmpty()) {
+                    return;
+                }
+                String strResolveUrl = TextAnalysisUtil.resolveUrl(str, attribute);
+                if (!strResolveUrl.isEmpty() && !strResolveUrl.startsWith("javascript:")) {
+                    sb.append("[");
+                    sb.append(strTrim);
+                    sb.append("](");
+                    sb.append(strResolveUrl);
+                    sb.append(")");
+                } else {
+                    sb.append(strTrim);
+                }
+                sb2.append(strTrim);
+            }
+
+            private static String getParentTag(HtmlNode htmlNode) {
+                HtmlNode parent = htmlNode.getParent();
+                return parent != null ? parent.getTagName() : AppPreferences.TTS_LANGUAGE_AUTO;
+            }
         }
-        if (src.isEmpty()) return;
-
-        String resolved = TextAnalysisUtil.resolveUrl(sourceUrl, src);
-        if (resolved.isEmpty()) return;
-
-        String alt = img.getAttribute("alt");
-        if (alt.isEmpty()) {
-            alt = "Image";
-        }
-
-        md.append("\n\n![").append(alt).append("](").append(resolved).append(")\n\n");
-    }
-
-    private static void formatLink(HtmlNode a, StringBuilder md, StringBuilder pt, String sourceUrl) {
-        String href = a.getAttribute("href");
-        String text = a.getInnerText().trim();
-        if (text.isEmpty()) return;
-
-        String resolved = TextAnalysisUtil.resolveUrl(sourceUrl, href);
-        if (!resolved.isEmpty() && !resolved.startsWith("javascript:")) {
-            md.append("[").append(text).append("](").append(resolved).append(")");
-        } else {
-            md.append(text);
-        }
-        pt.append(text);
-    }
-
-    private static String getParentTag(HtmlNode node) {
-        HtmlNode p = node.getParent();
-        return p != null ? p.getTagName() : "";
-    }
-
-    private static String cleanFormatting(String text) {
-        if (text == null) return "";
-        // Normalize space within lines
-        String s = text.replaceAll("[ \t]+", " ");
-        // Normalize multiple line breaks
-        s = s.replaceAll("\n[ \t]+", "\n");
-        s = s.replaceAll("\n{3,}", "\n\n");
-        return s.trim();
-    }
-}

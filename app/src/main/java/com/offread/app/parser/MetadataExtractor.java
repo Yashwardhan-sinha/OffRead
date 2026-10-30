@@ -1,196 +1,174 @@
 package com.offread.app.parser;
 
-import java.util.List;
+import com.offread.app.data.AppPreferences;
+import com.offread.app.data.OffReadDbHelper;
 import java.util.Locale;
+import java.util.function.Predicate;
 
+/* JADX INFO: loaded from: classes.dex */
 public class MetadataExtractor {
 
     public static class ArticleMetadata {
-        public String title = "";
-        public String author = "";
-        public String publishedDate = "";
-        public String leadImageUrl = "";
-        public String siteName = "";
-        public String canonicalUrl = "";
-        public String language = "";
-        public String description = "";
-        public String jsonLdBody = "";
+        public String title = AppPreferences.TTS_LANGUAGE_AUTO;
+        public String author = AppPreferences.TTS_LANGUAGE_AUTO;
+        public String publishedDate = AppPreferences.TTS_LANGUAGE_AUTO;
+        public String leadImageUrl = AppPreferences.TTS_LANGUAGE_AUTO;
+        public String siteName = AppPreferences.TTS_LANGUAGE_AUTO;
+        public String canonicalUrl = AppPreferences.TTS_LANGUAGE_AUTO;
+        public String language = AppPreferences.TTS_LANGUAGE_AUTO;
+        public String description = AppPreferences.TTS_LANGUAGE_AUTO;
+        public String jsonLdBody = AppPreferences.TTS_LANGUAGE_AUTO;
     }
 
-    public static ArticleMetadata extract(HtmlNode root, String sourceUrl) {
-        ArticleMetadata meta = new ArticleMetadata();
-        if (root == null) return meta;
-
-        // 1. JSON-LD Extraction
-        JsonLdExtractor.JsonLdData jsonLd = JsonLdExtractor.extract(root);
-        if (jsonLd != null) {
-            meta.title = jsonLd.headline;
-            meta.author = jsonLd.author;
-            meta.publishedDate = jsonLd.datePublished;
-            meta.leadImageUrl = jsonLd.imageUrl;
-            meta.siteName = jsonLd.publisherName;
-            meta.description = jsonLd.description;
-            meta.jsonLdBody = jsonLd.articleBody;
-        }
-
-        // 2. Scan meta and link tags
-        List<HtmlNode> metaTags = root.getElementsByTag("meta");
-        for (HtmlNode m : metaTags) {
-            String property = m.getAttribute("property").toLowerCase(Locale.ROOT);
-            String name = m.getAttribute("name").toLowerCase(Locale.ROOT);
-            String content = m.getAttribute("content");
-            if (content.isEmpty()) continue;
-
-            // Site name
-            if (meta.siteName.isEmpty() && ("og:site_name".equals(property) || "og:site_name".equals(name))) {
-                meta.siteName = content;
+    public static ArticleMetadata extract(HtmlNode htmlNode, String str) {
+        HtmlNode htmlNodeFindFirst;
+        HtmlNode htmlNodeFindFirst2;
+        HtmlNode htmlNodeFindFirst3;
+        HtmlNode htmlNodeFindFirst4;
+        HtmlNode htmlNodeFindFirst5;
+        ArticleMetadata articleMetadata = new ArticleMetadata();
+        if (htmlNode != null) {
+            JsonLdExtractor.JsonLdData jsonLdDataExtract = JsonLdExtractor.extract(htmlNode);
+            if (jsonLdDataExtract != null) {
+                articleMetadata.title = jsonLdDataExtract.headline;
+                articleMetadata.author = jsonLdDataExtract.author;
+                articleMetadata.publishedDate = jsonLdDataExtract.datePublished;
+                articleMetadata.leadImageUrl = jsonLdDataExtract.imageUrl;
+                articleMetadata.siteName = jsonLdDataExtract.publisherName;
+                articleMetadata.description = jsonLdDataExtract.description;
+                articleMetadata.jsonLdBody = jsonLdDataExtract.articleBody;
             }
-
-            // Title
-            if (meta.title.isEmpty()) {
-                if ("og:title".equals(property) || "og:title".equals(name) ||
-                        "twitter:title".equals(name) || "twitter:title".equals(property) ||
-                        "title".equals(name)) {
-                    meta.title = content;
+            for (HtmlNode htmlNode2 : htmlNode.getElementsByTag("meta")) {
+                String lowerCase = htmlNode2.getAttribute("property").toLowerCase(Locale.ROOT);
+                String lowerCase2 = htmlNode2.getAttribute("name").toLowerCase(Locale.ROOT);
+                String attribute = htmlNode2.getAttribute(OffReadDbHelper.COL_CONTENT);
+                if (!attribute.isEmpty()) {
+                    if (articleMetadata.siteName.isEmpty() && ("og:site_name".equals(lowerCase) || "og:site_name".equals(lowerCase2))) {
+                        articleMetadata.siteName = attribute;
+                    }
+                    if (articleMetadata.title.isEmpty() && ("og:title".equals(lowerCase) || "og:title".equals(lowerCase2) || "twitter:title".equals(lowerCase2) || "twitter:title".equals(lowerCase) || OffReadDbHelper.COL_TITLE.equals(lowerCase2))) {
+                        articleMetadata.title = attribute;
+                    }
+                    if (articleMetadata.author.isEmpty() && (OffReadDbHelper.COL_AUTHOR.equals(lowerCase2) || "article:author".equals(lowerCase) || "article:author".equals(lowerCase2) || "twitter:creator".equals(lowerCase2) || "dc.creator".equals(lowerCase2) || "sailthru.author".equals(lowerCase2) || "byl".equals(lowerCase2))) {
+                        articleMetadata.author = attribute;
+                    }
+                    if (articleMetadata.publishedDate.isEmpty() && ("article:published_time".equals(lowerCase) || "article:published_time".equals(lowerCase2) || "og:published_time".equals(lowerCase) || "dc.date.issued".equals(lowerCase2) || "pubdate".equals(lowerCase2) || "sailthru.date".equals(lowerCase2))) {
+                        articleMetadata.publishedDate = attribute;
+                    }
+                    if (articleMetadata.leadImageUrl.isEmpty() && ("og:image".equals(lowerCase) || "og:image:url".equals(lowerCase) || "og:image:secure_url".equals(lowerCase) || "twitter:image".equals(lowerCase2) || "twitter:image:src".equals(lowerCase2))) {
+                        articleMetadata.leadImageUrl = attribute;
+                    }
+                    if (articleMetadata.canonicalUrl.isEmpty() && ("og:url".equals(lowerCase) || "og:url".equals(lowerCase2))) {
+                        articleMetadata.canonicalUrl = attribute;
+                    }
+                    if (articleMetadata.description.isEmpty() && ("og:description".equals(lowerCase) || "description".equals(lowerCase2) || "twitter:description".equals(lowerCase2))) {
+                        articleMetadata.description = attribute;
+                    }
+                    if (articleMetadata.language.isEmpty() && ("content-language".equals(htmlNode2.getAttribute("http-equiv").toLowerCase(Locale.ROOT)) || "og:locale".equals(lowerCase))) {
+                        articleMetadata.language = attribute;
+                    }
                 }
             }
-
-            // Author
-            if (meta.author.isEmpty()) {
-                if ("author".equals(name) || "article:author".equals(property) ||
-                        "article:author".equals(name) || "twitter:creator".equals(name) ||
-                        "dc.creator".equals(name) || "sailthru.author".equals(name) ||
-                        "byl".equals(name)) {
-                    meta.author = content;
+            for (HtmlNode htmlNode3 : htmlNode.getElementsByTag("link")) {
+                String lowerCase3 = htmlNode3.getAttribute("rel").toLowerCase(Locale.ROOT);
+                String attribute2 = htmlNode3.getAttribute("href");
+                if (!attribute2.isEmpty()) {
+                    if (articleMetadata.canonicalUrl.isEmpty() && "canonical".equals(lowerCase3)) {
+                        articleMetadata.canonicalUrl = attribute2;
+                    }
+                    if (articleMetadata.leadImageUrl.isEmpty() && ("image_src".equals(lowerCase3) || "apple-touch-icon".equals(lowerCase3))) {
+                        articleMetadata.leadImageUrl = attribute2;
+                    }
                 }
             }
-
-            // Date
-            if (meta.publishedDate.isEmpty()) {
-                if ("article:published_time".equals(property) || "article:published_time".equals(name) ||
-                        "og:published_time".equals(property) || "dc.date.issued".equals(name) ||
-                        "pubdate".equals(name) || "sailthru.date".equals(name)) {
-                    meta.publishedDate = content;
+            if (articleMetadata.title.isEmpty() && (htmlNodeFindFirst5 = htmlNode.findFirst(new Predicate() { // from class: com.offread.app.parser.MetadataExtractor.0
+                @Override // java.util.function.Predicate
+                public final boolean test(Object obj) {
+                    return MetadataExtractor.lambda$extract$0((HtmlNode) obj);
                 }
+            })) != null) {
+                articleMetadata.title = htmlNodeFindFirst5.getInnerText();
             }
-
-            // Lead image
-            if (meta.leadImageUrl.isEmpty()) {
-                if ("og:image".equals(property) || "og:image:url".equals(property) ||
-                        "og:image:secure_url".equals(property) || "twitter:image".equals(name) ||
-                        "twitter:image:src".equals(name)) {
-                    meta.leadImageUrl = content;
+            if (articleMetadata.title.isEmpty() && (htmlNodeFindFirst4 = htmlNode.findFirst(new Predicate() { // from class: com.offread.app.parser.MetadataExtractor.1
+                @Override // java.util.function.Predicate
+                public final boolean test(Object obj) {
+                    return MetadataExtractor.lambda$extract$1((HtmlNode) obj);
                 }
+            })) != null) {
+                articleMetadata.title = htmlNodeFindFirst4.getInnerText();
             }
-
-            // Canonical URL
-            if (meta.canonicalUrl.isEmpty()) {
-                if ("og:url".equals(property) || "og:url".equals(name)) {
-                    meta.canonicalUrl = content;
+            if (articleMetadata.title.isEmpty() && str != null) {
+                articleMetadata.title = TextAnalysisUtil.extractDomain(str);
+            }
+            if (articleMetadata.author.isEmpty() && (htmlNodeFindFirst3 = htmlNode.findFirst(new Predicate() { // from class: com.offread.app.parser.MetadataExtractor.2
+                @Override // java.util.function.Predicate
+                public final boolean test(Object obj) {
+                    return MetadataExtractor.lambda$extract$2((HtmlNode) obj);
                 }
+            })) != null) {
+                articleMetadata.author = htmlNodeFindFirst3.getInnerText();
             }
-
-            // Description
-            if (meta.description.isEmpty()) {
-                if ("og:description".equals(property) || "description".equals(name) ||
-                        "twitter:description".equals(name)) {
-                    meta.description = content;
+            if (articleMetadata.publishedDate.isEmpty() && (htmlNodeFindFirst2 = htmlNode.findFirst(new Predicate() { // from class: com.offread.app.parser.MetadataExtractor.3
+                @Override // java.util.function.Predicate
+                public final boolean test(Object obj) {
+                    return MetadataExtractor.lambda$extract$3((HtmlNode) obj);
                 }
-            }
-
-            // Language
-            if (meta.language.isEmpty()) {
-                String httpEquiv = m.getAttribute("http-equiv").toLowerCase(Locale.ROOT);
-                if ("content-language".equals(httpEquiv) || "og:locale".equals(property)) {
-                    meta.language = content;
+            })) != null) {
+                String attribute3 = htmlNodeFindFirst2.getAttribute("datetime");
+                if (attribute3.isEmpty()) {
+                    attribute3 = htmlNodeFindFirst2.getInnerText();
                 }
+                articleMetadata.publishedDate = attribute3;
+            }
+            if (articleMetadata.language.isEmpty() && (htmlNodeFindFirst = htmlNode.findFirst(new Predicate() { // from class: com.offread.app.parser.MetadataExtractor.4
+                @Override // java.util.function.Predicate
+                public final boolean test(Object obj) {
+                    return MetadataExtractor.lambda$extract$4((HtmlNode) obj);
+                }
+            })) != null) {
+                articleMetadata.language = htmlNodeFindFirst.getAttribute("lang");
+            }
+            if (articleMetadata.siteName.isEmpty() && str != null) {
+                articleMetadata.siteName = TextAnalysisUtil.extractDomain(str);
+            }
+            if (articleMetadata.canonicalUrl.isEmpty()) {
+                articleMetadata.canonicalUrl = str != null ? str : AppPreferences.TTS_LANGUAGE_AUTO;
+            }
+            articleMetadata.title = TextAnalysisUtil.cleanTitle(articleMetadata.title, articleMetadata.siteName);
+            articleMetadata.author = TextAnalysisUtil.cleanAuthor(articleMetadata.author);
+            if (!articleMetadata.leadImageUrl.isEmpty()) {
+                articleMetadata.leadImageUrl = ArticleContentBlocks.resolveImageUrl(articleMetadata.leadImageUrl, str);
+            }
+            if (!articleMetadata.canonicalUrl.isEmpty() && str != null) {
+                articleMetadata.canonicalUrl = TextAnalysisUtil.resolveUrl(str, articleMetadata.canonicalUrl);
             }
         }
+        return articleMetadata;
+    }
 
-        // 3. Scan <link> tags (canonical & image_src)
-        List<HtmlNode> linkTags = root.getElementsByTag("link");
-        for (HtmlNode link : linkTags) {
-            String rel = link.getAttribute("rel").toLowerCase(Locale.ROOT);
-            String href = link.getAttribute("href");
-            if (href.isEmpty()) continue;
+    static /* synthetic */ boolean lambda$extract$0(HtmlNode htmlNode) {
+        return OffReadDbHelper.COL_TITLE.equals(htmlNode.getTagName());
+    }
 
-            if (meta.canonicalUrl.isEmpty() && "canonical".equals(rel)) {
-                meta.canonicalUrl = href;
-            }
-            if (meta.leadImageUrl.isEmpty() && ("image_src".equals(rel) || "apple-touch-icon".equals(rel))) {
-                meta.leadImageUrl = href;
-            }
-        }
+    static /* synthetic */ boolean lambda$extract$1(HtmlNode htmlNode) {
+        return "h1".equals(htmlNode.getTagName());
+    }
 
-        // 4. Fallback Title (<title>, <h1>)
-        if (meta.title.isEmpty()) {
-            HtmlNode titleElem = root.findFirst(n -> "title".equals(n.getTagName()));
-            if (titleElem != null) {
-                meta.title = titleElem.getInnerText();
-            }
+    static /* synthetic */ boolean lambda$extract$2(HtmlNode htmlNode) {
+        String lowerCase = htmlNode.getAttribute("rel").toLowerCase(Locale.ROOT);
+        String lowerCase2 = htmlNode.getAttribute("itemprop").toLowerCase(Locale.ROOT);
+        String lowerCase3 = htmlNode.getClassName().toLowerCase(Locale.ROOT);
+        if (OffReadDbHelper.COL_AUTHOR.equals(lowerCase) || OffReadDbHelper.COL_AUTHOR.equals(lowerCase2) || lowerCase3.contains("byline") || lowerCase3.contains("author-name")) {
+            return true;
         }
-        if (meta.title.isEmpty()) {
-            HtmlNode h1Elem = root.findFirst(n -> "h1".equals(n.getTagName()));
-            if (h1Elem != null) {
-                meta.title = h1Elem.getInnerText();
-            }
-        }
-        if (meta.title.isEmpty() && sourceUrl != null) {
-            meta.title = TextAnalysisUtil.extractDomain(sourceUrl);
-        }
+        return lowerCase3.contains(OffReadDbHelper.COL_AUTHOR) && !lowerCase3.contains("authors-list");
+    }
 
-        // 5. Fallback Author (rel="author", class="author" / "byline")
-        if (meta.author.isEmpty()) {
-            HtmlNode authorElem = root.findFirst(n -> {
-                String rel = n.getAttribute("rel").toLowerCase(Locale.ROOT);
-                String itemprop = n.getAttribute("itemprop").toLowerCase(Locale.ROOT);
-                String cls = n.getClassName().toLowerCase(Locale.ROOT);
-                return "author".equals(rel) || "author".equals(itemprop) ||
-                        cls.contains("byline") || cls.contains("author-name") ||
-                        (cls.contains("author") && !cls.contains("authors-list"));
-            });
-            if (authorElem != null) {
-                meta.author = authorElem.getInnerText();
-            }
-        }
+    static /* synthetic */ boolean lambda$extract$3(HtmlNode htmlNode) {
+        return "time".equals(htmlNode.getTagName());
+    }
 
-        // 6. Fallback Date (<time datetime="...">)
-        if (meta.publishedDate.isEmpty()) {
-            HtmlNode timeElem = root.findFirst(n -> "time".equals(n.getTagName()));
-            if (timeElem != null) {
-                String dt = timeElem.getAttribute("datetime");
-                meta.publishedDate = !dt.isEmpty() ? dt : timeElem.getInnerText();
-            }
-        }
-
-        // 7. Fallback Language (<html lang="...">)
-        if (meta.language.isEmpty()) {
-            HtmlNode htmlElem = root.findFirst(n -> "html".equals(n.getTagName()));
-            if (htmlElem != null) {
-                meta.language = htmlElem.getAttribute("lang");
-            }
-        }
-
-        // 8. Fallback Site Name & Canonical URL
-        if (meta.siteName.isEmpty() && sourceUrl != null) {
-            meta.siteName = TextAnalysisUtil.extractDomain(sourceUrl);
-        }
-        if (meta.canonicalUrl.isEmpty()) {
-            meta.canonicalUrl = sourceUrl != null ? sourceUrl : "";
-        }
-
-        // 9. Clean Title & Author
-        meta.title = TextAnalysisUtil.cleanTitle(meta.title, meta.siteName);
-        meta.author = TextAnalysisUtil.cleanAuthor(meta.author);
-
-        // 10. Resolve URLs
-        if (!meta.leadImageUrl.isEmpty() && sourceUrl != null) {
-            meta.leadImageUrl = TextAnalysisUtil.resolveUrl(sourceUrl, meta.leadImageUrl);
-        }
-        if (!meta.canonicalUrl.isEmpty() && sourceUrl != null) {
-            meta.canonicalUrl = TextAnalysisUtil.resolveUrl(sourceUrl, meta.canonicalUrl);
-        }
-
-        return meta;
+    static /* synthetic */ boolean lambda$extract$4(HtmlNode htmlNode) {
+        return "html".equals(htmlNode.getTagName());
     }
 }

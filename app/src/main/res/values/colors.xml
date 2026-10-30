@@ -1,37 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Brand Accents -->
-    <color name="primary">#0D9488</color>
-    <color name="primary_dark">#0F766E</color>
-    <color name="primary_light">#14B8A6</color>
-    <color name="primary_container">#CCFBF1</color>
-    <color name="on_primary_container">#115E59</color>
-    <color name="accent">#D97706</color>
-
-    <!-- Light Theme Palette (Clean Editorial Paper) -->
-    <color name="background">#F8FAFC</color>
-    <color name="surface">#FFFFFF</color>
-    <color name="surface_variant">#F1F5F9</color>
-    <color name="surface_card">#FFFFFF</color>
-    <color name="surface_elevated">#F8FAFC</color>
-    <color name="divider">#E2E8F0</color>
-
-    <!-- Typography -->
-    <color name="text_primary">#0F172A</color>
-    <color name="text_secondary">#475569</color>
-    <color name="text_muted">#94A3B8</color>
-
-    <!-- Tags & Categories -->
-    <color name="tag_tech">#0284C7</color>
-    <color name="tag_science">#059669</color>
-    <color name="tag_philosophy">#7C3AED</color>
-    <color name="tag_productivity">#D97706</color>
-
-    <!-- Status & Functional -->
-    <color name="success">#10B981</color>
-    <color name="warning">#F59E0B</color>
-    <color name="danger">#EF4444</color>
-    <color name="white">#FFFFFF</color>
+    <color name="accent">#d97706</color>
+    <color name="accent_dark">#f0b429</color>
+    <color name="background">#f8fafc</color>
+    <color name="background_dark">#101318</color>
     <color name="black">#000000</color>
+    <color name="danger">#ef4444</color>
+    <color name="danger_dark">#f87171</color>
+    <color name="divider">#e2e8f0</color>
+    <color name="divider_dark">#333b46</color>
+    <color name="on_primary_container">#115e59</color>
+    <color name="on_primary_container_dark">#a7f3e9</color>
+    <color name="on_primary_dark_mode">#06231f</color>
+    <color name="primary">#0d9488</color>
+    <color name="primary_container">#ccfbf1</color>
+    <color name="primary_container_dark">#124640</color>
+    <color name="primary_dark">#0f766e</color>
+    <color name="primary_dark_mode">#2dd4bf</color>
+    <color name="primary_light">#14b8a6</color>
+    <color name="success">#10b981</color>
+    <color name="success_dark">#34d399</color>
+    <color name="surface">#ffffff</color>
+    <color name="surface_card">#ffffff</color>
+    <color name="surface_card_dark">#1a1f26</color>
+    <color name="surface_dark">#171b21</color>
+    <color name="surface_elevated">#f8fafc</color>
+    <color name="surface_elevated_dark">#222831</color>
+    <color name="surface_variant">#f1f5f9</color>
+    <color name="surface_variant_dark">#262c35</color>
+    <color name="tag_philosophy">#7c3aed</color>
+    <color name="tag_productivity">#d97706</color>
+    <color name="tag_science">#059669</color>
+    <color name="tag_tech">#0284c7</color>
+    <color name="text_muted">#5b6675</color>
+    <color name="text_muted_dark">#8a949f</color>
+    <color name="text_primary">#0f172a</color>
+    <color name="text_primary_dark">#e6e9ee</color>
+    <color name="text_secondary">#475569</color>
+    <color name="text_secondary_dark">#a9b2bd</color>
     <color name="translucent_overlay">#80000000</color>
+    <color name="warning">#f59e0b</color>
+    <color name="white">#ffffff</color>
 </resources>

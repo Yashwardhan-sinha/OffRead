@@ -1,211 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background"
-    android:orientation="vertical">
-
-    <!-- Top Action Bar -->
-    <LinearLayout
-        android:id="@+id/layout_top_bar"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/surface"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="16dp"
-        android:paddingEnd="12dp">
-
-        <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/ic_book"
-            android:tint="@color/primary"
-            android:contentDescription="@string/app_name" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            android:text="@string/app_name"
-            android:textColor="@color/text_primary"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <!-- Text-to-Speech / Listen Button -->
-        <ImageButton
-            android:id="@+id/btn_listen"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/action_tts"
-            android:src="@drawable/ic_tts"
-            android:tint="@color/text_secondary" />
-
-        <!-- Bookmark Button -->
-        <ImageButton
-            android:id="@+id/btn_bookmark"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="4dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/action_favorite"
-            android:src="@drawable/ic_bookmark"
-            android:tint="@color/text_secondary" />
-
-        <!-- Light/Dark Theme Toggle Button -->
-        <ImageButton
-            android:id="@+id/btn_theme_toggle"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="4dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Toggle Theme"
-            android:src="@drawable/ic_theme"
-            android:tint="@color/text_secondary" />
+<LinearLayout android:orientation="vertical" android:background="?colorBackground" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:background="?colorSurface" android:layout_width="match_parent" android:layout_height="@dimen/toolbar_height" android:paddingStart="@dimen/screen_padding" android:paddingEnd="8.0dp">
+        <ImageView android:layout_width="26.0dp" android:layout_height="26.0dp" android:src="@drawable/ic_book" android:tint="?colorAccent" android:contentDescription="@string/app_name" />
+        <TextView android:textSize="@dimen/text_screen_title" android:textStyle="bold" android:textColor="?colorTextPrimary" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/app_name" android:layout_weight="1.0" android:layout_marginStart="10.0dp" />
+        <ImageButton android:id="@id/btn_stats" android:background="?android:selectableItemBackgroundBorderless" android:layout_width="@dimen/touch_target" android:layout_height="@dimen/touch_target" android:src="@drawable/ic_stats" android:tint="?colorIcon" android:contentDescription="@string/action_stats" />
+        <ImageButton android:id="@id/btn_add_article" android:background="?android:selectableItemBackgroundBorderless" android:layout_width="@dimen/touch_target" android:layout_height="@dimen/touch_target" android:src="@drawable/ic_add" android:tint="?colorIcon" android:contentDescription="@string/action_add" />
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider" />
-
-    <!-- Main Content Area in ScrollView -->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="28dp">
-
-            <!-- URL Input Card -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Article URL"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/edit_url"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_search_input"
-                    android:hint="Enter or paste article URL (e.g. https://example.com/article)"
-                    android:inputType="textUri"
-                    android:singleLine="true"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_muted"
-                    android:textSize="14sp" />
-
-                <Button
-                    android:id="@+id/btn_open_article"
-                    android:layout_width="match_parent"
-                    android:layout_height="46dp"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_primary_button"
-                    android:text="Open Article"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <ProgressBar
-                    android:id="@+id/progress_article"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="8dp"
-                    android:visibility="gone" />
-            </LinearLayout>
-
-            <!-- Status Notice Banner -->
-            <TextView
-                android:id="@+id/tv_status_notice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:gravity="center"
-                android:text="Enter any article URL above and tap Open Article."
-                android:textColor="@color/text_muted"
-                android:textSize="12sp" />
-
-            <!-- Reader Canvas (Placeholder Area) -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <!-- Article Title Placeholder -->
-                <TextView
-                    android:id="@+id/tv_article_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Article Title Placeholder"
-                    android:textColor="@color/text_primary"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:lineSpacingMultiplier="1.2" />
-
-                <!-- Article Metadata Placeholder -->
-                <TextView
-                    android:id="@+id/tv_article_meta"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="OffRead Reader • Ready for extraction"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
-
-                <!-- Article Featured Hero Image -->
-                <ImageView
-                    android:id="@+id/img_article_cover"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:adjustViewBounds="true"
-                    android:maxHeight="260dp"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone"
-                    android:contentDescription="Article Featured Image" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@color/divider" />
-
-                <!-- Article Content Placeholder -->
-                <TextView
-                    android:id="@+id/tv_article_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="This is where the distraction-free article text will be displayed once article extraction is implemented.\n\nAll clutter, ads, navigation bars, cookie popups, and tracking scripts will be stripped away, leaving only pure, readable typography.\n\nKey UI features ready for extraction integration:\n• Clean article typography container\n• Quick URL input and handler\n• Bookmark toggle for saving reads locally\n• Text-to-speech / audio listener trigger\n• Light and dark theme adaptability"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp"
-                    android:lineSpacingMultiplier="1.4"
-                    android:textIsSelectable="true" />
-            </LinearLayout>
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:background="?colorSurface" android:paddingBottom="12.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="@dimen/screen_padding" android:paddingEnd="@dimen/screen_padding">
+        <EditText android:textSize="@dimen/text_row_title" android:textColor="?colorTextPrimary" android:textColorHint="?colorTextMuted" android:id="@id/edit_url" android:background="@drawable/bg_search_input" android:layout_width="0.0dp" android:layout_height="wrap_content" android:minHeight="@dimen/touch_target" android:hint="@string/url_input_hint" android:maxLines="1" android:layout_weight="1.0" android:inputType="textUri" android:imeOptions="actionGo" android:contentDescription="@string/url_input_hint" android:paddingStart="12.0dp" android:paddingEnd="12.0dp" />
+        <Button android:textSize="@dimen/text_row_title" android:textColor="?colorOnAccent" android:id="@id/btn_open_article" android:background="@drawable/bg_primary_button" android:layout_width="wrap_content" android:layout_height="wrap_content" android:minHeight="@dimen/touch_target" android:text="@string/action_add" android:contentDescription="@string/fetch_and_save" android:textAllCaps="false" android:paddingStart="16.0dp" android:paddingEnd="16.0dp" android:layout_marginStart="8.0dp" />
+    </LinearLayout>
+    <ProgressBar android:id="@id/progress_article" android:visibility="gone" android:layout_width="match_parent" android:layout_height="3.0dp" android:indeterminate="true" android:progressTint="?colorAccent" style="?android:progressBarStyleHorizontal" />
+    <TextView android:textSize="@dimen/text_row_summary" android:textColor="?colorTextSecondary" android:id="@id/tv_status_notice" android:background="?colorSurfaceVariant" android:paddingTop="6.0dp" android:paddingBottom="6.0dp" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="@dimen/screen_padding" android:paddingEnd="@dimen/screen_padding" />
+    <FrameLayout android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_weight="1.0">
+        <ListView android:scrollbarStyle="outsideOverlay" android:id="@id/list_articles" android:paddingTop="10.0dp" android:paddingBottom="18.0dp" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="match_parent" android:divider="@null" android:dividerHeight="0.0dp" android:paddingStart="@dimen/screen_padding" android:paddingEnd="@dimen/screen_padding" />
+        <LinearLayout android:gravity="center" android:orientation="vertical" android:id="@id/layout_empty" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent" android:paddingStart="32.0dp" android:paddingEnd="32.0dp">
+            <ImageView android:layout_width="44.0dp" android:layout_height="44.0dp" android:src="@drawable/ic_book" android:tint="?colorTextMuted" android:contentDescription="@null" />
+            <TextView android:textSize="@dimen/text_row_title" android:textStyle="bold" android:textColor="?colorTextPrimary" android:id="@id/tv_empty_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="14.0dp" android:text="@string/empty_articles_title" />
+            <TextView android:textSize="@dimen/text_row_summary" android:textColor="?colorTextSecondary" android:gravity="center" android:id="@id/tv_empty_subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6.0dp" android:text="@string/empty_articles_subtitle" />
         </LinearLayout>
-    </ScrollView>
+    </FrameLayout>
+    <com.offread.app.ui.BottomNavBar android:id="@id/nav_bar" android:background="@drawable/bg_nav_bar" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="@dimen/nav_bar_height" />
 </LinearLayout>
