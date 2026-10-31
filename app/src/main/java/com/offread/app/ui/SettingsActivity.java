@@ -17,7 +17,6 @@ import com.offread.app.data.AppPreferences;
 import com.offread.app.data.Article;
 import com.offread.app.data.ArticleRepository;
 import com.offread.app.data.BackupFileProvider;
-import com.offread.app.data.OffReadDbHelper;
 import com.offread.app.tts.SpeechLanguages;
 import com.offread.app.util.BackupHelper;
 import com.offread.app.util.SampleContentHelper;
@@ -213,9 +212,9 @@ public class SettingsActivity extends ThemedActivity {
     private String versionName() {
         try {
             PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            return packageInfo.versionName == null ? AppPreferences.TTS_LANGUAGE_AUTO : packageInfo.versionName;
+            return packageInfo.versionName == null ? "" : packageInfo.versionName;
         } catch (Exception unused) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
     }
 
@@ -288,7 +287,7 @@ public class SettingsActivity extends ThemedActivity {
         if (id == R.id.chip_speed_150) {
             return "1.5";
         }
-        return AppPreferences.TTS_LANGUAGE_AUTO;
+        return "";
     }
 
     private void onChipTapped(TextView textView) {
@@ -384,7 +383,7 @@ public class SettingsActivity extends ThemedActivity {
     }
 
     private Uri backupUriFor(String str) {
-        return new Uri.Builder().scheme(OffReadDbHelper.COL_CONTENT).authority(BackupFileProvider.AUTHORITY).appendPath(BackupFileProvider.PATH_SEGMENT).appendPath(str).build();
+        return new Uri.Builder().scheme("content").authority(BackupFileProvider.AUTHORITY).appendPath(BackupFileProvider.PATH_SEGMENT).appendPath(str).build();
     }
 
     private void handleImport() {

@@ -46,7 +46,7 @@ public class Highlight implements Serializable {
 
     public String getText() {
         String str = this.text;
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
+        return str == null ? "" : str;
     }
 
     public void setText(String str) {
@@ -55,7 +55,7 @@ public class Highlight implements Serializable {
 
     public String getNote() {
         String str = this.note;
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
+        return str == null ? "" : str;
     }
 
     public void setNote(String str) {
@@ -84,8 +84,8 @@ public class Highlight implements Serializable {
         jSONObject.put("id", this.id);
         jSONObject.put("articleId", this.articleId);
         jSONObject.put("text", this.text);
-        jSONObject.put(OffReadDbHelper.COL_HL_NOTE, this.note);
-        jSONObject.put(OffReadDbHelper.COL_HL_COLOR, this.color);
+        jSONObject.put("note", this.note);
+        jSONObject.put("color", this.color);
         jSONObject.put("createdAt", this.createdAt);
         return jSONObject;
     }
@@ -94,9 +94,9 @@ public class Highlight implements Serializable {
         Highlight highlight = new Highlight();
         highlight.id = jSONObject.optLong("id", 0L);
         highlight.articleId = jSONObject.optLong("articleId", 0L);
-        highlight.text = jSONObject.optString("text", AppPreferences.TTS_LANGUAGE_AUTO);
-        highlight.note = jSONObject.optString(OffReadDbHelper.COL_HL_NOTE, AppPreferences.TTS_LANGUAGE_AUTO);
-        highlight.color = jSONObject.optString(OffReadDbHelper.COL_HL_COLOR, "#F59E0B");
+        highlight.text = jSONObject.optString("text", "");
+        highlight.note = jSONObject.optString("note", "");
+        highlight.color = jSONObject.optString("color", "#F59E0B");
         highlight.createdAt = jSONObject.optLong("createdAt", System.currentTimeMillis());
         return highlight;
     }

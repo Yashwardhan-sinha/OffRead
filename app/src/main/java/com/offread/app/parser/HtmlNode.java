@@ -1,6 +1,5 @@
 package com.offread.app.parser;
 
-import com.offread.app.data.AppPreferences;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +20,7 @@ public class HtmlNode {
     private String text;
 
     public HtmlNode(String str) {
-        this.tagName = str != null ? str.trim().toLowerCase(Locale.ROOT) : AppPreferences.TTS_LANGUAGE_AUTO;
+        this.tagName = str != null ? str.trim().toLowerCase(Locale.ROOT) : "";
         this.text = null;
         this.attributes = new HashMap();
         this.children = new ArrayList();
@@ -31,7 +30,7 @@ public class HtmlNode {
     public static HtmlNode createTextNode(String str) {
         HtmlNode htmlNode = new HtmlNode("#text");
         if (str == null) {
-            str = AppPreferences.TTS_LANGUAGE_AUTO;
+            str = "";
         }
         htmlNode.text = str;
         return htmlNode;
@@ -55,7 +54,7 @@ public class HtmlNode {
 
     public String getAttribute(String str) {
         String str2;
-        return (str == null || (str2 = this.attributes.get(str.toLowerCase(Locale.ROOT))) == null) ? AppPreferences.TTS_LANGUAGE_AUTO : str2;
+        return (str == null || (str2 = this.attributes.get(str.toLowerCase(Locale.ROOT))) == null) ? "" : str2;
     }
 
     public boolean hasAttribute(String str) {
@@ -72,7 +71,7 @@ public class HtmlNode {
         Map<String, String> map = this.attributes;
         String lowerCase = str.toLowerCase(Locale.ROOT);
         if (str2 == null) {
-            str2 = AppPreferences.TTS_LANGUAGE_AUTO;
+            str2 = "";
         }
         map.put(lowerCase, str2);
     }

@@ -1,7 +1,5 @@
 package com.offread.app.parser;
 
-import com.offread.app.data.AppPreferences;
-import com.offread.app.data.OffReadDbHelper;
 import java.util.Locale;
 import java.util.function.Predicate;
 
@@ -9,15 +7,15 @@ import java.util.function.Predicate;
 public class MetadataExtractor {
 
     public static class ArticleMetadata {
-        public String title = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String author = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String publishedDate = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String leadImageUrl = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String siteName = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String canonicalUrl = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String language = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String description = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String jsonLdBody = AppPreferences.TTS_LANGUAGE_AUTO;
+        public String title = "";
+        public String author = "";
+        public String publishedDate = "";
+        public String leadImageUrl = "";
+        public String siteName = "";
+        public String canonicalUrl = "";
+        public String language = "";
+        public String description = "";
+        public String jsonLdBody = "";
     }
 
     public static ArticleMetadata extract(HtmlNode htmlNode, String str) {
@@ -41,15 +39,15 @@ public class MetadataExtractor {
             for (HtmlNode htmlNode2 : htmlNode.getElementsByTag("meta")) {
                 String lowerCase = htmlNode2.getAttribute("property").toLowerCase(Locale.ROOT);
                 String lowerCase2 = htmlNode2.getAttribute("name").toLowerCase(Locale.ROOT);
-                String attribute = htmlNode2.getAttribute(OffReadDbHelper.COL_CONTENT);
+                String attribute = htmlNode2.getAttribute("content");
                 if (!attribute.isEmpty()) {
                     if (articleMetadata.siteName.isEmpty() && ("og:site_name".equals(lowerCase) || "og:site_name".equals(lowerCase2))) {
                         articleMetadata.siteName = attribute;
                     }
-                    if (articleMetadata.title.isEmpty() && ("og:title".equals(lowerCase) || "og:title".equals(lowerCase2) || "twitter:title".equals(lowerCase2) || "twitter:title".equals(lowerCase) || OffReadDbHelper.COL_TITLE.equals(lowerCase2))) {
+                    if (articleMetadata.title.isEmpty() && ("og:title".equals(lowerCase) || "og:title".equals(lowerCase2) || "twitter:title".equals(lowerCase2) || "twitter:title".equals(lowerCase) || "title".equals(lowerCase2))) {
                         articleMetadata.title = attribute;
                     }
-                    if (articleMetadata.author.isEmpty() && (OffReadDbHelper.COL_AUTHOR.equals(lowerCase2) || "article:author".equals(lowerCase) || "article:author".equals(lowerCase2) || "twitter:creator".equals(lowerCase2) || "dc.creator".equals(lowerCase2) || "sailthru.author".equals(lowerCase2) || "byl".equals(lowerCase2))) {
+                    if (articleMetadata.author.isEmpty() && ("author".equals(lowerCase2) || "article:author".equals(lowerCase) || "article:author".equals(lowerCase2) || "twitter:creator".equals(lowerCase2) || "dc.creator".equals(lowerCase2) || "sailthru.author".equals(lowerCase2) || "byl".equals(lowerCase2))) {
                         articleMetadata.author = attribute;
                     }
                     if (articleMetadata.publishedDate.isEmpty() && ("article:published_time".equals(lowerCase) || "article:published_time".equals(lowerCase2) || "og:published_time".equals(lowerCase) || "dc.date.issued".equals(lowerCase2) || "pubdate".equals(lowerCase2) || "sailthru.date".equals(lowerCase2))) {
@@ -132,7 +130,7 @@ public class MetadataExtractor {
                 articleMetadata.siteName = TextAnalysisUtil.extractDomain(str);
             }
             if (articleMetadata.canonicalUrl.isEmpty()) {
-                articleMetadata.canonicalUrl = str != null ? str : AppPreferences.TTS_LANGUAGE_AUTO;
+                articleMetadata.canonicalUrl = str != null ? str : "";
             }
             articleMetadata.title = TextAnalysisUtil.cleanTitle(articleMetadata.title, articleMetadata.siteName);
             articleMetadata.author = TextAnalysisUtil.cleanAuthor(articleMetadata.author);
@@ -147,7 +145,7 @@ public class MetadataExtractor {
     }
 
     static /* synthetic */ boolean lambda$extract$0(HtmlNode htmlNode) {
-        return OffReadDbHelper.COL_TITLE.equals(htmlNode.getTagName());
+        return "title".equals(htmlNode.getTagName());
     }
 
     static /* synthetic */ boolean lambda$extract$1(HtmlNode htmlNode) {
@@ -158,10 +156,10 @@ public class MetadataExtractor {
         String lowerCase = htmlNode.getAttribute("rel").toLowerCase(Locale.ROOT);
         String lowerCase2 = htmlNode.getAttribute("itemprop").toLowerCase(Locale.ROOT);
         String lowerCase3 = htmlNode.getClassName().toLowerCase(Locale.ROOT);
-        if (OffReadDbHelper.COL_AUTHOR.equals(lowerCase) || OffReadDbHelper.COL_AUTHOR.equals(lowerCase2) || lowerCase3.contains("byline") || lowerCase3.contains("author-name")) {
+        if ("author".equals(lowerCase) || "author".equals(lowerCase2) || lowerCase3.contains("byline") || lowerCase3.contains("author-name")) {
             return true;
         }
-        return lowerCase3.contains(OffReadDbHelper.COL_AUTHOR) && !lowerCase3.contains("authors-list");
+        return lowerCase3.contains("author") && !lowerCase3.contains("authors-list");
     }
 
     static /* synthetic */ boolean lambda$extract$3(HtmlNode htmlNode) {

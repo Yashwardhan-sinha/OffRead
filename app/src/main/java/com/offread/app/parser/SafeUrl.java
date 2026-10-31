@@ -1,6 +1,5 @@
 package com.offread.app.parser;
 
-import com.offread.app.data.AppPreferences;
 import java.net.IDN;
 import java.net.InetAddress;
 import java.net.URI;
@@ -26,7 +25,7 @@ public final class SafeUrl {
     }
 
     public static String normalize(String str) {
-        return isWellFormedHttpUrl(str) ? str.trim() : AppPreferences.TTS_LANGUAGE_AUTO;
+        return isWellFormedHttpUrl(str) ? str.trim() : "";
     }
 
     public static boolean isPublicHost(String str) {

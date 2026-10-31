@@ -15,7 +15,6 @@ import com.offread.app.R;
 import com.offread.app.data.AppPreferences;
 import com.offread.app.data.Article;
 import com.offread.app.data.ArticleRepository;
-import com.offread.app.data.OffReadDbHelper;
 import com.offread.app.parser.TextAnalysisUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,7 +86,7 @@ public class SpeedReaderActivity extends ThemedActivity {
         }
         if (this.words.isEmpty()) {
             this.words.add("No");
-            this.words.add(OffReadDbHelper.COL_CONTENT);
+            this.words.add("content");
             this.words.add("found.");
         }
     }

@@ -1,6 +1,5 @@
 package com.offread.app.parser;
 
-import com.offread.app.data.AppPreferences;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,9 +38,9 @@ public final class ArticleContentBlocks {
 
         Block(int i, String str, String str2, String str3) {
             this.type = i;
-            this.text = str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
-            this.imageUrl = str2 == null ? AppPreferences.TTS_LANGUAGE_AUTO : str2;
-            this.alt = str3 == null ? AppPreferences.TTS_LANGUAGE_AUTO : str3;
+            this.text = str == null ? "" : str;
+            this.imageUrl = str2 == null ? "" : str2;
+            this.alt = str3 == null ? "" : str3;
         }
 
         public boolean isImage() {
@@ -80,7 +79,7 @@ public final class ArticleContentBlocks {
             String strTrim = str2.trim();
             if (sb3 != null) {
                 if (strTrim.startsWith("```")) {
-                    arrayList.add(new Block(6, sb3.toString(), AppPreferences.TTS_LANGUAGE_AUTO, AppPreferences.TTS_LANGUAGE_AUTO));
+                    arrayList.add(new Block(6, sb3.toString(), "", ""));
                     sb3 = null;
                 } else if (arrayList.size() < MAX_BLOCKS) {
                     if (sb3.length() > 0) {
@@ -102,14 +101,14 @@ public final class ArticleContentBlocks {
                 } else if (isRule(strTrim)) {
                     flushParagraph(arrayList, sb);
                     flushQuote(arrayList, sb2);
-                    addBlock(arrayList, new Block(8, AppPreferences.TTS_LANGUAGE_AUTO, AppPreferences.TTS_LANGUAGE_AUTO, AppPreferences.TTS_LANGUAGE_AUTO));
+                    addBlock(arrayList, new Block(8, "", "", ""));
                 } else {
                     int iHeadingLevelOf = headingLevelOf(strTrim);
                     int i = 1;
                     if (iHeadingLevelOf > 0) {
                         flushParagraph(arrayList, sb);
                         flushQuote(arrayList, sb2);
-                        String strTrim2 = strTrim.replaceFirst("^#{1,6}[ \\t]+", AppPreferences.TTS_LANGUAGE_AUTO).trim();
+                        String strTrim2 = strTrim.replaceFirst("^#{1,6}[ \\t]+", "").trim();
                         if (iHeadingLevelOf != 1) {
                             i = 2;
                             if (iHeadingLevelOf != 2) {
@@ -120,7 +119,7 @@ public final class ArticleContentBlocks {
                     } else {
                         if (strTrim.startsWith(">")) {
                             flushParagraph(arrayList, sb);
-                            String strTrim3 = strTrim.replaceFirst("^>+[[ \\t]]*", AppPreferences.TTS_LANGUAGE_AUTO).trim();
+                            String strTrim3 = strTrim.replaceFirst("^>+[[ \\t]]*", "").trim();
                             if (!strTrim3.isEmpty()) {
                                 if (z && sb2.length() > 0) {
                                     sb2.append(' ');
@@ -131,7 +130,7 @@ public final class ArticleContentBlocks {
                         } else if (isListLine(strTrim)) {
                             flushParagraph(arrayList, sb);
                             flushQuote(arrayList, sb2);
-                            String strTrim4 = strTrim.replaceFirst("^[\\u2022\\-*+][ \\t]+", AppPreferences.TTS_LANGUAGE_AUTO).trim();
+                            String strTrim4 = strTrim.replaceFirst("^[\\u2022\\-*+][ \\t]+", "").trim();
                             if (!strTrim4.isEmpty()) {
                                 emitWithInlineImages(arrayList, 4, strTrim4);
                             }
@@ -142,7 +141,7 @@ public final class ArticleContentBlocks {
                                 flushQuote(arrayList, sb2);
                                 ImageRef image = parseImage(strStandaloneImageOf);
                                 if (image != null) {
-                                    addBlock(arrayList, new Block(7, AppPreferences.TTS_LANGUAGE_AUTO, image.url, image.alt));
+                                    addBlock(arrayList, new Block(7, "", image.url, image.alt));
                                 }
                             } else {
                                 emitInlineImagesInto(arrayList, sb, strTrim);
@@ -157,7 +156,7 @@ public final class ArticleContentBlocks {
             }
         }
         if (sb3 != null && sb3.length() > 0) {
-            addBlock(arrayList, new Block(6, sb3.toString(), AppPreferences.TTS_LANGUAGE_AUTO, AppPreferences.TTS_LANGUAGE_AUTO));
+            addBlock(arrayList, new Block(6, sb3.toString(), "", ""));
         }
         flushParagraph(arrayList, sb);
         flushQuote(arrayList, sb2);
@@ -225,7 +224,7 @@ public final class ArticleContentBlocks {
         if (strTrim.isEmpty() || AdFilter.isAdPlaceholderText(strTrim)) {
             return;
         }
-        addBlock(list, new Block(0, strTrim, AppPreferences.TTS_LANGUAGE_AUTO, AppPreferences.TTS_LANGUAGE_AUTO));
+        addBlock(list, new Block(0, strTrim, "", ""));
     }
 
     private static void flushQuote(List<Block> list, StringBuilder sb) {
@@ -237,7 +236,7 @@ public final class ArticleContentBlocks {
         if (strTrim.isEmpty() || AdFilter.isAdPlaceholderText(strTrim)) {
             return;
         }
-        addBlock(list, new Block(5, strTrim, AppPreferences.TTS_LANGUAGE_AUTO, AppPreferences.TTS_LANGUAGE_AUTO));
+        addBlock(list, new Block(5, strTrim, "", ""));
     }
 
     private static void emitWithInlineImages(List<Block> list, int i, String str) {
@@ -247,7 +246,7 @@ public final class ArticleContentBlocks {
         if (strTrim.isEmpty()) {
             return;
         }
-        addBlock(list, new Block(i, strTrim, AppPreferences.TTS_LANGUAGE_AUTO, AppPreferences.TTS_LANGUAGE_AUTO));
+        addBlock(list, new Block(i, strTrim, "", ""));
     }
 
     private static void emitInlineImagesInto(List<Block> list, StringBuilder sb, String str) {
@@ -261,7 +260,7 @@ public final class ArticleContentBlocks {
                 sb.append(strTrim);
             }
             if (imageRef.url.length() > 0) {
-                addBlock(list, new Block(7, AppPreferences.TTS_LANGUAGE_AUTO, imageRef.url, imageRef.alt));
+                addBlock(list, new Block(7, "", imageRef.url, imageRef.alt));
             }
             i = imageRef.end;
         }
@@ -364,7 +363,7 @@ public final class ArticleContentBlocks {
         if (str.length() < 3) {
             return false;
         }
-        String strReplace = str.replace(" ", AppPreferences.TTS_LANGUAGE_AUTO);
+        String strReplace = str.replace(" ", "");
         return strReplace.equals("---") || strReplace.equals("***") || strReplace.equals("___");
     }
 
@@ -375,14 +374,14 @@ public final class ArticleContentBlocks {
                 return strResolveUrl;
             }
         }
-        return AppPreferences.TTS_LANGUAGE_AUTO;
+        return "";
     }
 
     public static String inlinePlain(String str) {
         if (str == null || str.isEmpty()) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
-        return TextAnalysisUtil.decodeHtmlEntities(str).replaceAll("!\\[[^\\]]*\\]\\([^)]*\\)", AppPreferences.TTS_LANGUAGE_AUTO).replaceAll("\\[([^\\]]+)\\]\\([^)]*\\)", "$1").replaceAll("`([^`]+)`", "$1").replaceAll("\\*\\*([^*]*)\\*\\*", "$1").replaceAll("__([^_]*)__", "$1").replaceAll("\\*([^*]*)\\*", "$1").replaceAll("_([^_]*)_", "$1").replaceAll("\\s+", " ").trim();
+        return TextAnalysisUtil.decodeHtmlEntities(str).replaceAll("!\\[[^\\]]*\\]\\([^)]*\\)", "").replaceAll("\\[([^\\]]+)\\]\\([^)]*\\)", "$1").replaceAll("`([^`]+)`", "$1").replaceAll("\\*\\*([^*]*)\\*\\*", "$1").replaceAll("__([^_]*)__", "$1").replaceAll("\\*([^*]*)\\*", "$1").replaceAll("_([^_]*)_", "$1").replaceAll("\\s+", " ").trim();
     }
 
     public static String describeType(int i) {

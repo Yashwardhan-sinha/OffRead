@@ -647,7 +647,7 @@ public class ReaderActivity extends ThemedActivity implements ArticleSpeaker.Spe
         String url = this.article.getUrl();
         String title = this.article.getTitle();
         if (url.isEmpty()) {
-            str = AppPreferences.TTS_LANGUAGE_AUTO;
+            str = "";
         } else {
             str = url + "\n\n";
         }

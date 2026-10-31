@@ -32,21 +32,21 @@ public class Article implements Serializable {
     private int wordCount;
 
     public Article() {
-        this.title = AppPreferences.TTS_LANGUAGE_AUTO;
-        this.author = AppPreferences.TTS_LANGUAGE_AUTO;
-        this.url = AppPreferences.TTS_LANGUAGE_AUTO;
-        this.domain = AppPreferences.TTS_LANGUAGE_AUTO;
-        this.content = AppPreferences.TTS_LANGUAGE_AUTO;
-        this.plainText = AppPreferences.TTS_LANGUAGE_AUTO;
-        this.excerpt = AppPreferences.TTS_LANGUAGE_AUTO;
+        this.title = "";
+        this.author = "";
+        this.url = "";
+        this.domain = "";
+        this.content = "";
+        this.plainText = "";
+        this.excerpt = "";
         this.category = "General";
-        this.tags = AppPreferences.TTS_LANGUAGE_AUTO;
+        this.tags = "";
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = System.currentTimeMillis();
-        this.canonicalUrl = AppPreferences.TTS_LANGUAGE_AUTO;
-        this.publishedDate = AppPreferences.TTS_LANGUAGE_AUTO;
-        this.imageUrl = AppPreferences.TTS_LANGUAGE_AUTO;
-        this.language = AppPreferences.TTS_LANGUAGE_AUTO;
+        this.canonicalUrl = "";
+        this.publishedDate = "";
+        this.imageUrl = "";
+        this.language = "";
     }
 
     public Article(long j, String str, String str2, String str3, String str4, String str5, String str6, String str7, int i, int i2, int i3, int i4, boolean z, boolean z2, String str8, String str9, long j2, long j3, long j4) {
@@ -69,10 +69,10 @@ public class Article implements Serializable {
         this.createdAt = j2;
         this.updatedAt = j3;
         this.lastReadAt = j4;
-        this.canonicalUrl = AppPreferences.TTS_LANGUAGE_AUTO;
-        this.publishedDate = AppPreferences.TTS_LANGUAGE_AUTO;
-        this.imageUrl = AppPreferences.TTS_LANGUAGE_AUTO;
-        this.language = AppPreferences.TTS_LANGUAGE_AUTO;
+        this.canonicalUrl = "";
+        this.publishedDate = "";
+        this.imageUrl = "";
+        this.language = "";
     }
 
     public long getId() {
@@ -85,7 +85,7 @@ public class Article implements Serializable {
 
     public String getTitle() {
         String str = this.title;
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
+        return str == null ? "" : str;
     }
 
     public void setTitle(String str) {
@@ -94,7 +94,7 @@ public class Article implements Serializable {
 
     public String getAuthor() {
         String str = this.author;
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
+        return str == null ? "" : str;
     }
 
     public void setAuthor(String str) {
@@ -103,7 +103,7 @@ public class Article implements Serializable {
 
     public String getUrl() {
         String str = this.url;
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
+        return str == null ? "" : str;
     }
 
     public void setUrl(String str) {
@@ -112,7 +112,7 @@ public class Article implements Serializable {
 
     public String getDomain() {
         String str = this.domain;
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
+        return str == null ? "" : str;
     }
 
     public void setDomain(String str) {
@@ -121,7 +121,7 @@ public class Article implements Serializable {
 
     public String getContent() {
         String str = this.content;
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
+        return str == null ? "" : str;
     }
 
     public void setContent(String str) {
@@ -130,7 +130,7 @@ public class Article implements Serializable {
 
     public String getPlainText() {
         String str = this.plainText;
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
+        return str == null ? "" : str;
     }
 
     public void setPlainText(String str) {
@@ -139,7 +139,7 @@ public class Article implements Serializable {
 
     public String getExcerpt() {
         String str = this.excerpt;
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
+        return str == null ? "" : str;
     }
 
     public void setExcerpt(String str) {
@@ -205,7 +205,7 @@ public class Article implements Serializable {
 
     public String getTags() {
         String str = this.tags;
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
+        return str == null ? "" : str;
     }
 
     public void setTags(String str) {
@@ -238,7 +238,7 @@ public class Article implements Serializable {
 
     public String getCanonicalUrl() {
         String str = this.canonicalUrl;
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
+        return str == null ? "" : str;
     }
 
     public void setCanonicalUrl(String str) {
@@ -246,12 +246,12 @@ public class Article implements Serializable {
     }
 
     public static String identityUrl(String str, String str2) {
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str.trim();
+        return str == null ? "" : str.trim();
     }
 
     public String getPublishedDate() {
         String str = this.publishedDate;
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
+        return str == null ? "" : str;
     }
 
     public void setPublishedDate(String str) {
@@ -260,7 +260,7 @@ public class Article implements Serializable {
 
     public String getImageUrl() {
         String str = this.imageUrl;
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
+        return str == null ? "" : str;
     }
 
     public void setImageUrl(String str) {
@@ -269,7 +269,7 @@ public class Article implements Serializable {
 
     public String getLanguage() {
         String str = this.language;
-        return str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str;
+        return str == null ? "" : str;
     }
 
     public void setLanguage(String str) {
@@ -279,21 +279,21 @@ public class Article implements Serializable {
     public JSONObject toJson() throws JSONException {
         JSONObject jSONObject = new JSONObject();
         jSONObject.put("id", this.id);
-        jSONObject.put(OffReadDbHelper.COL_TITLE, this.title);
-        jSONObject.put(OffReadDbHelper.COL_AUTHOR, this.author);
-        jSONObject.put(OffReadDbHelper.COL_URL, this.url);
-        jSONObject.put(OffReadDbHelper.COL_DOMAIN, this.domain);
-        jSONObject.put(OffReadDbHelper.COL_CONTENT, this.content);
+        jSONObject.put("title", this.title);
+        jSONObject.put("author", this.author);
+        jSONObject.put("url", this.url);
+        jSONObject.put("domain", this.domain);
+        jSONObject.put("content", this.content);
         jSONObject.put("plainText", this.plainText);
-        jSONObject.put(OffReadDbHelper.COL_EXCERPT, this.excerpt);
+        jSONObject.put("excerpt", this.excerpt);
         jSONObject.put("wordCount", this.wordCount);
         jSONObject.put("readingTimeMinutes", this.readingTimeMinutes);
         jSONObject.put("scrollPosition", this.scrollPosition);
         jSONObject.put("progressPercent", this.progressPercent);
         jSONObject.put("isFavorite", this.isFavorite);
         jSONObject.put("isArchived", this.isArchived);
-        jSONObject.put(OffReadDbHelper.COL_CATEGORY, this.category);
-        jSONObject.put(OffReadDbHelper.COL_TAGS, this.tags);
+        jSONObject.put("category", this.category);
+        jSONObject.put("tags", this.tags);
         jSONObject.put("createdAt", this.createdAt);
         jSONObject.put("updatedAt", this.updatedAt);
         jSONObject.put("lastReadAt", this.lastReadAt);
@@ -307,28 +307,28 @@ public class Article implements Serializable {
     public static Article fromJson(JSONObject jSONObject) {
         Article article = new Article();
         article.id = jSONObject.optLong("id", 0L);
-        article.title = jSONObject.optString(OffReadDbHelper.COL_TITLE, AppPreferences.TTS_LANGUAGE_AUTO);
-        article.author = jSONObject.optString(OffReadDbHelper.COL_AUTHOR, AppPreferences.TTS_LANGUAGE_AUTO);
-        article.url = jSONObject.optString(OffReadDbHelper.COL_URL, AppPreferences.TTS_LANGUAGE_AUTO);
-        article.domain = jSONObject.optString(OffReadDbHelper.COL_DOMAIN, AppPreferences.TTS_LANGUAGE_AUTO);
-        article.content = jSONObject.optString(OffReadDbHelper.COL_CONTENT, AppPreferences.TTS_LANGUAGE_AUTO);
-        article.plainText = jSONObject.optString("plainText", AppPreferences.TTS_LANGUAGE_AUTO);
-        article.excerpt = jSONObject.optString(OffReadDbHelper.COL_EXCERPT, AppPreferences.TTS_LANGUAGE_AUTO);
+        article.title = jSONObject.optString("title", "");
+        article.author = jSONObject.optString("author", "");
+        article.url = jSONObject.optString("url", "");
+        article.domain = jSONObject.optString("domain", "");
+        article.content = jSONObject.optString("content", "");
+        article.plainText = jSONObject.optString("plainText", "");
+        article.excerpt = jSONObject.optString("excerpt", "");
         article.wordCount = jSONObject.optInt("wordCount", 0);
         article.readingTimeMinutes = jSONObject.optInt("readingTimeMinutes", 1);
         article.scrollPosition = jSONObject.optInt("scrollPosition", 0);
         article.progressPercent = jSONObject.optInt("progressPercent", 0);
         article.isFavorite = jSONObject.optBoolean("isFavorite", false);
         article.isArchived = jSONObject.optBoolean("isArchived", false);
-        article.category = jSONObject.optString(OffReadDbHelper.COL_CATEGORY, "General");
-        article.tags = jSONObject.optString(OffReadDbHelper.COL_TAGS, AppPreferences.TTS_LANGUAGE_AUTO);
+        article.category = jSONObject.optString("category", "General");
+        article.tags = jSONObject.optString("tags", "");
         article.createdAt = jSONObject.optLong("createdAt", System.currentTimeMillis());
         article.updatedAt = jSONObject.optLong("updatedAt", System.currentTimeMillis());
         article.lastReadAt = jSONObject.optLong("lastReadAt", 0L);
-        article.canonicalUrl = jSONObject.optString("canonicalUrl", AppPreferences.TTS_LANGUAGE_AUTO);
-        article.publishedDate = jSONObject.optString("publishedDate", AppPreferences.TTS_LANGUAGE_AUTO);
-        article.imageUrl = jSONObject.optString("imageUrl", AppPreferences.TTS_LANGUAGE_AUTO);
-        article.language = jSONObject.optString("language", AppPreferences.TTS_LANGUAGE_AUTO);
+        article.canonicalUrl = jSONObject.optString("canonicalUrl", "");
+        article.publishedDate = jSONObject.optString("publishedDate", "");
+        article.imageUrl = jSONObject.optString("imageUrl", "");
+        article.language = jSONObject.optString("language", "");
         return article;
     }
 }

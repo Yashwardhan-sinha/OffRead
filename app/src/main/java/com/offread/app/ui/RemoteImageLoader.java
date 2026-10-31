@@ -8,7 +8,6 @@ import android.os.Looper;
 import android.util.LruCache;
 import android.widget.ImageView;
 import com.offread.app.R;
-import com.offread.app.data.AppPreferences;
 import com.offread.app.parser.SafeUrl;
 import com.offread.app.parser.TextAnalysisUtil;
 import java.io.ByteArrayOutputStream;
@@ -45,7 +44,7 @@ public final class RemoteImageLoader {
         if (imageView == null) {
             return;
         }
-        final String strTrim = str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str.trim();
+        final String strTrim = str == null ? "" : str.trim();
         imageView.setTag(strTrim);
         if (strTrim.isEmpty() || !SafeUrl.isWellFormedHttpUrl(strTrim)) {
             imageView.setVisibility(8);

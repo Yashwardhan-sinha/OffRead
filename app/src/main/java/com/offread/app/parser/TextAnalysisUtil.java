@@ -1,6 +1,5 @@
 package com.offread.app.parser;
 
-import com.offread.app.data.AppPreferences;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,7 @@ public class TextAnalysisUtil {
 
     public static String createExcerpt(String str, int i) {
         if (str == null) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         String strTrim = str.replaceAll("\\s+", " ").trim();
         if (strTrim.length() <= i) {
@@ -95,7 +94,7 @@ public class TextAnalysisUtil {
 
     public static String resolveUrl(String str, String str2) {
         int iIndexOf;
-        String str3 = AppPreferences.TTS_LANGUAGE_AUTO;
+        String str3 = "";
         if (str2 != null && !str2.trim().isEmpty()) {
             String strTrim = str2.trim();
             if (!strTrim.startsWith("data:") && !strTrim.startsWith("javascript:") && !strTrim.startsWith("mailto:")) {
@@ -129,12 +128,12 @@ public class TextAnalysisUtil {
                 }
             }
         }
-        return AppPreferences.TTS_LANGUAGE_AUTO;
+        return "";
     }
 
     public static String cleanTitle(String str, String str2) {
         if (str == null || str.trim().isEmpty()) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         String strTrim = decodeHtmlEntities(str.trim()).replaceAll("\\s+", " ").trim();
         String[] strArr = {" | ", " — ", " – ", " - ", " :: ", " • ", " » ", " · "};
@@ -154,21 +153,21 @@ public class TextAnalysisUtil {
 
     public static String cleanAuthor(String str) {
         if (str == null || str.trim().isEmpty()) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
-        return decodeHtmlEntities(str.trim()).replaceAll("(?i)^(by|written by|author:|posted by|words by)\\s+", AppPreferences.TTS_LANGUAGE_AUTO).replaceAll("\\s+", " ").trim();
+        return decodeHtmlEntities(str.trim()).replaceAll("(?i)^(by|written by|author:|posted by|words by)\\s+", "").replaceAll("\\s+", " ").trim();
     }
 
     public static String stripMarkdown(String str) {
         if (str == null || str.isEmpty()) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
-        return str.replaceAll("```[a-zA-Z]*\\n[\\s\\S]*?```", AppPreferences.TTS_LANGUAGE_AUTO).replaceAll("`([^`]+)`", "$1").replaceAll("!\\[[^\\]]*\\]\\([^)]+\\)", AppPreferences.TTS_LANGUAGE_AUTO).replaceAll("\\[([^\\]]+)\\]\\([^)]+\\)", "$1").replaceAll("(?m)^#{1,6}\\s*", AppPreferences.TTS_LANGUAGE_AUTO).replaceAll("(?m)^>\\s*", AppPreferences.TTS_LANGUAGE_AUTO).replaceAll("\\*\\*([^*]+)\\*\\*", "$1").replaceAll("\\*([^*]+)\\*", "$1").replaceAll("__([^_]+)__", "$1").replaceAll("_([^_]+)_", "$1").replaceAll("(?m)^[-*_]{3,}\\s*$", AppPreferences.TTS_LANGUAGE_AUTO).replaceAll("\n{3,}", "\n\n").trim();
+        return str.replaceAll("```[a-zA-Z]*\\n[\\s\\S]*?```", "").replaceAll("`([^`]+)`", "$1").replaceAll("!\\[[^\\]]*\\]\\([^)]+\\)", "").replaceAll("\\[([^\\]]+)\\]\\([^)]+\\)", "$1").replaceAll("(?m)^#{1,6}\\s*", "").replaceAll("(?m)^>\\s*", "").replaceAll("\\*\\*([^*]+)\\*\\*", "$1").replaceAll("\\*([^*]+)\\*", "$1").replaceAll("__([^_]+)__", "$1").replaceAll("_([^_]+)_", "$1").replaceAll("(?m)^[-*_]{3,}\\s*$", "").replaceAll("\n{3,}", "\n\n").trim();
     }
 
     public static String decodeHtmlEntities(String str) {
         if (str == null || str.isEmpty()) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         String strReplace = str.replace("&nbsp;", " ").replace("&amp;", "&").replace("&quot;", "\"").replace("&apos;", "'").replace("&#39;", "'").replace("&lt;", "<").replace("&gt;", ">").replace("&mdash;", "—").replace("&ndash;", "–").replace("&hellip;", "…").replace("&ldquo;", "\"").replace("&rdquo;", "\"").replace("&lsquo;", "‘").replace("&rsquo;", "’").replace("&laquo;", "«").replace("&raquo;", "»").replace("&copy;", "©").replace("&reg;", "®").replace("&trade;", "™").replace("&bull;", "•").replace("&cent;", "¢").replace("&pound;", "£").replace("&yen;", "¥").replace("&euro;", "€");
         if (!strReplace.contains("&#")) {
@@ -182,7 +181,7 @@ public class TextAnalysisUtil {
                 if (Character.isValidCodePoint(i)) {
                     matcher.appendReplacement(sb, Matcher.quoteReplacement(new String(Character.toChars(i))));
                 } else {
-                    matcher.appendReplacement(sb, AppPreferences.TTS_LANGUAGE_AUTO);
+                    matcher.appendReplacement(sb, "");
                 }
             } catch (Exception unused) {
                 matcher.appendReplacement(sb, matcher.group(0));
@@ -197,7 +196,7 @@ public class TextAnalysisUtil {
                 if (Character.isValidCodePoint(i2)) {
                     matcher2.appendReplacement(sb2, Matcher.quoteReplacement(new String(Character.toChars(i2))));
                 } else {
-                    matcher2.appendReplacement(sb2, AppPreferences.TTS_LANGUAGE_AUTO);
+                    matcher2.appendReplacement(sb2, "");
                 }
             } catch (Exception unused2) {
                 matcher2.appendReplacement(sb2, matcher2.group(0));

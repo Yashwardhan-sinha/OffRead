@@ -13,7 +13,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.offread.app.R;
-import com.offread.app.data.AppPreferences;
 import com.offread.app.data.Article;
 import com.offread.app.data.ArticleRepository;
 import com.offread.app.parser.ArticleExtractor;
@@ -314,7 +313,7 @@ public class AddArticleActivity extends ThemedActivity {
         Article article = new Article();
         article.setTitle(readabilityResultProcessUserText.getTitle());
         article.setAuthor(readabilityResultProcessUserText.getAuthor());
-        article.setUrl(AppPreferences.TTS_LANGUAGE_AUTO);
+        article.setUrl("");
         article.setDomain(getString(R.string.note_category));
         article.setContent(readabilityResultProcessUserText.getContent());
         article.setPlainText(readabilityResultProcessUserText.getPlainText());

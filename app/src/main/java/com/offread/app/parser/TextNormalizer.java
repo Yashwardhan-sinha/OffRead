@@ -1,6 +1,5 @@
 package com.offread.app.parser;
 
-import com.offread.app.data.AppPreferences;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -19,22 +18,22 @@ public final class TextNormalizer {
 
     public static String normalizeArticle(String str) {
         if (str == null || str.isEmpty()) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
-        return collapseFenceBlanks(dropPlaceholderLines(BLANK_RUN.matcher(LONE_MARKERS.matcher(EMPTY_BULLET.matcher(EMPTY_QUOTE.matcher(EMPTY_HEADING.matcher(MULTI_SPACE.matcher(scrubInvisible(str).replace("\r\n", "\n").replace('\r', '\n')).replaceAll(" ").replaceAll("[ \\t]+\\n", "\n").replaceAll("\\n[ \\t]+", "\n")).replaceAll(AppPreferences.TTS_LANGUAGE_AUTO)).replaceAll(AppPreferences.TTS_LANGUAGE_AUTO)).replaceAll(AppPreferences.TTS_LANGUAGE_AUTO)).replaceAll(AppPreferences.TTS_LANGUAGE_AUTO)).replaceAll("\n\n").replaceAll("\n{3,}", "\n\n"))).replaceAll("\n{3,}", "\n\n").trim();
+        return collapseFenceBlanks(dropPlaceholderLines(BLANK_RUN.matcher(LONE_MARKERS.matcher(EMPTY_BULLET.matcher(EMPTY_QUOTE.matcher(EMPTY_HEADING.matcher(MULTI_SPACE.matcher(scrubInvisible(str).replace("\r\n", "\n").replace('\r', '\n')).replaceAll(" ").replaceAll("[ \\t]+\\n", "\n").replaceAll("\\n[ \\t]+", "\n")).replaceAll("")).replaceAll("")).replaceAll("")).replaceAll("")).replaceAll("\n\n").replaceAll("\n{3,}", "\n\n"))).replaceAll("\n{3,}", "\n\n").trim();
     }
 
     public static String normalizeInline(String str) {
         if (str == null || str.isEmpty()) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         String strTrim = MULTI_SPACE.matcher(scrubInvisible(str)).replaceAll(" ").replaceAll("[ \\t]*\\n[ \\t]*", " ").trim();
-        return AdFilter.isAdPlaceholderText(strTrim) ? AppPreferences.TTS_LANGUAGE_AUTO : strTrim;
+        return AdFilter.isAdPlaceholderText(strTrim) ? "" : strTrim;
     }
 
     public static String dropPlaceholderLines(String str) {
         if (str == null || str.isEmpty()) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         String[] strArrSplit = str.split("\n", -1);
         StringBuilder sb = new StringBuilder(str.length());
@@ -84,7 +83,7 @@ public final class TextNormalizer {
     }
 
     private static String stripBlockMarkers(String str) {
-        return str.replaceAll("^\\#+[ \\t]+", AppPreferences.TTS_LANGUAGE_AUTO).replaceAll("^>+[ \\t]*", AppPreferences.TTS_LANGUAGE_AUTO).replaceAll("^[\\u2022\\-*+][ \\t]+", AppPreferences.TTS_LANGUAGE_AUTO).replaceAll("^[-=*~_\\s]+$", AppPreferences.TTS_LANGUAGE_AUTO).trim();
+        return str.replaceAll("^\\#+[ \\t]+", "").replaceAll("^>+[ \\t]*", "").replaceAll("^[\\u2022\\-*+][ \\t]+", "").replaceAll("^[-=*~_\\s]+$", "").trim();
     }
 
     private static String collapseFenceBlanks(String str) {
@@ -93,7 +92,7 @@ public final class TextNormalizer {
 
     public static String scrubInvisible(String str) {
         if (str == null) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         StringBuilder sb = new StringBuilder(str.length());
         for (int i = 0; i < str.length(); i++) {
@@ -113,6 +112,6 @@ public final class TextNormalizer {
     }
 
     public static boolean isReadableContentEmpty(String str) {
-        return str == null || TextAnalysisUtil.stripMarkdown(str).replaceAll("[\\s\\p{Punct}]", AppPreferences.TTS_LANGUAGE_AUTO).toLowerCase(Locale.ROOT).length() < 3;
+        return str == null || TextAnalysisUtil.stripMarkdown(str).replaceAll("[\\s\\p{Punct}]", "").toLowerCase(Locale.ROOT).length() < 3;
     }
 }

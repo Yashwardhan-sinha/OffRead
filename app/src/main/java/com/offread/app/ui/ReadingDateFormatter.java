@@ -2,7 +2,6 @@ package com.offread.app.ui;
 
 import android.content.Context;
 import com.offread.app.R;
-import com.offread.app.data.AppPreferences;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -16,7 +15,7 @@ public final class ReadingDateFormatter {
 
     public static String format(Context context, long j) {
         if (context == null || j <= 0) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(j);

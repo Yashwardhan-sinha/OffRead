@@ -1,6 +1,5 @@
 package com.offread.app.parser;
 
-import com.offread.app.data.AppPreferences;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -98,7 +97,7 @@ public class NetworkFetcher {
             httpURLConnection.disconnect();
             String str2 = new String(allBytesWithLimit, detectCharset(contentType, allBytesWithLimit));
             if (contentType == null) {
-                contentType = AppPreferences.TTS_LANGUAGE_AUTO;
+                contentType = "";
             }
             return new FetchResult(str2, str, responseCode, contentType);
         } catch (Throwable th) {

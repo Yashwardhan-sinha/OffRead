@@ -1,8 +1,6 @@
 package com.offread.app.util;
 
-import com.offread.app.data.AppPreferences;
 import com.offread.app.data.Article;
-import com.offread.app.data.OffReadDbHelper;
 import com.offread.app.parser.SafeUrl;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,7 +30,7 @@ public class BackupHelper {
         while (it.hasNext()) {
             jSONArray.put(it.next().toJson());
         }
-        jSONObject.put(OffReadDbHelper.TABLE_ARTICLES, jSONArray);
+        jSONObject.put("articles", jSONArray);
         return jSONObject.toString(2);
     }
 
@@ -46,7 +44,7 @@ public class BackupHelper {
         if (exceedsImportDepth(str)) {
             throw new JSONException("Backup nesting is too deep");
         }
-        JSONArray jSONArray = new JSONObject(str).getJSONArray(OffReadDbHelper.TABLE_ARTICLES);
+        JSONArray jSONArray = new JSONObject(str).getJSONArray("articles");
         int iMin = Math.min(jSONArray.length(), MAX_IMPORT_RECORDS);
         ArrayList arrayList = new ArrayList();
         for (int i = 0; i < iMin; i++) {
@@ -72,10 +70,10 @@ public class BackupHelper {
 
     public static String sanitizeOptionalUrl(String str) {
         if (str == null) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         String strTrim = str.trim();
-        return (!strTrim.isEmpty() && SafeUrl.isWellFormedHttpUrl(strTrim)) ? strTrim : AppPreferences.TTS_LANGUAGE_AUTO;
+        return (!strTrim.isEmpty() && SafeUrl.isWellFormedHttpUrl(strTrim)) ? strTrim : "";
     }
 
     public static boolean exceedsImportDepth(String str) {

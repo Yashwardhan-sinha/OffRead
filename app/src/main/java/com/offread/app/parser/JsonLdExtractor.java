@@ -1,7 +1,5 @@
 package com.offread.app.parser;
 
-import com.offread.app.data.AppPreferences;
-import com.offread.app.data.OffReadDbHelper;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,13 +10,13 @@ import java.util.Map;
 public class JsonLdExtractor {
 
     public static class JsonLdData {
-        public String headline = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String author = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String datePublished = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String description = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String imageUrl = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String publisherName = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String articleBody = AppPreferences.TTS_LANGUAGE_AUTO;
+        public String headline = "";
+        public String author = "";
+        public String datePublished = "";
+        public String description = "";
+        public String imageUrl = "";
+        public String publisherName = "";
+        public String articleBody = "";
     }
 
     public static JsonLdData extract(HtmlNode htmlNode) {
@@ -88,8 +86,8 @@ public class JsonLdExtractor {
                 jsonLdData.headline = String.valueOf(map.get("name"));
             }
         }
-        if (jsonLdData.author.isEmpty() && map.containsKey(OffReadDbHelper.COL_AUTHOR)) {
-            jsonLdData.author = extractAuthor(map.get(OffReadDbHelper.COL_AUTHOR));
+        if (jsonLdData.author.isEmpty() && map.containsKey("author")) {
+            jsonLdData.author = extractAuthor(map.get("author"));
         }
         if (jsonLdData.datePublished.isEmpty()) {
             if (map.containsKey("datePublished")) {
@@ -124,7 +122,7 @@ public class JsonLdExtractor {
 
     private static String extractAuthor(Object obj) {
         if (obj == null) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         if (obj instanceof String) {
             return (String) obj;
@@ -132,12 +130,12 @@ public class JsonLdExtractor {
         if (obj instanceof Map) {
             Object obj2 = ((Map) obj).get("name");
             if (obj2 == null) {
-                return AppPreferences.TTS_LANGUAGE_AUTO;
+                return "";
             }
             return String.valueOf(obj2);
         }
         if (!(obj instanceof List)) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         StringBuilder sb = new StringBuilder();
         Iterator it = ((List) obj).iterator();
@@ -155,15 +153,15 @@ public class JsonLdExtractor {
 
     private static String extractImageUrl(Object obj) {
         if (obj == null) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         if (obj instanceof String) {
             return (String) obj;
         }
         if (obj instanceof Map) {
-            Object obj2 = ((Map) obj).get(OffReadDbHelper.COL_URL);
+            Object obj2 = ((Map) obj).get("url");
             if (obj2 == null) {
-                return AppPreferences.TTS_LANGUAGE_AUTO;
+                return "";
             }
             return String.valueOf(obj2);
         }
@@ -176,6 +174,6 @@ public class JsonLdExtractor {
                 }
             }
         }
-        return AppPreferences.TTS_LANGUAGE_AUTO;
+        return "";
     }
 }

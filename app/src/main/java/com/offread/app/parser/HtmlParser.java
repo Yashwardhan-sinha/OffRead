@@ -1,6 +1,5 @@
 package com.offread.app.parser;
 
-import com.offread.app.data.AppPreferences;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -250,7 +249,7 @@ public class HtmlParser {
             while (i3 < length && Character.isWhitespace(str.charAt(i3))) {
                 i3++;
             }
-            String strSubstring = AppPreferences.TTS_LANGUAGE_AUTO;
+            String strSubstring = "";
             if (i3 < length && str.charAt(i3) == '=') {
                 do {
                     i3++;
@@ -298,7 +297,7 @@ public class HtmlParser {
         Map<String, String> values;
 
         private ParsedTag() {
-            this.name = AppPreferences.TTS_LANGUAGE_AUTO;
+            this.name = "";
             this.keys = new ArrayList();
             this.values = new HashMap();
         }
@@ -309,7 +308,7 @@ public class HtmlParser {
 
         String getValue(String str) {
             String str2 = this.values.get(str);
-            return str2 != null ? str2 : AppPreferences.TTS_LANGUAGE_AUTO;
+            return str2 != null ? str2 : "";
         }
     }
 }

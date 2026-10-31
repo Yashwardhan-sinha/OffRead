@@ -18,7 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.offread.app.R;
-import com.offread.app.data.AppPreferences;
 import com.offread.app.data.Article;
 import com.offread.app.data.ArticleRepository;
 import com.offread.app.parser.ArticleExtractor;
@@ -276,7 +275,7 @@ public class MainActivity extends ThemedActivity implements ArticleAdapter.OnArt
         this.btnFetch.setEnabled(true);
         this.progressArticle.setVisibility(8);
         if (article != null) {
-            this.editUrl.setText(AppPreferences.TTS_LANGUAGE_AUTO);
+            this.editUrl.setText("");
             loadLibrary();
             openArticle(article);
         } else {
@@ -308,7 +307,7 @@ public class MainActivity extends ThemedActivity implements ArticleAdapter.OnArt
         article.setLanguage(readabilityResult.getLanguage());
         article.setCategory(siteName);
         if (article.getTags() == null || article.getTags().isEmpty()) {
-            article.setTags(AppPreferences.TTS_LANGUAGE_AUTO);
+            article.setTags("");
         }
         ArticleRepository articleRepository = this.repository;
         if (articleFindArticleByUrl != null) {

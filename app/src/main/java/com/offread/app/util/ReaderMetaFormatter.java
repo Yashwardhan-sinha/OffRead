@@ -1,6 +1,5 @@
 package com.offread.app.util;
 
-import com.offread.app.data.AppPreferences;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -17,7 +16,7 @@ public final class ReaderMetaFormatter {
     public static String join(String... strArr) {
         StringBuilder sb = new StringBuilder();
         if (strArr == null) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         for (String str : strArr) {
             if (str != null) {

@@ -1,6 +1,5 @@
 package com.offread.app.parser;
 
-import com.offread.app.data.AppPreferences;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,8 +13,8 @@ public class ReadabilityEngine {
     private static final Set<String> UNWANTED_TAGS = new HashSet(Arrays.asList("script", "style", "noscript", "template", "svg", "canvas", "applet", "object", "embed", "form", "input", "button", "select", "textarea", "nav", "footer", "aside", "dialog", "iframe"));
 
     public static class ExtractionResult {
-        public String markdown = AppPreferences.TTS_LANGUAGE_AUTO;
-        public String plainText = AppPreferences.TTS_LANGUAGE_AUTO;
+        public String markdown = "";
+        public String plainText = "";
     }
 
     public static ExtractionResult extractContent(HtmlNode htmlNode, String str, String str2) {
@@ -466,6 +465,6 @@ public class ReadabilityEngine {
 
             private static String getParentTag(HtmlNode htmlNode) {
                 HtmlNode parent = htmlNode.getParent();
-                return parent != null ? parent.getTagName() : AppPreferences.TTS_LANGUAGE_AUTO;
+                return parent != null ? parent.getTagName() : "";
             }
         }

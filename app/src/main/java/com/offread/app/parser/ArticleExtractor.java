@@ -1,7 +1,5 @@
 package com.offread.app.parser;
 
-import com.offread.app.data.AppPreferences;
-
 /* JADX INFO: loaded from: classes.dex */
 public class ArticleExtractor {
     public static ReadabilityResult fetchFromUrl(String str) throws Exception {
@@ -17,9 +15,9 @@ public class ArticleExtractor {
         if (str == null || str.trim().isEmpty()) {
             String strExtractDomain = TextAnalysisUtil.extractDomain(str3);
             if (str3 == null) {
-                str3 = AppPreferences.TTS_LANGUAGE_AUTO;
+                str3 = "";
             }
-            return new ReadabilityResult("Untitled", AppPreferences.TTS_LANGUAGE_AUTO, AppPreferences.TTS_LANGUAGE_AUTO, AppPreferences.TTS_LANGUAGE_AUTO, AppPreferences.TTS_LANGUAGE_AUTO, 0, 1, AppPreferences.TTS_LANGUAGE_AUTO, AppPreferences.TTS_LANGUAGE_AUTO, strExtractDomain, str3, AppPreferences.TTS_LANGUAGE_AUTO);
+            return new ReadabilityResult("Untitled", "", "", "", "", 0, 1, "", "", strExtractDomain, str3, "");
         }
         HtmlNode htmlNode = HtmlParser.parse(str);
         MetadataExtractor.ArticleMetadata articleMetadataExtract = MetadataExtractor.extract(htmlNode, str3);
@@ -48,8 +46,8 @@ public class ArticleExtractor {
 
     public static ReadabilityResult processUserText(String str, String str2, String str3) {
         String strTrim = (str == null || str.trim().isEmpty()) ? "Untitled Note" : str.trim();
-        String strTrim2 = AppPreferences.TTS_LANGUAGE_AUTO;
-        String strTrim3 = str2 != null ? str2.trim() : AppPreferences.TTS_LANGUAGE_AUTO;
+        String strTrim2 = "";
+        String strTrim3 = str2 != null ? str2.trim() : "";
         if (str3 != null) {
             strTrim2 = str3.trim();
         }

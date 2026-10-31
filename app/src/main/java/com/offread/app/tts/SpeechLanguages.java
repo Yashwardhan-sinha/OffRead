@@ -2,7 +2,6 @@ package com.offread.app.tts;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
-import com.offread.app.data.AppPreferences;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -76,7 +75,7 @@ public final class SpeechLanguages {
 
     public static String displayLabel(Locale locale) {
         if (locale == null) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         Locale locale2 = Locale.getDefault();
         String displayLanguage = locale.getDisplayLanguage(locale2);
@@ -91,13 +90,13 @@ public final class SpeechLanguages {
             }
             return displayLanguage + " (" + variant + ")";
         }
-        return displayLanguage + " (" + new Locale(AppPreferences.TTS_LANGUAGE_AUTO, country).getDisplayCountry(locale2) + ")";
+        return displayLanguage + " (" + new Locale("", country).getDisplayCountry(locale2) + ")";
     }
 
     public static String tagOf(Locale locale) {
         String language;
         if (locale == null || (language = locale.getLanguage()) == null || language.isEmpty()) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         String country = locale.getCountry();
         if (country == null || country.isEmpty()) {
@@ -121,7 +120,7 @@ public final class SpeechLanguages {
     }
 
     public static Locale fromHtmlLang(String str, List<Locale> list) {
-        Locale localeLocaleForTag = localeForTag(str == null ? AppPreferences.TTS_LANGUAGE_AUTO : str.replace('_', '-'));
+        Locale localeLocaleForTag = localeForTag(str == null ? "" : str.replace('_', '-'));
         if (localeLocaleForTag == null) {
             return null;
         }

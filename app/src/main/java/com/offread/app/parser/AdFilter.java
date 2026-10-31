@@ -1,7 +1,5 @@
 package com.offread.app.parser;
 
-import com.offread.app.data.AppPreferences;
-import com.offread.app.data.OffReadDbHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,7 +13,7 @@ import java.util.function.Predicate;
 public final class AdFilter {
     private static final Set<String> BOILERPLATE_TOKENS = new HashSet(Arrays.asList("ad", "ads", "advert", "adverts", "advertisement", "advertisements", "advertising", "adv", "advertorial", "sponsor", "sponsors", "sponsored", "sponsorship", "promo", "promos", "promotion", "promotions", "promoted", "commercial", "commercials", "monetized", "monetisation", "monetization", "banner", "banners", "leaderboard", "halfpage", "half-page", "megabar", "interstitial", "popunder", "popunderlayer", "popuplayer", "nativead", "adslot", "adunit", "adbox", "adsense", "adsbygoogle", "dfp", "gpt", "gemini", "mrec", "skyainer", "takeover", "netboard", "comment", "comments", "combx", "disqus", "remark", "shoutbox", "community", "sidebar", "nav", "navbar", "navmenu", "menu", "menubar", "navigation", "header", "foot", "footer", "bottombar", "topbar", "masthead", "breadcrumb", "breadcrumbs", "pagination", "pager", "pages", "jump", "share", "sharing", "social", "subscribe", "subscription", "newsletter", "signup", "register", "registration", "paywall", "subscribeunit", "cookie", "cookies", "consent", "gdpr", "privacy", "rgpd", "popup", "popups", "modal", "modals", "overlay", "toast", "interstitialmodal", "tracker", "tracking", "telemetry", "pixel", "pixels", "related", "relatedposts", "recommendation", "recommendations", "recommended", "trending", "mostread", "mostpopular", "outbrain", "taboola", "criteo", "nativo", "widget", "widgets", "rss", "feed", "feeds", "syndication", "advertise", "advertisingpolicy", "editorialpolicy"));
     private static final Set<String> AD_SPECIFIC_TOKENS = new HashSet(Arrays.asList("ad", "ads", "advert", "adverts", "advertisement", "advertisements", "advertising", "advertise", "advertorial", "sponsor", "sponsors", "sponsored", "adsense", "adsbygoogle", "adslot", "adunit", "adbox", "dfp", "gpt", "mrec", "interstitial", "popunder", "monetized", "commercial", "commercials"));
-    private static final Set<String> PROTECTED_TOKENS = new HashSet(Arrays.asList("article", "body", OffReadDbHelper.COL_CONTENT, "entry", "main", "post", "story", "prose", "text", "page", "paragraph", "articlebody", "storybody"));
+    private static final Set<String> PROTECTED_TOKENS = new HashSet(Arrays.asList("article", "body", "content", "entry", "main", "post", "story", "prose", "text", "page", "paragraph", "articlebody", "storybody"));
     private static final Set<String> AD_ATTRIBUTE_NAMES = new HashSet(Arrays.asList("data-ad-client", "data-ad-slot", "data-ad-format", "data-ad-width", "data-ad-height", "data-ad-region", "data-ad-unit", "data-ads", "data-adv", "data-advertisement", "data-doubleclick", "data-dfp", "data-gpt", "data-google-query-id", "data-google-ad", "data-widget-id", "data-mobile-ad", "data-sticky-ad", "data-native-ad", "data-sponsored", "data-sponsor", "data-promoted", "data-element-id", "data-legacy-widget-id", "data-ad-test", "data-adbreak"));
     private static final String[] AD_NETWORK_MARKERS = {"adsbygoogle", "googleadservices", "googlesyndication", "pagead", "doubleclick", "googletagservices", "gpt.js", "/dfp/", "dfp-gpt", "amazon-adsystem", "aax-us", "taboola", "outbrain", "criteo", "rubiconproject", "pubmatic", "adnxs", "adsafeprotected", "smartadserver", "adform", "spotxchange", "openx", "yieldmo", "medianet", "sovrn", "zedo", "threepassads", "betweendigital", "yandex-ads", "yads", "vk_ads", "moedendigital", "monetize", "zeotap", "nativo", "adshot", "activeads", "adsterra", "popads", "juicyads", "exoclick", "revcontent", "adstxt", "adserv", "ad-stg", "adn.", "adn.net", "moas", "businessinsider.ads", "/ads/", "?ad=", "adtag", "adtiny", "fling", "mgid", "plista", "vliplatform", "jimads", "revenuehits", "TPNAds", "tpnads", "a-ads", "voiceads", "widespace", "broadsign", "carbonads", "buysellads", "buysellads"};
     private static final Set<String> AD_NOUNS = new HashSet(Arrays.asList("ad", "ads", "advert", "advertisement", "advertisements", "advertising", "advertise", "sponsor", "sponsors", "sponsored", "sponsorship", "promo", "promos", "promotion", "promoted", "commercial", "commercials", "advertorial", "monetized"));
@@ -148,7 +146,7 @@ public final class AdFilter {
     }
 
     private static boolean isAdLabeled(HtmlNode htmlNode) {
-        String strFirstNonEmpty = firstNonEmpty(htmlNode.getAttribute("aria-label"), htmlNode.getAttribute("aria-roledescription"), htmlNode.getAttribute("data-ad-label"), htmlNode.getAttribute(OffReadDbHelper.COL_TITLE), htmlNode.getAttribute("alt"), htmlNode.getAttribute("data-label"));
+        String strFirstNonEmpty = firstNonEmpty(htmlNode.getAttribute("aria-label"), htmlNode.getAttribute("aria-roledescription"), htmlNode.getAttribute("data-ad-label"), htmlNode.getAttribute("title"), htmlNode.getAttribute("alt"), htmlNode.getAttribute("data-label"));
         if (strFirstNonEmpty.isEmpty()) {
             return false;
         }
@@ -271,7 +269,7 @@ public final class AdFilter {
 
     private static String normalizePhrase(String str) {
         if (str == null) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         String strDecodeHtmlEntities = TextAnalysisUtil.decodeHtmlEntities(str);
         StringBuilder sb = new StringBuilder(strDecodeHtmlEntities.length());
@@ -284,7 +282,7 @@ public final class AdFilter {
                 sb.append(cCharAt);
             }
         }
-        return sb.toString().toLowerCase(Locale.ROOT).trim().replaceAll("\\s+", " ").replaceAll("^[.·•‧∙・*_=\\-–—~|:,;\\s]+", AppPreferences.TTS_LANGUAGE_AUTO).replaceAll("[.·•‧∙・*_=\\-–—~|:,;\\s]+$", AppPreferences.TTS_LANGUAGE_AUTO).trim();
+        return sb.toString().toLowerCase(Locale.ROOT).trim().replaceAll("\\s+", " ").replaceAll("^[.·•‧∙・*_=\\-–—~|:,;\\s]+", "").replaceAll("[.·•‧∙・*_=\\-–—~|:,;\\s]+$", "").trim();
     }
 
     private static Set<String> tokenize(String str) {
@@ -323,13 +321,13 @@ public final class AdFilter {
 
     private static String firstNonEmpty(String... strArr) {
         if (strArr == null) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         for (String str : strArr) {
             if (str != null && !str.trim().isEmpty()) {
                 return str;
             }
         }
-        return AppPreferences.TTS_LANGUAGE_AUTO;
+        return "";
     }
 }

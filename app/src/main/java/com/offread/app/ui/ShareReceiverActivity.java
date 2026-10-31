@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 import com.offread.app.R;
-import com.offread.app.data.AppPreferences;
 import com.offread.app.data.Article;
 import com.offread.app.data.ArticleRepository;
 import com.offread.app.parser.ArticleExtractor;
@@ -217,11 +216,11 @@ public class ShareReceiverActivity extends ThemedActivity {
 
     /* JADX INFO: Access modifiers changed from: private */
     public /* synthetic */ void lambda$saveNote$8(String str) {
-        ReadabilityResult readabilityResultProcessUserText = ArticleExtractor.processUserText(getString(R.string.shared_note_title), AppPreferences.TTS_LANGUAGE_AUTO, str);
+        ReadabilityResult readabilityResultProcessUserText = ArticleExtractor.processUserText(getString(R.string.shared_note_title), "", str);
         Article article = new Article();
         article.setTitle(readabilityResultProcessUserText.getTitle());
-        article.setAuthor(AppPreferences.TTS_LANGUAGE_AUTO);
-        article.setUrl(AppPreferences.TTS_LANGUAGE_AUTO);
+        article.setAuthor("");
+        article.setUrl("");
         article.setDomain(getString(R.string.note_category));
         article.setContent(readabilityResultProcessUserText.getContent());
         article.setPlainText(readabilityResultProcessUserText.getPlainText());

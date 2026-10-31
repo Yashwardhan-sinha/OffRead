@@ -55,7 +55,7 @@ public class BackupFileProvider extends ContentProvider {
                 for (File file : roots(context)) {
                     File fileInsideRoot = insideRoot(file, str2);
                     if (fileInsideRoot != null) {
-                        return ParcelFileDescriptor.open(fileInsideRoot, 268435456);
+                        return ParcelFileDescriptor.open(fileInsideRoot, ParcelFileDescriptor.MODE_READ_ONLY);
                     }
                 }
                 throw new FileNotFoundException("No such backup");

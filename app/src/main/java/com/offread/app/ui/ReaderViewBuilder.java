@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.offread.app.R;
-import com.offread.app.data.AppPreferences;
 import com.offread.app.parser.ArticleContentBlocks;
 import com.offread.app.parser.SafeUrl;
 import com.offread.app.parser.TextAnalysisUtil;
@@ -195,13 +194,13 @@ public final class ReaderViewBuilder {
 
     private static String stripFenceNoise(String str) {
         if (str == null) {
-            return AppPreferences.TTS_LANGUAGE_AUTO;
+            return "";
         }
         return str.replaceAll("\n{3,}", "\n\n").trim().replace("\t", "    ");
     }
 
     public static CharSequence richInline(String str, Style style) {
-        String source = str == null ? AppPreferences.TTS_LANGUAGE_AUTO : TextAnalysisUtil.decodeHtmlEntities(str);
+        String source = str == null ? "" : TextAnalysisUtil.decodeHtmlEntities(str);
         SpannableStringBuilder output = new SpannableStringBuilder();
         int index = 0;
         while (index < source.length()) {
