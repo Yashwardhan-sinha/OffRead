@@ -1,98 +1,61 @@
 package com.offread.app.parser;
 
+/* JADX INFO: loaded from: classes.dex */
 public class ArticleExtractor {
-
-    public static ReadabilityResult fetchFromUrl(String urlString) throws Exception {
-        if (urlString == null || urlString.trim().isEmpty()) {
+    public static ReadabilityResult fetchFromUrl(String str) throws Exception {
+        if (str == null || str.trim().isEmpty()) {
             throw new IllegalArgumentException("URL cannot be null or empty");
         }
-        NetworkFetcher.FetchResult fetchResult = NetworkFetcher.fetch(urlString.trim());
-        return extractFromHtml(fetchResult.html, fetchResult.finalUrl);
+        NetworkFetcher.FetchResult fetchResultFetch = NetworkFetcher.fetch(str.trim());
+        return extractFromHtml(fetchResultFetch.html, fetchResultFetch.finalUrl);
     }
 
-    public static ReadabilityResult extractFromHtml(String rawHtml, String sourceUrl) {
-        if (rawHtml == null || rawHtml.trim().isEmpty()) {
-            String domain = TextAnalysisUtil.extractDomain(sourceUrl);
-            return new ReadabilityResult("Untitled", "", "", "", "", 0, 1,
-                    "", "", domain, sourceUrl != null ? sourceUrl : "", "");
-        }
-
-        // 1. Build DOM Tree
-        HtmlNode root = HtmlParser.parse(rawHtml);
-
-        // 2. Extract Metadata (OpenGraph, Twitter Cards, Dublin Core, JSON-LD, Schema)
-        MetadataExtractor.ArticleMetadata meta = MetadataExtractor.extract(root, sourceUrl);
-
-        // 3. Extract Main Article Body & Remove Boilerplate / Noise
-        ReadabilityEngine.ExtractionResult body = ReadabilityEngine.extractContent(root, sourceUrl, meta.title);
-
-        String markdown = body.markdown;
-        String plainText = body.plainText;
-
-        // Fallback to JSON-LD articleBody if DOM extraction yielded empty text
-        if (plainText.length() < 50 && meta.jsonLdBody != null && !meta.jsonLdBody.trim().isEmpty()) {
-            markdown = meta.jsonLdBody.trim();
-            plainText = meta.jsonLdBody.trim();
-        }
-
-        // 4. Word count, Reading time, and Excerpt
-        int wordCount = TextAnalysisUtil.countWords(plainText);
-        int readTime = TextAnalysisUtil.calculateReadingTimeMinutes(wordCount);
-
-        String excerpt = meta.description;
-        if (excerpt == null || excerpt.trim().isEmpty()) {
-            excerpt = TextAnalysisUtil.createExcerpt(plainText, 160);
-        } else {
-            excerpt = TextAnalysisUtil.decodeHtmlEntities(excerpt.trim());
-        }
-
-        String safeTitle = (meta.title != null && !meta.title.isEmpty()) ?
-                meta.title : TextAnalysisUtil.extractDomain(sourceUrl);
-
-        return new ReadabilityResult(
-                safeTitle,
-                meta.author,
-                markdown,
-                plainText,
-                excerpt,
-                wordCount,
-                readTime,
-                meta.publishedDate,
-                meta.leadImageUrl,
-                meta.siteName,
-                meta.canonicalUrl,
-                meta.language
-        );
-    }
-
-    public static ReadabilityResult processUserText(String title, String author, String rawText) {
-        String safeTitle = (title != null && !title.trim().isEmpty()) ? title.trim() : "Untitled Note";
-        String safeAuthor = (author != null) ? author.trim() : "";
-        String safeText = (rawText != null) ? rawText.trim() : "";
-
-        // Format raw text into clean paragraphs
-        String[] paragraphs = safeText.split("\n\\s*\n");
-        StringBuilder formatted = new StringBuilder();
-        for (String p : paragraphs) {
-            String clean = p.trim();
-            if (!clean.isEmpty()) {
-                formatted.append(clean).append("\n\n");
+    public static ReadabilityResult extractFromHtml(String str, String str2) {
+        String str3 = str2;
+        if (str == null || str.trim().isEmpty()) {
+            String strExtractDomain = TextAnalysisUtil.extractDomain(str3);
+            if (str3 == null) {
+                str3 = "";
             }
+            return new ReadabilityResult("Untitled", "", "", "", "", 0, 1, "", "", strExtractDomain, str3, "");
         }
+        HtmlNode htmlNode = HtmlParser.parse(str);
+        MetadataExtractor.ArticleMetadata articleMetadataExtract = MetadataExtractor.extract(htmlNode, str3);
+        ReadabilityEngine.ExtractionResult extractionResultExtractContent = ReadabilityEngine.extractContent(htmlNode, str3, articleMetadataExtract.title);
+        String strNormalizeArticle = extractionResultExtractContent.markdown;
+        String strNormalizeArticle2 = extractionResultExtractContent.plainText;
+        if (strNormalizeArticle2.length() < 50 && articleMetadataExtract.jsonLdBody != null && !articleMetadataExtract.jsonLdBody.trim().isEmpty()) {
+            strNormalizeArticle = TextNormalizer.normalizeArticle(articleMetadataExtract.jsonLdBody);
+            strNormalizeArticle2 = TextNormalizer.normalizeArticle(articleMetadataExtract.jsonLdBody);
+        }
+        String str4 = strNormalizeArticle2;
+        String str5 = strNormalizeArticle;
+        int iCountWords = TextAnalysisUtil.countWords(str4);
+        int iCalculateReadingTimeMinutes = TextAnalysisUtil.calculateReadingTimeMinutes(iCountWords);
+        String strNormalizeInline = TextNormalizer.normalizeInline(articleMetadataExtract.description);
+        if (strNormalizeInline.isEmpty()) {
+            strNormalizeInline = TextAnalysisUtil.createExcerpt(str4, 160);
+        }
+        String str6 = strNormalizeInline;
+        String strNormalizeInline2 = TextNormalizer.normalizeInline(articleMetadataExtract.title);
+        if (strNormalizeInline2.isEmpty()) {
+            strNormalizeInline2 = TextAnalysisUtil.extractDomain(str3);
+        }
+        return new ReadabilityResult(strNormalizeInline2, TextNormalizer.normalizeInline(articleMetadataExtract.author), str5, str4, str6, iCountWords, iCalculateReadingTimeMinutes, articleMetadataExtract.publishedDate, articleMetadataExtract.leadImageUrl, articleMetadataExtract.siteName, articleMetadataExtract.canonicalUrl, articleMetadataExtract.language);
+    }
 
-        String plainText = safeText;
-        int wordCount = TextAnalysisUtil.countWords(plainText);
-        int readTime = TextAnalysisUtil.calculateReadingTimeMinutes(wordCount);
-        String excerpt = TextAnalysisUtil.createExcerpt(plainText, 160);
-
-        return new ReadabilityResult(
-                safeTitle,
-                safeAuthor,
-                formatted.toString().trim(),
-                plainText,
-                excerpt,
-                wordCount,
-                readTime
-        );
+    public static ReadabilityResult processUserText(String str, String str2, String str3) {
+        String strTrim = (str == null || str.trim().isEmpty()) ? "Untitled Note" : str.trim();
+        String strTrim2 = "";
+        String strTrim3 = str2 != null ? str2.trim() : "";
+        if (str3 != null) {
+            strTrim2 = str3.trim();
+        }
+        String str4 = strTrim2;
+        for (String str5 : str4.split("\n\\s*\n")) {
+            str5.trim().isEmpty();
+        }
+        int iCountWords = TextAnalysisUtil.countWords(str4);
+        return new ReadabilityResult(strTrim, strTrim3, str4, str4, TextAnalysisUtil.createExcerpt(str4, 160), iCountWords, TextAnalysisUtil.calculateReadingTimeMinutes(iCountWords));
     }
 }

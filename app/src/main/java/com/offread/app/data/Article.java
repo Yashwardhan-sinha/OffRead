@@ -1,35 +1,35 @@
 package com.offread.app.data;
 
+import java.io.Serializable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
-
+/* JADX INFO: loaded from: classes.dex */
 public class Article implements Serializable {
-    private static final long serialVersionUID = 1L;
-
-    private long id;
-    private String title;
+    private static final long serialVersionUID = 1;
     private String author;
-    private String url;
-    private String domain;
+    private String canonicalUrl;
+    private String category;
     private String content;
-    private String plainText;
+    private long createdAt;
+    private String domain;
     private String excerpt;
-    private int wordCount;
+    private long id;
+    private String imageUrl;
+    private boolean isArchived;
+    private boolean isFavorite;
+    private String language;
+    private long lastReadAt;
+    private String plainText;
+    private int progressPercent;
+    private String publishedDate;
     private int readingTimeMinutes;
     private int scrollPosition;
-    private int progressPercent;
-    private boolean isFavorite;
-    private boolean isArchived;
-    private String category;
     private String tags;
-    private long createdAt;
+    private String title;
     private long updatedAt;
-    private long lastReadAt;
-    private String canonicalUrl;
-    private String publishedDate;
-    private String imageUrl;
+    private String url;
+    private int wordCount;
 
     public Article() {
         this.title = "";
@@ -46,154 +46,289 @@ public class Article implements Serializable {
         this.canonicalUrl = "";
         this.publishedDate = "";
         this.imageUrl = "";
+        this.language = "";
     }
 
-    public Article(long id, String title, String author, String url, String domain,
-                   String content, String plainText, String excerpt, int wordCount,
-                   int readingTimeMinutes, int scrollPosition, int progressPercent,
-                   boolean isFavorite, boolean isArchived, String category,
-                   String tags, long createdAt, long updatedAt, long lastReadAt) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.url = url;
-        this.domain = domain;
-        this.content = content;
-        this.plainText = plainText;
-        this.excerpt = excerpt;
-        this.wordCount = wordCount;
-        this.readingTimeMinutes = readingTimeMinutes;
-        this.scrollPosition = scrollPosition;
-        this.progressPercent = progressPercent;
-        this.isFavorite = isFavorite;
-        this.isArchived = isArchived;
-        this.category = category;
-        this.tags = tags;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.lastReadAt = lastReadAt;
+    public Article(long j, String str, String str2, String str3, String str4, String str5, String str6, String str7, int i, int i2, int i3, int i4, boolean z, boolean z2, String str8, String str9, long j2, long j3, long j4) {
+        this.id = j;
+        this.title = str;
+        this.author = str2;
+        this.url = str3;
+        this.domain = str4;
+        this.content = str5;
+        this.plainText = str6;
+        this.excerpt = str7;
+        this.wordCount = i;
+        this.readingTimeMinutes = i2;
+        this.scrollPosition = i3;
+        this.progressPercent = i4;
+        this.isFavorite = z;
+        this.isArchived = z2;
+        this.category = str8;
+        this.tags = str9;
+        this.createdAt = j2;
+        this.updatedAt = j3;
+        this.lastReadAt = j4;
         this.canonicalUrl = "";
         this.publishedDate = "";
         this.imageUrl = "";
+        this.language = "";
     }
 
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
+    public long getId() {
+        return this.id;
+    }
 
-    public String getTitle() { return title == null ? "" : title; }
-    public void setTitle(String title) { this.title = title; }
+    public void setId(long j) {
+        this.id = j;
+    }
 
-    public String getAuthor() { return author == null ? "" : author; }
-    public void setAuthor(String author) { this.author = author; }
+    public String getTitle() {
+        String str = this.title;
+        return str == null ? "" : str;
+    }
 
-    public String getUrl() { return url == null ? "" : url; }
-    public void setUrl(String url) { this.url = url; }
+    public void setTitle(String str) {
+        this.title = str;
+    }
 
-    public String getDomain() { return domain == null ? "" : domain; }
-    public void setDomain(String domain) { this.domain = domain; }
+    public String getAuthor() {
+        String str = this.author;
+        return str == null ? "" : str;
+    }
 
-    public String getContent() { return content == null ? "" : content; }
-    public void setContent(String content) { this.content = content; }
+    public void setAuthor(String str) {
+        this.author = str;
+    }
 
-    public String getPlainText() { return plainText == null ? "" : plainText; }
-    public void setPlainText(String plainText) { this.plainText = plainText; }
+    public String getUrl() {
+        String str = this.url;
+        return str == null ? "" : str;
+    }
 
-    public String getExcerpt() { return excerpt == null ? "" : excerpt; }
-    public void setExcerpt(String excerpt) { this.excerpt = excerpt; }
+    public void setUrl(String str) {
+        this.url = str;
+    }
 
-    public int getWordCount() { return wordCount; }
-    public void setWordCount(int wordCount) { this.wordCount = wordCount; }
+    public String getDomain() {
+        String str = this.domain;
+        return str == null ? "" : str;
+    }
 
-    public int getReadingTimeMinutes() { return readingTimeMinutes; }
-    public void setReadingTimeMinutes(int readingTimeMinutes) { this.readingTimeMinutes = readingTimeMinutes; }
+    public void setDomain(String str) {
+        this.domain = str;
+    }
 
-    public int getScrollPosition() { return scrollPosition; }
-    public void setScrollPosition(int scrollPosition) { this.scrollPosition = scrollPosition; }
+    public String getContent() {
+        String str = this.content;
+        return str == null ? "" : str;
+    }
 
-    public int getProgressPercent() { return progressPercent; }
-    public void setProgressPercent(int progressPercent) { this.progressPercent = progressPercent; }
+    public void setContent(String str) {
+        this.content = str;
+    }
 
-    public boolean isFavorite() { return isFavorite; }
-    public void setFavorite(boolean favorite) { isFavorite = favorite; }
+    public String getPlainText() {
+        String str = this.plainText;
+        return str == null ? "" : str;
+    }
 
-    public boolean isArchived() { return isArchived; }
-    public void setArchived(boolean archived) { isArchived = archived; }
+    public void setPlainText(String str) {
+        this.plainText = str;
+    }
 
-    public String getCategory() { return category == null ? "General" : category; }
-    public void setCategory(String category) { this.category = category; }
+    public String getExcerpt() {
+        String str = this.excerpt;
+        return str == null ? "" : str;
+    }
 
-    public String getTags() { return tags == null ? "" : tags; }
-    public void setTags(String tags) { this.tags = tags; }
+    public void setExcerpt(String str) {
+        this.excerpt = str;
+    }
 
-    public long getCreatedAt() { return createdAt; }
-    public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
+    public int getWordCount() {
+        return this.wordCount;
+    }
 
-    public long getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(long updatedAt) { this.updatedAt = updatedAt; }
+    public void setWordCount(int i) {
+        this.wordCount = i;
+    }
 
-    public long getLastReadAt() { return lastReadAt; }
-    public void setLastReadAt(long lastReadAt) { this.lastReadAt = lastReadAt; }
+    public int getReadingTimeMinutes() {
+        return this.readingTimeMinutes;
+    }
 
-    public String getCanonicalUrl() { return canonicalUrl == null ? "" : canonicalUrl; }
-    public void setCanonicalUrl(String canonicalUrl) { this.canonicalUrl = canonicalUrl; }
+    public void setReadingTimeMinutes(int i) {
+        this.readingTimeMinutes = i;
+    }
 
-    public String getPublishedDate() { return publishedDate == null ? "" : publishedDate; }
-    public void setPublishedDate(String publishedDate) { this.publishedDate = publishedDate; }
+    public int getScrollPosition() {
+        return this.scrollPosition;
+    }
 
-    public String getImageUrl() { return imageUrl == null ? "" : imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public void setScrollPosition(int i) {
+        this.scrollPosition = i;
+    }
+
+    public int getProgressPercent() {
+        return this.progressPercent;
+    }
+
+    public void setProgressPercent(int i) {
+        this.progressPercent = i;
+    }
+
+    public boolean isFavorite() {
+        return this.isFavorite;
+    }
+
+    public void setFavorite(boolean z) {
+        this.isFavorite = z;
+    }
+
+    public boolean isArchived() {
+        return this.isArchived;
+    }
+
+    public void setArchived(boolean z) {
+        this.isArchived = z;
+    }
+
+    public String getCategory() {
+        String str = this.category;
+        return str == null ? "General" : str;
+    }
+
+    public void setCategory(String str) {
+        this.category = str;
+    }
+
+    public String getTags() {
+        String str = this.tags;
+        return str == null ? "" : str;
+    }
+
+    public void setTags(String str) {
+        this.tags = str;
+    }
+
+    public long getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(long j) {
+        this.createdAt = j;
+    }
+
+    public long getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public void setUpdatedAt(long j) {
+        this.updatedAt = j;
+    }
+
+    public long getLastReadAt() {
+        return this.lastReadAt;
+    }
+
+    public void setLastReadAt(long j) {
+        this.lastReadAt = j;
+    }
+
+    public String getCanonicalUrl() {
+        String str = this.canonicalUrl;
+        return str == null ? "" : str;
+    }
+
+    public void setCanonicalUrl(String str) {
+        this.canonicalUrl = str;
+    }
+
+    public static String identityUrl(String str, String str2) {
+        return str == null ? "" : str.trim();
+    }
+
+    public String getPublishedDate() {
+        String str = this.publishedDate;
+        return str == null ? "" : str;
+    }
+
+    public void setPublishedDate(String str) {
+        this.publishedDate = str;
+    }
+
+    public String getImageUrl() {
+        String str = this.imageUrl;
+        return str == null ? "" : str;
+    }
+
+    public void setImageUrl(String str) {
+        this.imageUrl = str;
+    }
+
+    public String getLanguage() {
+        String str = this.language;
+        return str == null ? "" : str;
+    }
+
+    public void setLanguage(String str) {
+        this.language = str;
+    }
 
     public JSONObject toJson() throws JSONException {
-        JSONObject obj = new JSONObject();
-        obj.put("id", id);
-        obj.put("title", title);
-        obj.put("author", author);
-        obj.put("url", url);
-        obj.put("domain", domain);
-        obj.put("content", content);
-        obj.put("plainText", plainText);
-        obj.put("excerpt", excerpt);
-        obj.put("wordCount", wordCount);
-        obj.put("readingTimeMinutes", readingTimeMinutes);
-        obj.put("scrollPosition", scrollPosition);
-        obj.put("progressPercent", progressPercent);
-        obj.put("isFavorite", isFavorite);
-        obj.put("isArchived", isArchived);
-        obj.put("category", category);
-        obj.put("tags", tags);
-        obj.put("createdAt", createdAt);
-        obj.put("updatedAt", updatedAt);
-        obj.put("lastReadAt", lastReadAt);
-        obj.put("canonicalUrl", canonicalUrl);
-        obj.put("publishedDate", publishedDate);
-        obj.put("imageUrl", imageUrl);
-        return obj;
+        JSONObject jSONObject = new JSONObject();
+        jSONObject.put("id", this.id);
+        jSONObject.put("title", this.title);
+        jSONObject.put("author", this.author);
+        jSONObject.put("url", this.url);
+        jSONObject.put("domain", this.domain);
+        jSONObject.put("content", this.content);
+        jSONObject.put("plainText", this.plainText);
+        jSONObject.put("excerpt", this.excerpt);
+        jSONObject.put("wordCount", this.wordCount);
+        jSONObject.put("readingTimeMinutes", this.readingTimeMinutes);
+        jSONObject.put("scrollPosition", this.scrollPosition);
+        jSONObject.put("progressPercent", this.progressPercent);
+        jSONObject.put("isFavorite", this.isFavorite);
+        jSONObject.put("isArchived", this.isArchived);
+        jSONObject.put("category", this.category);
+        jSONObject.put("tags", this.tags);
+        jSONObject.put("createdAt", this.createdAt);
+        jSONObject.put("updatedAt", this.updatedAt);
+        jSONObject.put("lastReadAt", this.lastReadAt);
+        jSONObject.put("canonicalUrl", this.canonicalUrl);
+        jSONObject.put("publishedDate", this.publishedDate);
+        jSONObject.put("imageUrl", this.imageUrl);
+        jSONObject.put("language", this.language);
+        return jSONObject;
     }
 
-    public static Article fromJson(JSONObject obj) {
-        Article a = new Article();
-        a.id = obj.optLong("id", 0);
-        a.title = obj.optString("title", "");
-        a.author = obj.optString("author", "");
-        a.url = obj.optString("url", "");
-        a.domain = obj.optString("domain", "");
-        a.content = obj.optString("content", "");
-        a.plainText = obj.optString("plainText", "");
-        a.excerpt = obj.optString("excerpt", "");
-        a.wordCount = obj.optInt("wordCount", 0);
-        a.readingTimeMinutes = obj.optInt("readingTimeMinutes", 1);
-        a.scrollPosition = obj.optInt("scrollPosition", 0);
-        a.progressPercent = obj.optInt("progressPercent", 0);
-        a.isFavorite = obj.optBoolean("isFavorite", false);
-        a.isArchived = obj.optBoolean("isArchived", false);
-        a.category = obj.optString("category", "General");
-        a.tags = obj.optString("tags", "");
-        a.createdAt = obj.optLong("createdAt", System.currentTimeMillis());
-        a.updatedAt = obj.optLong("updatedAt", System.currentTimeMillis());
-        a.lastReadAt = obj.optLong("lastReadAt", 0);
-        a.canonicalUrl = obj.optString("canonicalUrl", "");
-        a.publishedDate = obj.optString("publishedDate", "");
-        a.imageUrl = obj.optString("imageUrl", "");
-        return a;
+    public static Article fromJson(JSONObject jSONObject) {
+        Article article = new Article();
+        article.id = jSONObject.optLong("id", 0L);
+        article.title = jSONObject.optString("title", "");
+        article.author = jSONObject.optString("author", "");
+        article.url = jSONObject.optString("url", "");
+        article.domain = jSONObject.optString("domain", "");
+        article.content = jSONObject.optString("content", "");
+        article.plainText = jSONObject.optString("plainText", "");
+        article.excerpt = jSONObject.optString("excerpt", "");
+        article.wordCount = jSONObject.optInt("wordCount", 0);
+        article.readingTimeMinutes = jSONObject.optInt("readingTimeMinutes", 1);
+        article.scrollPosition = jSONObject.optInt("scrollPosition", 0);
+        article.progressPercent = jSONObject.optInt("progressPercent", 0);
+        article.isFavorite = jSONObject.optBoolean("isFavorite", false);
+        article.isArchived = jSONObject.optBoolean("isArchived", false);
+        article.category = jSONObject.optString("category", "General");
+        article.tags = jSONObject.optString("tags", "");
+        article.createdAt = jSONObject.optLong("createdAt", System.currentTimeMillis());
+        article.updatedAt = jSONObject.optLong("updatedAt", System.currentTimeMillis());
+        article.lastReadAt = jSONObject.optLong("lastReadAt", 0L);
+        article.canonicalUrl = jSONObject.optString("canonicalUrl", "");
+        article.publishedDate = jSONObject.optString("publishedDate", "");
+        article.imageUrl = jSONObject.optString("imageUrl", "");
+        article.language = jSONObject.optString("language", "");
+        return article;
     }
 }

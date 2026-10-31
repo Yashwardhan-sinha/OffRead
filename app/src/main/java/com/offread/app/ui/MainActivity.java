@@ -1,445 +1,376 @@
 package com.offread.app.ui;
 
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.offread.app.R;
-import com.offread.app.data.AppPreferences;
 import com.offread.app.data.Article;
 import com.offread.app.data.ArticleRepository;
 import com.offread.app.parser.ArticleExtractor;
+import com.offread.app.parser.NetworkFetcher;
 import com.offread.app.parser.ReadabilityResult;
+import com.offread.app.parser.SafeUrl;
 import com.offread.app.parser.TextAnalysisUtil;
-import com.offread.app.tts.ArticleSpeaker;
-
-import java.io.InputStream;
 import java.net.ConnectException;
-import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.Locale;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends Activity {
-
+/* JADX INFO: loaded from: classes.dex */
+public class MainActivity extends ThemedActivity implements ArticleAdapter.OnArticleActionListener {
+    private ArticleAdapter adapter;
+    private Button btnFetch;
     private EditText editUrl;
-    private Button btnOpenArticle;
+    private boolean fetchInFlight;
+    private View layoutEmpty;
+    private ListView listArticles;
     private ProgressBar progressArticle;
-    private TextView tvArticleTitle;
-    private TextView tvArticleMeta;
-    private ImageView imgArticleCover;
-    private TextView tvArticleContent;
-    private TextView tvStatusNotice;
-
-    private ImageButton btnBookmark;
-    private ImageButton btnListen;
-    private ImageButton btnThemeToggle;
-
-    private boolean isBookmarked = false;
-    private boolean isListening = false;
-    private AppPreferences preferences;
     private ArticleRepository repository;
-    private Article currentArticle = null;
-    private ArticleSpeaker speaker = null;
+    private TextView tvStatusNotice;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        preferences = new AppPreferences(this);
-        repository = ArticleRepository.getInstance(this);
-
-        applyCurrentTheme();
+    @Override // com.offread.app.ui.ThemedActivity, android.app.Activity
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
         setContentView(R.layout.activity_main);
-
-        initViews();
-        setupListeners();
-        initTts();
+        applySystemBars(themeColor(R.attr.colorSurface));
+        this.repository = ArticleRepository.getInstance(this);
+        this.editUrl = (EditText) findViewById(R.id.edit_url);
+        this.btnFetch = (Button) findViewById(R.id.btn_open_article);
+        this.progressArticle = (ProgressBar) findViewById(R.id.progress_article);
+        this.tvStatusNotice = (TextView) findViewById(R.id.tv_status_notice);
+        this.listArticles = (ListView) findViewById(R.id.list_articles);
+        this.layoutEmpty = findViewById(R.id.layout_empty);
+        ArticleAdapter articleAdapter = new ArticleAdapter(this, this);
+        this.adapter = articleAdapter;
+        this.listArticles.setAdapter((ListAdapter) articleAdapter);
+        this.listArticles.setEmptyView(null);
+        ImageButton imageButton = (ImageButton) findViewById(R.id.btn_add_article);
+        ImageButton imageButton2 = (ImageButton) findViewById(R.id.btn_stats);
+        imageButton.setOnClickListener(new View.OnClickListener() { // from class: com.offread.app.ui.MainActivity.1
+            @Override // android.view.View.OnClickListener
+            public final void onClick(View view) {
+                MainActivity.this.lambda$onCreate$0(view);
+            }
+        });
+        imageButton2.setOnClickListener(new View.OnClickListener() { // from class: com.offread.app.ui.MainActivity.2
+            @Override // android.view.View.OnClickListener
+            public final void onClick(View view) {
+                MainActivity.this.lambda$onCreate$1(view);
+            }
+        });
+        this.btnFetch.setOnClickListener(new View.OnClickListener() { // from class: com.offread.app.ui.MainActivity.3
+            @Override // android.view.View.OnClickListener
+            public final void onClick(View view) {
+                MainActivity.this.lambda$onCreate$2(view);
+            }
+        });
+        this.editUrl.setOnEditorActionListener(new TextView.OnEditorActionListener() { // from class: com.offread.app.ui.MainActivity.4
+            @Override // android.widget.TextView.OnEditorActionListener
+            public final boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                return MainActivity.this.lambda$onCreate$3(textView, i, keyEvent);
+            }
+        });
+        BottomNavBar bottomNavBar = (BottomNavBar) findViewById(R.id.nav_bar);
+        bottomNavBar.setSelected(0);
+        bottomNavBar.setOnTabSelectedListener(new BottomNavBar.OnTabSelectedListener() { // from class: com.offread.app.ui.MainActivity.5
+            @Override // com.offread.app.ui.BottomNavBar.OnTabSelectedListener
+            public final void onTabSelected(int i) {
+                MainActivity.this.lambda$onCreate$4(i);
+            }
+        });
+        this.listArticles.setOnItemClickListener(new AdapterView.OnItemClickListener() { // from class: com.offread.app.ui.MainActivity.6
+            @Override // android.widget.AdapterView.OnItemClickListener
+            public final void onItemClick(AdapterView adapterView, View view, int i, long j) {
+                MainActivity.this.lambda$onCreate$5(adapterView, view, i, j);
+            }
+        });
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (speaker != null && isListening) {
-            speaker.pause();
+    /* JADX INFO: Access modifiers changed from: private */
+    public /* synthetic */ void lambda$onCreate$0(View view) {
+        startActivity(new Intent(this, (Class<?>) AddArticleActivity.class));
+    }
+
+    /* JADX INFO: Access modifiers changed from: private */
+    public /* synthetic */ void lambda$onCreate$1(View view) {
+        startActivity(new Intent(this, (Class<?>) StatisticsActivity.class));
+    }
+
+    /* JADX INFO: Access modifiers changed from: private */
+    public /* synthetic */ void lambda$onCreate$2(View view) {
+        handleOpenArticle();
+    }
+
+    /* JADX INFO: Access modifiers changed from: private */
+    public /* synthetic */ boolean lambda$onCreate$3(TextView textView, int i, KeyEvent keyEvent) {
+        if (i != 2 && i != 6) {
+            return false;
+        }
+        handleOpenArticle();
+        return true;
+    }
+
+    /* JADX INFO: Access modifiers changed from: private */
+    public /* synthetic */ void lambda$onCreate$4(int i) {
+        if (i != 0) {
+            goToSection(i);
         }
     }
 
-    @Override
+    /* JADX INFO: Access modifiers changed from: private */
+    public /* synthetic */ void lambda$onCreate$5(AdapterView adapterView, View view, int i, long j) {
+        openArticle(this.adapter.getItem(i));
+    }
+
+    @Override // com.offread.app.ui.ThemedActivity, android.app.Activity
+    protected void onResume() {
+        super.onResume();
+        loadLibrary();
+    }
+
+    @Override // android.app.Activity
     protected void onDestroy() {
         super.onDestroy();
-        if (speaker != null) {
-            speaker.shutdown();
+        this.executor.shutdownNow();
+    }
+
+    private void loadLibrary() {
+        this.executor.execute(new Runnable() { // from class: com.offread.app.ui.MainActivity.8
+            @Override // java.lang.Runnable
+            public final void run() {
+                MainActivity.this.lambda$loadLibrary$7();
+            }
+        });
+    }
+
+    /* JADX INFO: Access modifiers changed from: private */
+    public /* synthetic */ void lambda$loadLibrary$7() {
+        final List<Article> articles = this.repository.getArticles(ArticleRepository.FilterType.ALL, null, null, ArticleRepository.SortOrder.NEWEST);
+        this.mainHandler.post(new Runnable() { // from class: com.offread.app.ui.MainActivity.7
+            @Override // java.lang.Runnable
+            public final void run() {
+                MainActivity.this.lambda$loadLibrary$6(articles);
+            }
+        });
+    }
+
+    /* JADX INFO: Access modifiers changed from: private */
+    public /* synthetic */ void lambda$loadLibrary$6(List list) {
+        this.adapter.setArticles(list);
+        this.layoutEmpty.setVisibility(list.isEmpty() ? 0 : 8);
+        this.listArticles.setVisibility(list.isEmpty() ? 8 : 0);
+    }
+
+    private void openArticle(Article article) {
+        if (article == null) {
+            return;
         }
-        executor.shutdown();
+        Intent intent = new Intent(this, (Class<?>) ReaderActivity.class);
+        intent.putExtra("extra_article_id", article.getId());
+        startActivity(intent);
     }
 
-    private void applyCurrentTheme() {
-        String theme = preferences.getTheme();
-        if (AppPreferences.THEME_DARK.equals(theme) || AppPreferences.THEME_BLACK.equals(theme)) {
-            setTheme(R.style.Theme_OffRead);
-        } else {
-            setTheme(R.style.Theme_OffRead);
-        }
+    @Override // com.offread.app.ui.ArticleAdapter.OnArticleActionListener
+    public void onArticleClick(Article article) {
+        openArticle(article);
     }
 
-    private void initViews() {
-        editUrl = findViewById(R.id.edit_url);
-        btnOpenArticle = findViewById(R.id.btn_open_article);
-        progressArticle = findViewById(R.id.progress_article);
-        tvArticleTitle = findViewById(R.id.tv_article_title);
-        tvArticleMeta = findViewById(R.id.tv_article_meta);
-        imgArticleCover = findViewById(R.id.img_article_cover);
-        tvArticleContent = findViewById(R.id.tv_article_content);
-        tvStatusNotice = findViewById(R.id.tv_status_notice);
-
-        btnBookmark = findViewById(R.id.btn_bookmark);
-        btnListen = findViewById(R.id.btn_listen);
-        btnThemeToggle = findViewById(R.id.btn_theme_toggle);
-
-        updateBookmarkUI();
-        updateListenUI();
-        updateThemeIcon();
+    @Override // com.offread.app.ui.ArticleAdapter.OnArticleActionListener
+    public void onBookmarkToggle(Article article) {
+        boolean zIsFavorite = article.isFavorite();
+        boolean z = !zIsFavorite;
+        this.repository.setFavorite(article.getId(), z);
+        article.setFavorite(z);
+        this.adapter.notifyDataSetChanged();
+        Toast.makeText(this, !zIsFavorite ? R.string.reader_saved : R.string.reader_removed, 0).show();
     }
 
-    private void initTts() {
-        speaker = new ArticleSpeaker(this, new ArticleSpeaker.SpeakerListener() {
-            @Override
-            public void onInitialized(boolean success) {
-            }
-
-            @Override
-            public void onSentenceChanged(int index, int total, String sentence) {
-            }
-
-            @Override
-            public void onPlaybackStateChanged(boolean isPlayingState) {
-                runOnUiThread(() -> {
-                    isListening = isPlayingState;
-                    updateListenUI();
-                });
-            }
-
-            @Override
-            public void onPlaybackCompleted() {
-                runOnUiThread(() -> {
-                    isListening = false;
-                    updateListenUI();
-                });
-            }
-        });
-    }
-
-    private void setupListeners() {
-        btnOpenArticle.setOnClickListener(v -> handleOpenArticle());
-
-        btnBookmark.setOnClickListener(v -> {
-            if (currentArticle != null && currentArticle.getId() > 0) {
-                boolean fav = repository.toggleFavorite(currentArticle.getId());
-                currentArticle.setFavorite(fav);
-                isBookmarked = fav;
-                updateBookmarkUI();
-                Toast.makeText(this, isBookmarked ? "Saved to Bookmarks" : "Removed from Bookmarks", Toast.LENGTH_SHORT).show();
-            } else if (currentArticle != null) {
-                isBookmarked = !isBookmarked;
-                currentArticle.setFavorite(isBookmarked);
-                long id = repository.insertArticle(currentArticle);
-                currentArticle.setId(id);
-                updateBookmarkUI();
-                Toast.makeText(this, isBookmarked ? "Article bookmarked locally" : "Bookmark removed", Toast.LENGTH_SHORT).show();
-            } else {
-                isBookmarked = !isBookmarked;
-                updateBookmarkUI();
-                Toast.makeText(this, isBookmarked ? "Article bookmarked locally" : "Bookmark removed", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        btnListen.setOnClickListener(v -> {
-            if (currentArticle == null || currentArticle.getPlainText().trim().isEmpty()) {
-                Toast.makeText(this, "Please open an article first to listen", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (speaker == null) {
-                Toast.makeText(this, "Speech engine initializing, please wait…", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (isListening) {
-                speaker.pause();
-            } else {
-                speaker.play();
-            }
-        });
-
-        btnThemeToggle.setOnClickListener(v -> {
-            String current = preferences.getTheme();
-            if (AppPreferences.THEME_DARK.equals(current)) {
-                preferences.setTheme(AppPreferences.THEME_LIGHT);
-                Toast.makeText(this, "Switched to Light Theme", Toast.LENGTH_SHORT).show();
-            } else {
-                preferences.setTheme(AppPreferences.THEME_DARK);
-                Toast.makeText(this, "Switched to Dark Theme", Toast.LENGTH_SHORT).show();
-            }
-            recreate();
-        });
+    @Override // com.offread.app.ui.ArticleAdapter.OnArticleActionListener
+    public void onArchiveToggle(Article article) {
+        this.repository.toggleArchive(article.getId());
+        article.setArchived(!article.isArchived());
+        this.adapter.notifyDataSetChanged();
     }
 
     private void handleOpenArticle() {
-        String inputUrl = editUrl.getText().toString().trim();
-
-        // 1. Check for empty URL
-        if (inputUrl.isEmpty()) {
-            String errorMsg = "Please enter an article URL";
-            tvStatusNotice.setText(errorMsg);
-            Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show();
+        if (this.fetchInFlight) {
             return;
         }
-
-        // Auto-prepend https if missing scheme
-        if (!inputUrl.startsWith("http://") && !inputUrl.startsWith("https://")) {
-            inputUrl = "https://" + inputUrl;
-            editUrl.setText(inputUrl);
-        }
-
-        // 2. Validate URL structure
-        if (!isValidHttpUrl(inputUrl)) {
-            String errorMsg = "Invalid URL. Please enter a valid HTTP or HTTPS address.";
-            tvStatusNotice.setText(errorMsg);
-            Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show();
+        String strTrim = this.editUrl.getText().toString().trim();
+        if (strTrim.isEmpty()) {
+            showStatus(getString(R.string.error_empty_url));
             return;
         }
-
-        // 3. Check network state if available
+        if (!strTrim.startsWith("http://") && !strTrim.startsWith("https://")) {
+            strTrim = "https://" + strTrim;
+            this.editUrl.setText(strTrim);
+        }
+        if (!isValidHttpUrl(strTrim)) {
+            showStatus(getString(R.string.error_invalid_url));
+            return;
+        }
         if (!isNetworkAvailable()) {
-            String errorMsg = "No internet connection. Please check your network and try again.";
-            tvStatusNotice.setText(errorMsg);
-            Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show();
+            showStatus(getString(R.string.error_no_network));
             return;
         }
-
-        // 4. Set Loading State
-        final String finalTargetUrl = inputUrl;
-        btnOpenArticle.setEnabled(false);
-        progressArticle.setVisibility(View.VISIBLE);
-        tvStatusNotice.setText("Fetching and extracting article…");
-
-        if (speaker != null) {
-            speaker.stop();
-        }
-
-        // 5. Asynchronous Fetch & Extraction
-        executor.execute(() -> {
-            try {
-                ReadabilityResult result = ArticleExtractor.fetchFromUrl(finalTargetUrl);
-
-                if (result == null || result.getPlainText().trim().isEmpty() || result.getWordCount() < 5) {
-                    throw new Exception("No meaningful article content found at this address.");
-                }
-
-                // Lead image download
-                Bitmap heroBitmap = null;
-                if (!result.getLeadImageUrl().isEmpty()) {
-                    heroBitmap = downloadBitmap(result.getLeadImageUrl());
-                }
-
-                // Check if existing article in DB
-                Article existing = repository.getArticleByUrl(finalTargetUrl);
-                Article articleToSave = existing != null ? existing : new Article();
-
-                String domain = !result.getSiteName().isEmpty() ?
-                        result.getSiteName() : TextAnalysisUtil.extractDomain(finalTargetUrl);
-                String canonical = !result.getCanonicalUrl().isEmpty() ?
-                        result.getCanonicalUrl() : finalTargetUrl;
-
-                articleToSave.setTitle(result.getTitle());
-                articleToSave.setAuthor(result.getAuthor());
-                articleToSave.setUrl(finalTargetUrl);
-                articleToSave.setCanonicalUrl(canonical);
-                articleToSave.setDomain(domain);
-                articleToSave.setContent(result.getContent());
-                articleToSave.setPlainText(result.getPlainText());
-                articleToSave.setExcerpt(result.getExcerpt());
-                articleToSave.setWordCount(result.getWordCount());
-                articleToSave.setReadingTimeMinutes(result.getReadingTimeMinutes());
-                articleToSave.setPublishedDate(result.getPublishedDate());
-                articleToSave.setImageUrl(result.getLeadImageUrl());
-                articleToSave.setCategory(domain);
-
-                if (existing != null) {
-                    repository.updateArticle(articleToSave);
-                } else {
-                    long newId = repository.insertArticle(articleToSave);
-                    articleToSave.setId(newId);
-                }
-
-                final Bitmap finalHeroBitmap = heroBitmap;
-                final Article finalArticle = articleToSave;
-
-                runOnUiThread(() -> {
-                    btnOpenArticle.setEnabled(true);
-                    progressArticle.setVisibility(View.GONE);
-
-                    currentArticle = finalArticle;
-                    isBookmarked = finalArticle.isFavorite();
-                    updateBookmarkUI();
-
-                    // Title
-                    tvArticleTitle.setText(finalArticle.getTitle());
-
-                    // Metadata byline: Author • Date • Domain • Reading Time
-                    StringBuilder metaBuilder = new StringBuilder();
-                    if (!finalArticle.getAuthor().isEmpty()) {
-                        metaBuilder.append(finalArticle.getAuthor()).append(" • ");
-                    }
-                    if (!finalArticle.getPublishedDate().isEmpty()) {
-                        metaBuilder.append(finalArticle.getPublishedDate()).append(" • ");
-                    }
-                    metaBuilder.append(finalArticle.getDomain()).append(" • ");
-                    metaBuilder.append(finalArticle.getReadingTimeMinutes()).append(" min read");
-                    tvArticleMeta.setText(metaBuilder.toString());
-
-                    // Hero Image
-                    if (finalHeroBitmap != null) {
-                        imgArticleCover.setImageBitmap(finalHeroBitmap);
-                        imgArticleCover.setVisibility(View.VISIBLE);
-                    } else {
-                        imgArticleCover.setVisibility(View.GONE);
-                    }
-
-                    // Content Body
-                    tvArticleContent.setText(finalArticle.getContent());
-
-                    // Load TTS text
-                    if (speaker != null) {
-                        speaker.loadText(finalArticle.getPlainText());
-                    }
-
-                    String successMsg = "Article loaded successfully (" + finalArticle.getWordCount() + " words)";
-                    tvStatusNotice.setText(successMsg);
-                    Toast.makeText(MainActivity.this, "Article extracted cleanly!", Toast.LENGTH_SHORT).show();
-                });
-
-            } catch (Throwable t) {
-                final String friendlyMessage = resolveErrorMessage(t);
-                runOnUiThread(() -> {
-                    btnOpenArticle.setEnabled(true);
-                    progressArticle.setVisibility(View.GONE);
-                    tvStatusNotice.setText(friendlyMessage);
-                    Toast.makeText(MainActivity.this, friendlyMessage, Toast.LENGTH_LONG).show();
-                });
+        final String urlToFetch = strTrim;
+        this.fetchInFlight = true;
+        this.btnFetch.setEnabled(false);
+        this.progressArticle.setVisibility(0);
+        showStatus(getString(R.string.fetching_article));
+        this.executor.execute(new Runnable() { // from class: com.offread.app.ui.MainActivity.0
+            @Override // java.lang.Runnable
+            public final void run() {
+                MainActivity.this.lambda$handleOpenArticle$9(urlToFetch);
             }
         });
     }
 
-    private boolean isValidHttpUrl(String urlString) {
-        if (urlString == null || urlString.trim().isEmpty()) return false;
+    /* JADX INFO: Access modifiers changed from: private */
+    public /* synthetic */ void lambda$handleOpenArticle$9(String str) {
+        String strResolveErrorMessage;
+        Article articlePersist = null;
         try {
-            URI uri = new URI(urlString.trim());
-            String scheme = uri.getScheme();
-            if (scheme == null) return false;
-            String lower = scheme.toLowerCase(Locale.ROOT);
-            if (!"http".equals(lower) && !"https".equals(lower)) return false;
-            String host = uri.getHost();
-            return host != null && host.contains(".");
-        } catch (Exception e) {
-            return false;
+            ReadabilityResult readabilityResultFetchFromUrl = ArticleExtractor.fetchFromUrl(str);
+            if (readabilityResultFetchFromUrl == null || readabilityResultFetchFromUrl.getPlainText().trim().isEmpty() || readabilityResultFetchFromUrl.getWordCount() < 5) {
+                strResolveErrorMessage = getString(R.string.error_no_article);
+            } else {
+                articlePersist = persist(readabilityResultFetchFromUrl, str);
+                strResolveErrorMessage = null;
+            }
+        } catch (Throwable th) {
+            strResolveErrorMessage = resolveErrorMessage(th);
         }
+        final Article resultArticle = articlePersist;
+        final String resultError = strResolveErrorMessage;
+        this.mainHandler.post(new Runnable() { // from class: com.offread.app.ui.MainActivity.9
+            @Override // java.lang.Runnable
+            public final void run() {
+                MainActivity.this.lambda$handleOpenArticle$8(resultArticle, resultError);
+            }
+        });
+    }
+
+    /* JADX INFO: Access modifiers changed from: private */
+    public /* synthetic */ void lambda$handleOpenArticle$8(Article article, String str) {
+        this.fetchInFlight = false;
+        this.btnFetch.setEnabled(true);
+        this.progressArticle.setVisibility(8);
+        if (article != null) {
+            this.editUrl.setText("");
+            loadLibrary();
+            openArticle(article);
+        } else {
+            showStatus(str);
+            Toast.makeText(this, str, 1).show();
+        }
+    }
+
+    private Article persist(ReadabilityResult readabilityResult, String str) {
+        String strIdentityUrl = Article.identityUrl(str, readabilityResult.getCanonicalUrl());
+        Article articleFindArticleByUrl = this.repository.findArticleByUrl(strIdentityUrl);
+        Article article = articleFindArticleByUrl != null ? articleFindArticleByUrl : new Article();
+        String siteName = !readabilityResult.getSiteName().isEmpty() ? readabilityResult.getSiteName() : TextAnalysisUtil.extractDomain(str);
+        if (!readabilityResult.getCanonicalUrl().isEmpty()) {
+            str = readabilityResult.getCanonicalUrl();
+        }
+        article.setTitle(readabilityResult.getTitle());
+        article.setAuthor(readabilityResult.getAuthor());
+        article.setUrl(strIdentityUrl);
+        article.setCanonicalUrl(str);
+        article.setDomain(siteName);
+        article.setContent(readabilityResult.getContent());
+        article.setPlainText(readabilityResult.getPlainText());
+        article.setExcerpt(readabilityResult.getExcerpt());
+        article.setWordCount(readabilityResult.getWordCount());
+        article.setReadingTimeMinutes(readabilityResult.getReadingTimeMinutes());
+        article.setPublishedDate(readabilityResult.getPublishedDate());
+        article.setImageUrl(readabilityResult.getLeadImageUrl());
+        article.setLanguage(readabilityResult.getLanguage());
+        article.setCategory(siteName);
+        if (article.getTags() == null || article.getTags().isEmpty()) {
+            article.setTags("");
+        }
+        ArticleRepository articleRepository = this.repository;
+        if (articleFindArticleByUrl != null) {
+            articleRepository.updateArticle(article);
+            return article;
+        }
+        article.setId(articleRepository.insertArticle(article));
+        return article;
+    }
+
+    private void showStatus(String str) {
+        this.tvStatusNotice.setText(str);
+        this.tvStatusNotice.setVisibility(0);
+    }
+
+    private boolean isValidHttpUrl(String str) {
+        return SafeUrl.isWellFormedHttpUrl(str);
     }
 
     private boolean isNetworkAvailable() {
         try {
-            ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-            if (cm == null) return true;
-            NetworkInfo active = cm.getActiveNetworkInfo();
-            return active != null && active.isConnected();
-        } catch (Exception e) {
+            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService("connectivity");
+            if (connectivityManager == null) {
+                return true;
+            }
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        } catch (Exception unused) {
             return true;
         }
     }
 
-    private String resolveErrorMessage(Throwable t) {
-        if (t instanceof UnknownHostException || t instanceof ConnectException) {
-            return "No internet connection. Please check your network and try again.";
+    private String resolveErrorMessage(Throwable th) {
+        if (th instanceof NetworkFetcher.BlockedTargetException) {
+            return getString(R.string.error_blocked_url);
         }
-        if (t instanceof SocketTimeoutException) {
-            return "Connection timed out. The server took too long to respond.";
+        if ((th instanceof UnknownHostException) || (th instanceof ConnectException)) {
+            return getString(R.string.error_no_network);
         }
-        String msg = t.getMessage();
-        if (msg != null) {
-            if (msg.contains("HTTP error")) {
-                return "HTTP error: " + msg;
+        if (th instanceof SocketTimeoutException) {
+            return getString(R.string.error_timeout);
+        }
+        String message = th.getMessage();
+        if (message != null) {
+            if (message.startsWith("HTTP error ")) {
+                return getString(R.string.error_http_status, new Object[]{httpStatusOf(message)});
             }
-            if (msg.contains("No meaningful article content")) {
-                return "No meaningful article content found at this address.";
+            if (message.startsWith("Cleartext HTTP traffic")) {
+                return getString(R.string.error_cleartext_blocked);
             }
-            if (msg.contains("timed out")) {
-                return "Connection timed out. Please try again later.";
+            if (message.contains("No meaningful article content")) {
+                return getString(R.string.error_no_article);
+            }
+            if (message.contains("timed out")) {
+                return getString(R.string.error_timeout);
             }
         }
-        return "Unable to parse this webpage into readable text.";
+        return getString(R.string.error_parse_failed);
     }
 
-    private Bitmap downloadBitmap(String imageUrl) {
-        if (imageUrl == null || imageUrl.trim().isEmpty()) return null;
-        try {
-            URL url = new URL(imageUrl.trim());
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(8000);
-            conn.setReadTimeout(8000);
-            conn.setInstanceFollowRedirects(true);
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 13)");
-            int code = conn.getResponseCode();
-            if (code >= 200 && code < 300) {
-                try (InputStream in = conn.getInputStream()) {
-                    return BitmapFactory.decodeStream(in);
-                }
-            }
-        } catch (Exception ignored) {
-        }
-        return null;
-    }
-
-    private void updateBookmarkUI() {
-        if (isBookmarked) {
-            btnBookmark.setImageResource(R.drawable.ic_bookmark_filled);
-            btnBookmark.setColorFilter(Color.parseColor("#F59E0B"));
-        } else {
-            btnBookmark.setImageResource(R.drawable.ic_bookmark);
-            btnBookmark.setColorFilter(Color.parseColor("#94A3B8"));
-        }
-    }
-
-    private void updateListenUI() {
-        if (isListening) {
-            btnListen.setColorFilter(Color.parseColor("#0D9488"));
-        } else {
-            btnListen.setColorFilter(Color.parseColor("#94A3B8"));
-        }
-    }
-
-    private void updateThemeIcon() {
-        String current = preferences.getTheme();
-        if (AppPreferences.THEME_DARK.equals(current)) {
-            btnThemeToggle.setColorFilter(Color.parseColor("#F59E0B"));
-        } else {
-            btnThemeToggle.setColorFilter(Color.parseColor("#64748B"));
-        }
+    private String httpStatusOf(String str) {
+        String strTrim = str.substring(11).trim();
+        int iIndexOf = strTrim.indexOf(32);
+        return iIndexOf > 0 ? strTrim.substring(0, iIndexOf) : strTrim;
     }
 }

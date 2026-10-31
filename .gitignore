@@ -29,3 +29,6 @@ Thumbs.db
 
 # Android Studio local properties
 local.properties
+
+# Local development signing password
+.offread-dev-keypass

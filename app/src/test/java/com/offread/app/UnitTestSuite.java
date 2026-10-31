@@ -1,18 +1,28 @@
 package com.offread.app;
 
+import com.offread.app.data.AppPreferences;
 import com.offread.app.data.Article;
 import com.offread.app.data.ReadingStats;
+import com.offread.app.parser.AdFilter;
+import com.offread.app.parser.ArticleContentBlocks;
 import com.offread.app.parser.ArticleExtractor;
 import com.offread.app.parser.HtmlNode;
 import com.offread.app.parser.HtmlParser;
 import com.offread.app.parser.JsonLdExtractor;
 import com.offread.app.parser.MiniJson;
 import com.offread.app.parser.ReadabilityResult;
+import com.offread.app.parser.SafeUrl;
 import com.offread.app.parser.TextAnalysisUtil;
+import com.offread.app.tts.SpeechLanguages;
+import com.offread.app.ui.ReadingDateFormatter;
+import com.offread.app.util.BackupHelper;
+import com.offread.app.util.ReaderMetaFormatter;
 import com.offread.app.util.SampleContentHelper;
 import com.offread.app.util.UIHelper;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class UnitTestSuite {
@@ -53,7 +63,16 @@ public class UnitTestSuite {
                 "testInvalidAndEmptyInputRejected",
                 "testShortNonArticleContentHandledSafely",
                 "testCanonicalUrlExtraction",
-                "testMissingOptionalMetadataDoesNotCrash"
+                "testMissingOptionalMetadataDoesNotCrash",
+                "testTtsLanguageConstantsAndDefaults",
+                "testReaderMetaFormatter",
+                "testReadingDateFormatterNullSafety",
+                "testFoldedConstantsReplacement",
+                "testSafeUrlTargetValidation",
+                "testBackupSanitizationAndDepth",
+                "testArticleModelDecoupledDefaults",
+                "testArticleContentBlocksParsing",
+                "testAdFilterAndBoilerplateDecoupling"
         };
 
         Runnable[] tests = {
@@ -84,7 +103,16 @@ public class UnitTestSuite {
                 UnitTestSuite::testInvalidAndEmptyInputRejected,
                 UnitTestSuite::testShortNonArticleContentHandledSafely,
                 UnitTestSuite::testCanonicalUrlExtraction,
-                UnitTestSuite::testMissingOptionalMetadataDoesNotCrash
+                UnitTestSuite::testMissingOptionalMetadataDoesNotCrash,
+                UnitTestSuite::testTtsLanguageConstantsAndDefaults,
+                UnitTestSuite::testReaderMetaFormatter,
+                UnitTestSuite::testReadingDateFormatterNullSafety,
+                UnitTestSuite::testFoldedConstantsReplacement,
+                UnitTestSuite::testSafeUrlTargetValidation,
+                UnitTestSuite::testBackupSanitizationAndDepth,
+                UnitTestSuite::testArticleModelDecoupledDefaults,
+                UnitTestSuite::testArticleContentBlocksParsing,
+                UnitTestSuite::testAdFilterAndBoilerplateDecoupling
         };
 
         for (int i = 0; i < tests.length; i++) {
@@ -531,5 +559,135 @@ public class UnitTestSuite {
         assertEquals("Published date is empty", "", res.getPublishedDate());
         assertEquals("Fallback title to domain", "minimalist.com", res.getTitle());
         assertTrue("Content extracted", res.getContent().contains("An article with absolutely no title"));
+    }
+
+    private static void testTtsLanguageConstantsAndDefaults() {
+        assertEquals("TTS auto constant is empty string", "", AppPreferences.TTS_LANGUAGE_AUTO);
+        assertEquals("Tag of null is empty", "", SpeechLanguages.tagOf(null));
+        assertEquals("Tag of empty locale is empty", "", SpeechLanguages.tagOf(new Locale("")));
+        assertEquals("Tag of en-US is formatted with dash", "en-US", SpeechLanguages.tagOf(Locale.US));
+        assertEquals("Tag of fr is formatted without country", "fr", SpeechLanguages.tagOf(Locale.FRENCH));
+        assertEquals("Tag of de-DE is formatted with country", "de-DE", SpeechLanguages.tagOf(Locale.GERMANY));
+
+        Locale parsed = SpeechLanguages.localeForTag("en-US");
+        assertTrue("Parsed locale not null", parsed != null);
+        assertEquals("Language is en", "en", parsed.getLanguage());
+        assertEquals("Country is US", "US", parsed.getCountry());
+        assertEquals("Locale for empty tag is null", null, SpeechLanguages.localeForTag(""));
+        assertEquals("Locale for whitespace tag is null", null, SpeechLanguages.localeForTag("   "));
+        assertEquals("Locale for null tag is null", null, SpeechLanguages.localeForTag(null));
+
+        Locale matched = SpeechLanguages.fromHtmlLang("en_US", Arrays.asList(Locale.US, Locale.UK));
+        assertEquals("fromHtmlLang converts underscore to hyphen and matches", Locale.US, matched);
+        assertEquals("fromHtmlLang null tag returns null", null, SpeechLanguages.fromHtmlLang(null, Arrays.asList(Locale.US)));
+    }
+
+    private static void testReaderMetaFormatter() {
+        assertEquals("Null array returns empty string", "", ReaderMetaFormatter.join((String[]) null));
+        assertEquals("Empty args returns empty string", "", ReaderMetaFormatter.join());
+        assertEquals("Null element ignored", "", ReaderMetaFormatter.join((String) null));
+        assertEquals("Single element returns trimmed string", "Technology", ReaderMetaFormatter.join("  Technology  "));
+        assertEquals("Multiple elements joined with separator", "Technology  •  5 min  •  Offline", ReaderMetaFormatter.join("Technology", "5 min", "Offline"));
+        assertEquals("Blank elements skipped", "First  •  Second", ReaderMetaFormatter.join("First", "  ", null, "Second"));
+    }
+
+    private static void testReadingDateFormatterNullSafety() {
+        assertEquals("Null context returns empty", "", ReadingDateFormatter.format(null, 123456789L));
+        assertEquals("Non-positive timestamp returns empty", "", ReadingDateFormatter.format(null, 0L));
+        assertEquals("Negative timestamp returns empty", "", ReadingDateFormatter.format(null, -1L));
+    }
+
+    private static void testFoldedConstantsReplacement() {
+        int expectedFlags = android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
+        assertEquals("Intent clear top + single top equals 603979776", 603979776, expectedFlags);
+        assertEquals("ParcelFileDescriptor MODE_READ_ONLY equals 268435456", 268435456, android.os.ParcelFileDescriptor.MODE_READ_ONLY);
+    }
+
+    private static void testSafeUrlTargetValidation() {
+        assertTrue("HTTPS valid", SafeUrl.isWellFormedHttpUrl("https://example.com/path"));
+        assertTrue("HTTP valid", SafeUrl.isWellFormedHttpUrl("http://example.com:8080/path?q=1#top"));
+        assertTrue("Empty false", !SafeUrl.isWellFormedHttpUrl(""));
+        assertTrue("Null false", !SafeUrl.isWellFormedHttpUrl(null));
+        assertTrue("Javascript false", !SafeUrl.isWellFormedHttpUrl("javascript:alert(1)"));
+        assertTrue("File false", !SafeUrl.isWellFormedHttpUrl("file:///data/app"));
+        assertTrue("Content scheme false", !SafeUrl.isWellFormedHttpUrl("content://com.offread.app/backup"));
+
+        assertTrue("Private 127.0.0.1 blocked", !SafeUrl.isSafeFetchTarget("http://127.0.0.1:8080"));
+        assertTrue("Private 10.0.0.1 blocked", !SafeUrl.isSafeFetchTarget("http://10.0.0.1/admin"));
+        assertTrue("Private 192.168.1.1 blocked", !SafeUrl.isSafeFetchTarget("http://192.168.1.1/router"));
+        assertTrue("Private 172.16.0.1 blocked", !SafeUrl.isSafeFetchTarget("http://172.16.0.1/status"));
+        assertTrue("Link-local 169.254.169.254 blocked", !SafeUrl.isSafeFetchTarget("http://169.254.169.254/latest/meta-data"));
+        assertTrue("Localhost string blocked", !SafeUrl.isSafeFetchTarget("http://localhost:3000"));
+        assertTrue("Public IP 8.8.8.8 safe", SafeUrl.isSafeFetchTarget("https://8.8.8.8/article"));
+    }
+
+    private static void testBackupSanitizationAndDepth() {
+        assertTrue("Acceptable null URL", BackupHelper.isAcceptableImportUrl(null));
+        assertTrue("Acceptable empty URL", BackupHelper.isAcceptableImportUrl(""));
+        assertTrue("Acceptable whitespace URL", BackupHelper.isAcceptableImportUrl("   "));
+        assertTrue("Acceptable HTTPS URL", BackupHelper.isAcceptableImportUrl("https://example.com/article"));
+        assertTrue("Reject javascript URL", !BackupHelper.isAcceptableImportUrl("javascript:evil()"));
+        assertTrue("Reject file URL", !BackupHelper.isAcceptableImportUrl("file:///etc/hosts"));
+        assertTrue("Reject content URL", !BackupHelper.isAcceptableImportUrl("content://com.offread.app.backup/1"));
+
+        assertEquals("Sanitize null URL", "", BackupHelper.sanitizeOptionalUrl(null));
+        assertEquals("Sanitize empty URL", "", BackupHelper.sanitizeOptionalUrl("   "));
+        assertEquals("Sanitize valid URL", "https://example.com/img.png", BackupHelper.sanitizeOptionalUrl("  https://example.com/img.png  "));
+        assertEquals("Sanitize invalid URL", "", BackupHelper.sanitizeOptionalUrl("javascript:exploit"));
+
+        assertTrue("Null depth safe", !BackupHelper.exceedsImportDepth(null));
+        assertTrue("Normal depth safe", !BackupHelper.exceedsImportDepth("{\"articles\": [{\"title\": \"A\"}]}"));
+        String jsonWithBracesInStrings = "{\"content\": \"{ nested {{ brackets }} inside text }\"}";
+        assertTrue("Braces inside quotes do not exceed depth", !BackupHelper.exceedsImportDepth(jsonWithBracesInStrings));
+
+        StringBuilder deep = new StringBuilder();
+        for (int i = 0; i < 70; i++) {
+            deep.append("{\"level\":");
+        }
+        deep.append("1");
+        for (int i = 0; i < 70; i++) {
+            deep.append("}");
+        }
+        assertTrue("Exceeds 64 depth triggers protection", BackupHelper.exceedsImportDepth(deep.toString()));
+    }
+
+    private static void testArticleModelDecoupledDefaults() {
+        Article a = new Article();
+        assertEquals("Default category", "General", a.getCategory());
+        assertEquals("Default tags", "", a.getTags());
+        assertEquals("Default canonical url", "", a.getCanonicalUrl());
+        assertEquals("Default published date", "", a.getPublishedDate());
+        assertEquals("Default image url", "", a.getImageUrl());
+        assertEquals("Default language", "", a.getLanguage());
+
+        assertEquals("Identity URL trimmed", "https://example.com/page", Article.identityUrl("  https://example.com/page  ", ""));
+        assertEquals("Identity URL null safe", "", Article.identityUrl(null, "fallback"));
+    }
+
+    private static void testArticleContentBlocksParsing() {
+        String md = "## Section Title\n\nFirst paragraph of text.\n\n```\nint x = 42;\n```\n\n> A famous quotation\n";
+        List<ArticleContentBlocks.Block> blocks = ArticleContentBlocks.parse(md);
+        assertTrue("Blocks parsed", blocks != null && !blocks.isEmpty());
+        assertEquals("Exactly 4 blocks", 4, blocks.size());
+
+        assertEquals("First block is SUBHEADING", ArticleContentBlocks.TYPE_SUBHEADING, blocks.get(0).type);
+        assertTrue("H2 text matches", blocks.get(0).text.contains("Section Title"));
+
+        assertEquals("Second block is PARAGRAPH", ArticleContentBlocks.TYPE_PARAGRAPH, blocks.get(1).type);
+        assertTrue("Paragraph text matches", blocks.get(1).text.contains("First paragraph"));
+
+        assertEquals("Third block is CODE", ArticleContentBlocks.TYPE_CODE, blocks.get(2).type);
+        assertTrue("Code block contains code", blocks.get(2).text.contains("int x = 42;"));
+
+        assertEquals("Fourth block is QUOTE", ArticleContentBlocks.TYPE_QUOTE, blocks.get(3).type);
+        assertTrue("Quote text matches", blocks.get(3).text.contains("A famous quotation"));
+    }
+
+    private static void testAdFilterAndBoilerplateDecoupling() {
+        assertTrue("Sponsored content is ad placeholder", AdFilter.isAdPlaceholderText("Sponsored content"));
+        assertTrue("Mentions advertising", AdFilter.mentionsAdvertising("This article contains advertising from our sponsor"));
+        assertTrue("Clean article prose does not mention advertising", !AdFilter.mentionsAdvertising("A clean philosophical essay about deep work."));
+        assertTrue("Separator or spinner detected", AdFilter.isSeparatorOrSpinner("• • •"));
+        assertTrue("Normal text not spinner", !AdFilter.isSeparatorOrSpinner("Hello world"));
     }
 }

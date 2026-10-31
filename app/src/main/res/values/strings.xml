@@ -1,97 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="about_body">OffRead saves any web article offline as clean text, then presents it without ads, trackers or popovers. It runs entirely on Android framework APIs and stores everything on this device.</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="action_add">Add Article</string>
+    <string name="action_appearance">Appearance</string>
+    <string name="action_archive">Archive</string>
+    <string name="action_back">Back</string>
+    <string name="action_bookmark">Save to bookmarks</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_delete_confirm">Delete</string>
+    <string name="action_done">Done</string>
+    <string name="action_favorite">Favorite</string>
+    <string name="action_install_voices">Open voice settings</string>
+    <string name="action_mark_finished">Mark as finished</string>
+    <string name="action_more">More actions</string>
+    <string name="action_open_source">Open original</string>
+    <string name="action_prev_sentence">Previous sentence</string>
+    <string name="action_remove_bookmark">Remove from saved</string>
+    <string name="action_save">Save</string>
+    <string name="action_search">Search</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_share">Share</string>
+    <string name="action_speed_read">Speed Read</string>
+    <string name="action_stats">Insights</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_tts">Listen (TTS)</string>
+    <string name="action_unarchive">Move to Unread</string>
+    <string name="action_unbookmark">Remove from bookmarks</string>
+    <string name="action_unfavorite">Unfavorite</string>
+    <string name="add_article_title">Add to OffRead</string>
     <string name="app_name">OffRead</string>
     <string name="app_tagline">Offline Distraction-Free Reader</string>
-
-    <!-- Navigation & Tabs -->
-    <string name="tab_all">All</string>
-    <string name="tab_unread">Unread</string>
-    <string name="tab_favorites">Favorites</string>
-    <string name="tab_archive">Archive</string>
-
-    <!-- Search & Filters -->
+    <string name="appearance_title">Reader Appearance</string>
+    <string name="article_deleted">Article deleted</string>
+    <string name="article_finished">Marked as finished</string>
+    <string name="article_saved_offline">Article saved offline</string>
+    <string name="author_hint">Author (optional)</string>
+    <string name="bookmarks_empty_subtitle">Tap the bookmark in any article to keep it here for offline reading.</string>
+    <string name="bookmarks_empty_title">Nothing saved yet</string>
+    <string name="bookmarks_title">Saved articles</string>
+    <string name="browser_unavailable">Could not open a browser</string>
+    <string name="category_hint">Category / Tags (comma separated)</string>
+    <string name="confirm_clear_message">Every saved article, highlight and statistic is removed from this device.</string>
+    <string name="confirm_clear_title">Clear the whole library?</string>
+    <string name="confirm_delete_message">It will be removed from your library on this device.</string>
+    <string name="confirm_delete_title">Delete this article?</string>
+    <string name="content_hint">Paste article text or markdown here…</string>
+    <string name="content_required">Please enter article content</string>
+    <string name="date_yesterday">Yesterday</string>
+    <string name="empty_articles_subtitle">Save any web article or note to read distraction-free offline.</string>
+    <string name="empty_articles_title">Your library is empty</string>
+    <string name="empty_search_subtitle">Try a different search query or tag.</string>
+    <string name="empty_search_title">No articles found</string>
+    <string name="error_article_missing">That article is no longer in your library.</string>
+    <string name="error_blocked_url">OffRead only fetches public web pages. This address points at a local or private network location.</string>
+    <string name="error_cleartext_blocked">OffRead loads pages over HTTPS only. This address is plain HTTP, so the system blocked it.</string>
+    <string name="error_empty_url">Please enter an article URL</string>
+    <string name="error_http">Request failed: %1$s</string>
+    <string name="error_http_status">The site replied with HTTP status %1$s.</string>
+    <string name="error_invalid_url">Invalid URL. Please enter a valid HTTP or HTTPS address.</string>
+    <string name="error_no_article">No readable article found at this address.</string>
+    <string name="error_no_network">No internet connection. Please check your network and try again.</string>
+    <string name="error_parse_failed">Unable to parse this webpage into readable text.</string>
+    <string name="error_share_failed">No app available to share from</string>
+    <string name="error_timeout">Connection timed out. The server took too long to respond.</string>
+    <string name="export_failed">Export failed</string>
+    <string name="export_success">Library exported</string>
+    <string name="fetch_and_save">Fetch &amp; Save Offline</string>
+    <string name="fetching_article">Extracting article content…</string>
+    <string name="font_large">Large</string>
+    <string name="font_medium">Medium</string>
+    <string name="font_mono">Mono</string>
+    <string name="font_sans">Sans</string>
+    <string name="font_serif">Serif</string>
+    <string name="font_size">Font Size</string>
+    <string name="font_small">Small</string>
+    <string name="fullscreen_mode">Fullscreen Mode</string>
+    <string name="image_alt_prefix">Illustration: %1$s</string>
+    <string name="import_failed">Import failed — is that an OffRead backup?</string>
+    <string name="import_success">Imported %1$d articles</string>
+    <string name="keep_screen_on">Keep Screen On</string>
+    <string name="library_count_value">%1$d articles stored on this device</string>
+    <string name="line_spacing">Line Spacing</string>
+    <string name="minutes_read">%1$d min read</string>
+    <string name="moved_to_archive">Moved to Archive</string>
+    <string name="nav_bookmarks">Saved</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_settings">Settings</string>
+    <string name="no_original_url">No original link saved for this article</string>
+    <string name="note_category">Note</string>
+    <string name="nothing_to_save">Nothing to save</string>
+    <string name="offline_download_failed">Could not download this article.</string>
+    <string name="offline_draft_saved">Saved as an offline draft — no network to fetch the text</string>
+    <string name="offline_queued_label">Offline link</string>
+    <string name="offline_queued_prefix">Saved offline: %1$s</string>
+    <string name="paper_auto">Auto</string>
+    <string name="pref_clear_all">Clear Entire Library</string>
+    <string name="pref_clear_all_desc">Permanently remove all articles and statistics</string>
+    <string name="pref_export_desc">Backup all saved articles to a local JSON file</string>
+    <string name="pref_export_library">Export Library (JSON)</string>
+    <string name="pref_font_family">Font family</string>
+    <string name="pref_font_size">Font size</string>
+    <string name="pref_import_desc">Restore articles from a JSON backup</string>
+    <string name="pref_import_library">Import Library (JSON)</string>
+    <string name="pref_reading_width">Reading width</string>
+    <string name="pref_restore_samples">Load Sample Articles</string>
+    <string name="pref_restore_samples_desc">Add curated timeless articles to library</string>
+    <string name="pref_theme">Theme</string>
+    <string name="pref_theme_desc">System, Light or Dark</string>
+    <string name="pref_tts_language">Language</string>
+    <string name="pref_tts_speed">Speech speed</string>
+    <string name="press_play_to_start">Tap Play to start speed reading</string>
+    <string name="progress_finished">Finished</string>
+    <string name="progress_percent">%1$d%% read</string>
+    <string name="progress_unread">Unread</string>
+    <string name="reader_no_text">This article has no readable text left after cleaning.</string>
+    <string name="reader_removed">Removed from Bookmarks</string>
+    <string name="reader_saved">Saved to Bookmarks</string>
+    <string name="restored_to_library">Restored to Library</string>
+    <string name="samples_loaded">Sample articles loaded</string>
+    <string name="saved_article">Saved: %1$s</string>
+    <string name="saved_link_offline">Saved the link offline to OffRead</string>
+    <string name="saved_note">Saved the note to OffRead</string>
+    <string name="saving_article">Saving article offline with OffRead…</string>
     <string name="search_hint">Search articles, tags, authors…</string>
+    <string name="settings_category_about">About</string>
+    <string name="settings_category_appearance">Appearance</string>
+    <string name="settings_category_data">Library data</string>
+    <string name="settings_category_read_aloud">Read aloud</string>
+    <string name="settings_category_reading">Reading</string>
+    <string name="settings_cleared">Library cleared</string>
+    <string name="settings_title">Settings &amp; Backup</string>
+    <string name="share_confirm_message_link">"Another app sent OffRead this address:
+
+%1$s
+
+OffRead will fetch the page and store its text on this device."</string>
+    <string name="share_confirm_message_note">"Another app sent OffRead the following text. Nothing is saved until you choose Save.
+
+%1$s"</string>
+    <string name="share_confirm_save">Save</string>
+    <string name="share_confirm_title">Save this to OffRead?</string>
+    <string name="share_unsupported_link">OffRead can only save a public http or https address.</string>
+    <string name="shared_note_title">Shared note</string>
     <string name="sort_by">Sort by</string>
     <string name="sort_newest">Newest first</string>
     <string name="sort_oldest">Oldest first</string>
     <string name="sort_reading_time">Shortest read</string>
     <string name="sort_title">Title (A-Z)</string>
-
-    <!-- Actions -->
-    <string name="action_add">Add Article</string>
-    <string name="action_search">Search</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_stats">Insights</string>
-    <string name="action_favorite">Favorite</string>
-    <string name="action_unfavorite">Unfavorite</string>
-    <string name="action_archive">Archive</string>
-    <string name="action_unarchive">Move to Unread</string>
-    <string name="action_delete">Delete</string>
-    <string name="action_share">Share</string>
-    <string name="action_speed_read">Speed Read</string>
-    <string name="action_tts">Listen (TTS)</string>
-    <string name="action_appearance">Appearance</string>
-    <string name="action_save">Save</string>
-    <string name="action_cancel">Cancel</string>
-
-    <!-- Reader Settings -->
-    <string name="appearance_title">Reader Appearance</string>
-    <string name="theme_light">Paper</string>
-    <string name="theme_sepia">Sepia</string>
-    <string name="theme_dark">Slate</string>
-    <string name="theme_black">AMOLED</string>
-    <string name="font_serif">Serif</string>
-    <string name="font_sans">Sans</string>
-    <string name="font_mono">Mono</string>
-    <string name="font_size">Font Size</string>
-    <string name="line_spacing">Line Spacing</string>
-    <string name="keep_screen_on">Keep Screen On</string>
-    <string name="fullscreen_mode">Fullscreen Mode</string>
-
-    <!-- Add Article Screen -->
-    <string name="add_article_title">Add to OffRead</string>
-    <string name="tab_url">Web URL</string>
-    <string name="tab_text">Write / Paste</string>
-    <string name="url_input_hint">https://example.com/article</string>
-    <string name="fetch_and_save">Fetch &amp; Save Offline</string>
-    <string name="fetching_article">Extracting article content…</string>
-    <string name="title_hint">Article Title</string>
-    <string name="author_hint">Author (optional)</string>
-    <string name="category_hint">Category / Tags (comma separated)</string>
-    <string name="content_hint">Paste article text or markdown here…</string>
-
-    <!-- Audio Player (TTS) -->
-    <string name="tts_playing">Playing audio reader</string>
-    <string name="tts_paused">Audio reader paused</string>
-    <string name="tts_speed">Speed</string>
-
-    <!-- Speed Reader (RSVP) -->
+    <string name="speech_paused">Paused</string>
+    <string name="speech_sentence">%1$d of %2$d</string>
+    <string name="speech_started">Reading aloud</string>
+    <string name="speed_100">1.0×</string>
+    <string name="speed_125">1.25×</string>
+    <string name="speed_150">1.5×</string>
+    <string name="speed_75">0.75×</string>
+    <string name="speed_completed">Completed speed reading</string>
     <string name="speed_reader_title">Speed Reader (RSVP)</string>
-    <string name="wpm_label">WPM</string>
-    <string name="press_play_to_start">Tap Play to start speed reading</string>
-
-    <!-- Statistics -->
-    <string name="stats_title">Reading Insights</string>
-    <string name="stat_articles_saved">Saved</string>
     <string name="stat_articles_read">Finished</string>
-    <string name="stat_words_read">Words Read</string>
-    <string name="stat_time_read">Time Reading</string>
+    <string name="stat_articles_saved">Saved</string>
     <string name="stat_streak">Day Streak</string>
-
-    <!-- Settings -->
-    <string name="settings_title">Settings &amp; Backup</string>
-    <string name="pref_export_library">Export Library (JSON)</string>
-    <string name="pref_export_desc">Backup all saved articles to a local JSON file</string>
-    <string name="pref_import_library">Import Library (JSON)</string>
-    <string name="pref_import_desc">Restore articles from a JSON backup</string>
-    <string name="pref_restore_samples">Load Sample Articles</string>
-    <string name="pref_restore_samples_desc">Add curated timeless articles to library</string>
-    <string name="pref_clear_all">Clear Entire Library</string>
-    <string name="pref_clear_all_desc">Permanently remove all articles and statistics</string>
-
-    <!-- Empty States -->
-    <string name="empty_articles_title">Your library is empty</string>
-    <string name="empty_articles_subtitle">Save any web article or note to read distraction-free offline.</string>
-    <string name="empty_search_title">No articles found</string>
-    <string name="empty_search_subtitle">Try a different search query or tag.</string>
+    <string name="stat_time_read">Time Reading</string>
+    <string name="stat_words_read">Words Read</string>
+    <string name="stats_title">Reading Insights</string>
+    <string name="tab_all">All</string>
+    <string name="tab_archive">Archive</string>
+    <string name="tab_favorites">Favorites</string>
+    <string name="tab_text">Write / Paste</string>
+    <string name="tab_unread">Unread</string>
+    <string name="tab_url">Web URL</string>
+    <string name="theme_black">AMOLED</string>
+    <string name="theme_dark">Slate</string>
+    <string name="theme_light">Paper</string>
+    <string name="theme_mode_dark">Dark</string>
+    <string name="theme_mode_light">Light</string>
+    <string name="theme_sepia">Sepia</string>
+    <string name="theme_system">System</string>
+    <string name="title_hint">Article Title</string>
+    <string name="tts_engine_voice_count">%1$d voices available</string>
+    <string name="tts_language_auto">Auto</string>
+    <string name="tts_language_auto_suffix">Auto (%1$s)</string>
+    <string name="tts_language_dialog_title">Choose a language</string>
+    <string name="tts_language_hint">Auto reads each article in its own language when the engine has that voice.</string>
+    <string name="tts_language_unavailable">That voice is not installed. Choose another language or pick Auto.</string>
+    <string name="tts_no_voices">This engine reports no downloadable voices, so only the system language is selectable.</string>
+    <string name="tts_none_installed">No text-to-speech engine is installed on this device. Add one in system settings to use Read Aloud.</string>
+    <string name="tts_paused">Audio reader paused</string>
+    <string name="tts_playing">Playing audio reader</string>
+    <string name="tts_speed">Speed</string>
+    <string name="url_input_hint">https://example.com/article</string>
+    <string name="width_normal">Normal</string>
+    <string name="width_wide">Wide</string>
+    <string name="wpm_label">WPM</string>
 </resources>

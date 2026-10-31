@@ -1,294 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background"
-    android:orientation="vertical">
-
-    <!-- Top Action Bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="16dp">
-
-        <ImageButton
-            android:id="@+id/btn_add_back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_back"
-            android:tint="@color/text_primary"
-            android:contentDescription="@string/action_cancel" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:text="@string/add_article_title"
-            android:textColor="@color/text_primary"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+<LinearLayout android:orientation="vertical" android:background="?colorBackground" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="56.0dp" android:paddingStart="12.0dp" android:paddingEnd="16.0dp">
+        <ImageButton android:id="@id/btn_add_back" android:background="?android:selectableItemBackgroundBorderless" android:layout_width="40.0dp" android:layout_height="40.0dp" android:src="@drawable/ic_back" android:tint="?colorTextPrimary" android:contentDescription="@string/action_cancel" />
+        <TextView android:textSize="18.0sp" android:textStyle="bold" android:textColor="?colorTextPrimary" android:layout_width="0.0dp" android:layout_height="wrap_content" android:text="@string/add_article_title" android:layout_weight="1.0" android:layout_marginStart="8.0dp" />
     </LinearLayout>
-
-    <!-- Mode Selector Tabs -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="16dp">
-
-        <TextView
-            android:id="@+id/tab_mode_url"
-            android:layout_width="0dp"
-            android:layout_height="42dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="6dp"
-            android:gravity="center"
-            android:background="@drawable/bg_chip_active"
-            android:text="@string/tab_url"
-            android:textColor="@color/text_primary"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tab_mode_text"
-            android:layout_width="0dp"
-            android:layout_height="42dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:background="@drawable/bg_chip"
-            android:text="@string/tab_text"
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp" />
+    <LinearLayout android:orientation="horizontal" android:paddingTop="8.0dp" android:paddingBottom="16.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="20.0dp" android:paddingEnd="20.0dp">
+        <TextView android:textSize="14.0sp" android:textStyle="bold" android:textColor="?colorTextPrimary" android:gravity="center" android:id="@id/tab_mode_url" android:background="@drawable/bg_chip_active" android:paddingTop="6.0dp" android:paddingBottom="6.0dp" android:layout_width="0.0dp" android:layout_height="wrap_content" android:minHeight="42.0dp" android:text="@string/tab_url" android:layout_weight="1.0" android:layout_marginEnd="6.0dp" />
+        <TextView android:textSize="14.0sp" android:textColor="?colorTextSecondary" android:gravity="center" android:id="@id/tab_mode_text" android:background="@drawable/bg_chip" android:paddingTop="6.0dp" android:paddingBottom="6.0dp" android:layout_width="0.0dp" android:layout_height="wrap_content" android:minHeight="42.0dp" android:text="@string/tab_text" android:layout_weight="1.0" />
     </LinearLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="24dp">
-
-            <!-- ================= URL FORM ================= -->
-            <LinearLayout
-                android:id="@+id/layout_form_url"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Web Article URL"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_search_input"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="8dp">
-
-                    <EditText
-                        android:id="@+id/edit_url_input"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@null"
-                        android:hint="@string/url_input_hint"
-                        android:textColor="@color/text_primary"
-                        android:textColorHint="@color/text_muted"
-                        android:textSize="14sp"
-                        android:inputType="textUri"
-                        android:singleLine="true" />
-
-                    <Button
-                        android:id="@+id/btn_paste_url"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:background="@drawable/bg_chip"
-                        android:text="Paste"
-                        android:textColor="@color/primary_light"
-                        android:textSize="12sp"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp" />
+    <ScrollView android:layout_width="match_parent" android:layout_height="0.0dp" android:fillViewport="true" android:layout_weight="1.0">
+        <LinearLayout android:orientation="vertical" android:paddingBottom="24.0dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="20.0dp" android:paddingEnd="20.0dp">
+            <LinearLayout android:orientation="vertical" android:id="@id/layout_form_url" android:visibility="visible" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <TextView android:textSize="13.0sp" android:textStyle="bold" android:textColor="?colorTextSecondary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Web Article URL" />
+                <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:background="@drawable/bg_search_input" android:layout_width="match_parent" android:layout_height="50.0dp" android:layout_marginTop="8.0dp" android:paddingStart="12.0dp" android:paddingEnd="8.0dp">
+                    <EditText android:textSize="14.0sp" android:textColor="?colorTextPrimary" android:textColorHint="?colorTextMuted" android:id="@id/edit_url_input" android:background="@null" android:layout_width="0.0dp" android:layout_height="match_parent" android:hint="@string/url_input_hint" android:singleLine="true" android:layout_weight="1.0" android:inputType="textUri" />
+                    <Button android:textSize="12.0sp" android:textColor="?colorAccent" android:id="@id/btn_paste_url" android:background="@drawable/bg_chip" android:layout_width="wrap_content" android:layout_height="36.0dp" android:text="Paste" android:paddingStart="12.0dp" android:paddingEnd="12.0dp" />
                 </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Category / Tags"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/edit_url_tags"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_search_input"
-                    android:hint="@string/category_hint"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_muted"
-                    android:textSize="14sp"
-                    android:singleLine="true" />
-
-                <ProgressBar
-                    android:id="@+id/progress_url_fetch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="24dp"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/tv_url_fetch_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center"
-                    android:text="@string/fetching_article"
-                    android:textColor="@color/primary_light"
-                    android:textSize="13sp"
-                    android:visibility="gone" />
-
-                <Button
-                    android:id="@+id/btn_submit_url"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="24dp"
-                    android:background="@drawable/bg_primary_button"
-                    android:text="@string/fetch_and_save"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                <TextView android:textSize="13.0sp" android:textStyle="bold" android:textColor="?colorTextSecondary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16.0dp" android:text="Category / Tags" />
+                <EditText android:textSize="14.0sp" android:textColor="?colorTextPrimary" android:textColorHint="?colorTextMuted" android:id="@id/edit_url_tags" android:background="@drawable/bg_search_input" android:layout_width="match_parent" android:layout_height="50.0dp" android:layout_marginTop="8.0dp" android:hint="@string/category_hint" android:singleLine="true" />
+                <ProgressBar android:layout_gravity="center_horizontal" android:id="@id/progress_url_fetch" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="24.0dp" />
+                <TextView android:textSize="13.0sp" android:textColor="?colorAccent" android:gravity="center" android:id="@id/tv_url_fetch_status" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" android:text="@string/fetching_article" />
+                <Button android:textSize="15.0sp" android:textStyle="bold" android:textColor="?colorOnAccent" android:id="@id/btn_submit_url" android:background="@drawable/bg_primary_button" android:layout_width="match_parent" android:layout_height="50.0dp" android:layout_marginTop="24.0dp" android:text="@string/fetch_and_save" />
             </LinearLayout>
-
-            <!-- ================= MANUAL / TEXT FORM ================= -->
-            <LinearLayout
-                android:id="@+id/layout_form_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Article Title"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/edit_manual_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_search_input"
-                    android:hint="@string/title_hint"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_muted"
-                    android:textSize="14sp"
-                    android:singleLine="true" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Author"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/edit_manual_author"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_search_input"
-                    android:hint="@string/author_hint"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_muted"
-                    android:textSize="14sp"
-                    android:singleLine="true" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Tags (comma separated)"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/edit_manual_tags"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_search_input"
-                    android:hint="@string/category_hint"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_muted"
-                    android:textSize="14sp"
-                    android:singleLine="true" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Article Content"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/edit_manual_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:minLines="8"
-                    android:gravity="top|start"
-                    android:background="@drawable/bg_search_input"
-                    android:hint="@string/content_hint"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_muted"
-                    android:textSize="14sp"
-                    android:inputType="textMultiLine" />
-
-                <Button
-                    android:id="@+id/btn_submit_manual"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="24dp"
-                    android:background="@drawable/bg_primary_button"
-                    android:text="@string/action_save"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+            <LinearLayout android:orientation="vertical" android:id="@id/layout_form_text" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <TextView android:textSize="13.0sp" android:textStyle="bold" android:textColor="?colorTextSecondary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Article Title" />
+                <EditText android:textSize="14.0sp" android:textColor="?colorTextPrimary" android:textColorHint="?colorTextMuted" android:id="@id/edit_manual_title" android:background="@drawable/bg_search_input" android:layout_width="match_parent" android:layout_height="50.0dp" android:layout_marginTop="8.0dp" android:hint="@string/title_hint" android:singleLine="true" />
+                <TextView android:textSize="13.0sp" android:textStyle="bold" android:textColor="?colorTextSecondary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16.0dp" android:text="Author" />
+                <EditText android:textSize="14.0sp" android:textColor="?colorTextPrimary" android:textColorHint="?colorTextMuted" android:id="@id/edit_manual_author" android:background="@drawable/bg_search_input" android:layout_width="match_parent" android:layout_height="50.0dp" android:layout_marginTop="8.0dp" android:hint="@string/author_hint" android:singleLine="true" />
+                <TextView android:textSize="13.0sp" android:textStyle="bold" android:textColor="?colorTextSecondary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16.0dp" android:text="Tags (comma separated)" />
+                <EditText android:textSize="14.0sp" android:textColor="?colorTextPrimary" android:textColorHint="?colorTextMuted" android:id="@id/edit_manual_tags" android:background="@drawable/bg_search_input" android:layout_width="match_parent" android:layout_height="50.0dp" android:layout_marginTop="8.0dp" android:hint="@string/category_hint" android:singleLine="true" />
+                <TextView android:textSize="13.0sp" android:textStyle="bold" android:textColor="?colorTextSecondary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16.0dp" android:text="Article Content" />
+                <EditText android:textSize="14.0sp" android:textColor="?colorTextPrimary" android:textColorHint="?colorTextMuted" android:gravity="start|top" android:id="@id/edit_manual_content" android:background="@drawable/bg_search_input" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8.0dp" android:hint="@string/content_hint" android:minLines="8" android:inputType="textMultiLine" />
+                <Button android:textSize="15.0sp" android:textStyle="bold" android:textColor="?colorOnAccent" android:id="@id/btn_submit_manual" android:background="@drawable/bg_primary_button" android:layout_width="match_parent" android:layout_height="50.0dp" android:layout_marginTop="24.0dp" android:text="@string/action_save" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

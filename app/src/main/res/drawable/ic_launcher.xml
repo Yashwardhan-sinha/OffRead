@@ -1,21 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <path
-        android:fillColor="#0D9488"
-        android:pathData="M16,16h76a12,12 0,0,1 12,12v52a12,12 0,0,1 -12,12h-76a12,12 0,0,1 -12,-12v-52a12,12 0,0,1 12,-12z" />
-    <!-- Book open pages -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M32,36c0,-3 4,-6 10,-6 6,0 12,3 12,6v36c0,-3 -6,-6 -12,-6 -6,0 -10,3 -10,6V36z" />
-    <path
-        android:fillColor="#E2E8F0"
-        android:pathData="M76,36c0,-3 -4,-6 -10,-6 -6,0 -12,3 -12,6v36c0,-3 6,-6 12,-6 6,0 10,3 10,6V36z" />
-    <!-- Book bookmark ribbon -->
-    <path
-        android:fillColor="#F59E0B"
-        android:pathData="M52,30h4v18l-2,-2 -2,2z" />
+<vector android:height="108.0dp" android:width="108.0dp" android:viewportWidth="108.0" android:viewportHeight="108.0"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#0d9488" android:pathData="M16,16h76a12,12 0,0,1 12,12v52a12,12 0,0,1 -12,12h-76a12,12 0,0,1 -12,-12v-52a12,12 0,0,1 12,-12z" />
+    <path android:fillColor="#ffffff" android:pathData="M32,36c0,-3 4,-6 10,-6 6,0 12,3 12,6v36c0,-3 -6,-6 -12,-6 -6,0 -10,3 -10,6V36z" />
+    <path android:fillColor="#e2e8f0" android:pathData="M76,36c0,-3 -4,-6 -10,-6 -6,0 -12,3 -12,6v36c0,-3 6,-6 12,-6 6,0 10,3 10,6V36z" />
+    <path android:fillColor="#f59e0b" android:pathData="M52,30h4v18l-2,-2 -2,2z" />
 </vector>

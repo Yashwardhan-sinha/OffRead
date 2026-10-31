@@ -1,10 +1,12 @@
 package com.offread.app.parser;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/* JADX INFO: loaded from: classes.dex */
 public class JsonLdExtractor {
 
     public static class JsonLdData {
@@ -17,167 +19,159 @@ public class JsonLdExtractor {
         public String articleBody = "";
     }
 
-    public static JsonLdData extract(HtmlNode root) {
-        JsonLdData result = new JsonLdData();
-        if (root == null) return result;
-
-        List<HtmlNode> scripts = root.getElementsByTag("script");
-        for (HtmlNode script : scripts) {
-            String type = script.getAttribute("type").toLowerCase(Locale.ROOT);
-            if (type.contains("ld+json")) {
-                String text = script.getInnerText();
-                if (text == null || text.trim().isEmpty()) continue;
-
-                try {
-                    Object parsed = MiniJson.parse(text);
-                    if (parsed != null) {
-                        List<Map<String, Object>> candidateObjects = new ArrayList<>();
-                        collectArticleCandidates(parsed, candidateObjects);
-
-                        for (Map<String, Object> obj : candidateObjects) {
-                            populateData(obj, result);
-                            if (!result.headline.isEmpty() || !result.articleBody.isEmpty()) {
-                                return result;
+    public static JsonLdData extract(HtmlNode htmlNode) {
+        String innerText;
+        JsonLdData jsonLdData = new JsonLdData();
+        if (htmlNode != null) {
+            loop0: for (HtmlNode htmlNode2 : htmlNode.getElementsByTag("script")) {
+                if (htmlNode2.getAttribute("type").toLowerCase(Locale.ROOT).contains("ld+json") && (innerText = htmlNode2.getInnerText()) != null && !innerText.trim().isEmpty()) {
+                    try {
+                        Object obj = MiniJson.parse(innerText);
+                        if (obj != null) {
+                            ArrayList arrayList = new ArrayList();
+                            collectArticleCandidates(obj, arrayList);
+                            Iterator it = arrayList.iterator();
+                            while (it.hasNext()) {
+                                populateData((Map) it.next(), jsonLdData);
+                                if (!jsonLdData.headline.isEmpty() || !jsonLdData.articleBody.isEmpty()) {
+                                    break loop0;
+                                }
                             }
+                        } else {
+                            continue;
                         }
+                    } catch (Throwable unused) {
+                        continue;
                     }
-                } catch (Exception ignored) {
                 }
             }
         }
-        return result;
+        return jsonLdData;
     }
 
-    @SuppressWarnings("unchecked")
-    private static void collectArticleCandidates(Object jsonNode, List<Map<String, Object>> out) {
-        if (jsonNode instanceof Map) {
-            Map<String, Object> map = (Map<String, Object>) jsonNode;
-            Object type = map.get("@type");
-            if (isArticleType(type)) {
-                out.add(map);
+    private static void collectArticleCandidates(Object obj, List<Map<String, Object>> list) {
+        if (obj instanceof Map) {
+            Map<String, Object> map = (Map) obj;
+            if (isArticleType(map.get("@type"))) {
+                list.add(map);
             }
-
-            Object graph = map.get("@graph");
-            if (graph != null) {
-                collectArticleCandidates(graph, out);
+            Object obj2 = map.get("@graph");
+            if (obj2 != null) {
+                collectArticleCandidates(obj2, list);
+                return;
             }
-        } else if (jsonNode instanceof List) {
-            List<?> list = (List<?>) jsonNode;
-            for (Object item : list) {
-                collectArticleCandidates(item, out);
+            return;
+        }
+        if (obj instanceof List) {
+            Iterator it = ((List) obj).iterator();
+            while (it.hasNext()) {
+                collectArticleCandidates(it.next(), list);
             }
         }
     }
 
-    private static boolean isArticleType(Object typeObj) {
-        if (typeObj == null) return false;
-        String typeStr = typeObj.toString().toLowerCase(Locale.ROOT);
-        return typeStr.contains("article") ||
-                typeStr.contains("blogposting") ||
-                typeStr.contains("newsarticle") ||
-                typeStr.contains("techarticle") ||
-                typeStr.contains("report") ||
-                typeStr.contains("webpage");
+    private static boolean isArticleType(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        String lowerCase = obj.toString().toLowerCase(Locale.ROOT);
+        return lowerCase.contains("article") || lowerCase.contains("blogposting") || lowerCase.contains("newsarticle") || lowerCase.contains("techarticle") || lowerCase.contains("report") || lowerCase.contains("webpage");
     }
 
-    @SuppressWarnings("unchecked")
-    private static void populateData(Map<String, Object> map, JsonLdData data) {
-        // Headline
-        if (data.headline.isEmpty()) {
+    private static void populateData(Map<String, Object> map, JsonLdData jsonLdData) {
+        if (jsonLdData.headline.isEmpty()) {
             if (map.containsKey("headline")) {
-                data.headline = String.valueOf(map.get("headline"));
+                jsonLdData.headline = String.valueOf(map.get("headline"));
             } else if (map.containsKey("name")) {
-                data.headline = String.valueOf(map.get("name"));
+                jsonLdData.headline = String.valueOf(map.get("name"));
             }
         }
-
-        // Author
-        if (data.author.isEmpty() && map.containsKey("author")) {
-            data.author = extractAuthor(map.get("author"));
+        if (jsonLdData.author.isEmpty() && map.containsKey("author")) {
+            jsonLdData.author = extractAuthor(map.get("author"));
         }
-
-        // Date Published
-        if (data.datePublished.isEmpty()) {
+        if (jsonLdData.datePublished.isEmpty()) {
             if (map.containsKey("datePublished")) {
-                data.datePublished = String.valueOf(map.get("datePublished"));
+                jsonLdData.datePublished = String.valueOf(map.get("datePublished"));
             } else if (map.containsKey("dateCreated")) {
-                data.datePublished = String.valueOf(map.get("dateCreated"));
+                jsonLdData.datePublished = String.valueOf(map.get("dateCreated"));
             } else if (map.containsKey("dateModified")) {
-                data.datePublished = String.valueOf(map.get("dateModified"));
+                jsonLdData.datePublished = String.valueOf(map.get("dateModified"));
             }
         }
-
-        // Description
-        if (data.description.isEmpty() && map.containsKey("description")) {
-            data.description = String.valueOf(map.get("description"));
+        if (jsonLdData.description.isEmpty() && map.containsKey("description")) {
+            jsonLdData.description = String.valueOf(map.get("description"));
         }
-
-        // Image
-        if (data.imageUrl.isEmpty() && map.containsKey("image")) {
-            data.imageUrl = extractImageUrl(map.get("image"));
+        if (jsonLdData.imageUrl.isEmpty() && map.containsKey("image")) {
+            jsonLdData.imageUrl = extractImageUrl(map.get("image"));
         }
-
-        // Publisher
-        if (data.publisherName.isEmpty() && map.containsKey("publisher")) {
-            Object pub = map.get("publisher");
-            if (pub instanceof Map) {
-                Object pName = ((Map<?, ?>) pub).get("name");
-                if (pName != null) {
-                    data.publisherName = String.valueOf(pName);
+        if (jsonLdData.publisherName.isEmpty() && map.containsKey("publisher")) {
+            Object obj = map.get("publisher");
+            if (obj instanceof Map) {
+                Object obj2 = ((Map) obj).get("name");
+                if (obj2 != null) {
+                    jsonLdData.publisherName = String.valueOf(obj2);
                 }
-            } else if (pub instanceof String) {
-                data.publisherName = (String) pub;
+            } else if (obj instanceof String) {
+                jsonLdData.publisherName = (String) obj;
             }
         }
-
-        // Article body
-        if (data.articleBody.isEmpty() && map.containsKey("articleBody")) {
-            data.articleBody = String.valueOf(map.get("articleBody"));
+        if (jsonLdData.articleBody.isEmpty() && map.containsKey("articleBody")) {
+            jsonLdData.articleBody = String.valueOf(map.get("articleBody"));
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static String extractAuthor(Object authorObj) {
-        if (authorObj == null) return "";
-        if (authorObj instanceof String) {
-            return (String) authorObj;
+    private static String extractAuthor(Object obj) {
+        if (obj == null) {
+            return "";
         }
-        if (authorObj instanceof Map) {
-            Map<?, ?> map = (Map<?, ?>) authorObj;
-            Object name = map.get("name");
-            return name != null ? String.valueOf(name) : "";
+        if (obj instanceof String) {
+            return (String) obj;
         }
-        if (authorObj instanceof List) {
-            List<?> list = (List<?>) authorObj;
-            StringBuilder sb = new StringBuilder();
-            for (Object item : list) {
-                String a = extractAuthor(item);
-                if (!a.isEmpty()) {
-                    if (sb.length() > 0) sb.append(", ");
-                    sb.append(a);
-                }
+        if (obj instanceof Map) {
+            Object obj2 = ((Map) obj).get("name");
+            if (obj2 == null) {
+                return "";
             }
-            return sb.toString();
+            return String.valueOf(obj2);
         }
-        return "";
+        if (!(obj instanceof List)) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        Iterator it = ((List) obj).iterator();
+        while (it.hasNext()) {
+            String strExtractAuthor = extractAuthor(it.next());
+            if (!strExtractAuthor.isEmpty()) {
+                if (sb.length() > 0) {
+                    sb.append(", ");
+                }
+                sb.append(strExtractAuthor);
+            }
+        }
+        return sb.toString();
     }
 
-    @SuppressWarnings("unchecked")
-    private static String extractImageUrl(Object imageObj) {
-        if (imageObj == null) return "";
-        if (imageObj instanceof String) {
-            return (String) imageObj;
+    private static String extractImageUrl(Object obj) {
+        if (obj == null) {
+            return "";
         }
-        if (imageObj instanceof Map) {
-            Map<?, ?> map = (Map<?, ?>) imageObj;
-            Object url = map.get("url");
-            return url != null ? String.valueOf(url) : "";
+        if (obj instanceof String) {
+            return (String) obj;
         }
-        if (imageObj instanceof List) {
-            List<?> list = (List<?>) imageObj;
-            for (Object item : list) {
-                String u = extractImageUrl(item);
-                if (!u.isEmpty()) return u;
+        if (obj instanceof Map) {
+            Object obj2 = ((Map) obj).get("url");
+            if (obj2 == null) {
+                return "";
+            }
+            return String.valueOf(obj2);
+        }
+        if (obj instanceof List) {
+            Iterator it = ((List) obj).iterator();
+            while (it.hasNext()) {
+                String strExtractImageUrl = extractImageUrl(it.next());
+                if (!strExtractImageUrl.isEmpty()) {
+                    return strExtractImageUrl;
+                }
             }
         }
         return "";

@@ -1,273 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/root_reader"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background">
-
-    <!-- Top Reading Progress Indicator -->
-    <ProgressBar
-        android:id="@+id/progress_reading_top"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:layout_alignParentTop="true"
-        android:max="100"
-        android:progress="0"
-        android:progressTint="@color/primary"
-        android:progressBackgroundTint="@color/divider" />
-
-    <!-- Reader Toolbar -->
-    <LinearLayout
-        android:id="@+id/toolbar_reader"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_below="@id/progress_reading_top"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:background="@color/surface">
-
-        <ImageButton
-            android:id="@+id/btn_reader_back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_back"
-            android:tint="@color/text_primary"
-            android:contentDescription="@string/action_cancel" />
-
-        <TextView
-            android:id="@+id/tv_reader_progress_header"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:text="0% read"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp"
-            android:singleLine="true"
-            android:ellipsize="end" />
-
-        <ImageButton
-            android:id="@+id/btn_reader_tts"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_tts"
-            android:tint="@color/text_secondary"
-            android:contentDescription="@string/action_tts" />
-
-        <ImageButton
-            android:id="@+id/btn_reader_speed"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_speed"
-            android:tint="@color/text_secondary"
-            android:contentDescription="@string/action_speed_read" />
-
-        <ImageButton
-            android:id="@+id/btn_reader_appearance"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_font"
-            android:tint="@color/text_secondary"
-            android:contentDescription="@string/action_appearance" />
-
-        <ImageButton
-            android:id="@+id/btn_reader_favorite"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_star"
-            android:tint="@color/text_secondary"
-            android:contentDescription="@string/action_favorite" />
-
-        <ImageButton
-            android:id="@+id/btn_reader_archive"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_archive"
-            android:tint="@color/text_secondary"
-            android:contentDescription="@string/action_archive" />
-
-        <ImageButton
-            android:id="@+id/btn_reader_share"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_share"
-            android:tint="@color/text_secondary"
-            android:contentDescription="@string/action_share" />
+<LinearLayout android:orientation="vertical" android:id="@id/reader_root" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/toolbar_reader" android:layout_width="match_parent" android:layout_height="@dimen/toolbar_height" android:paddingStart="4.0dp" android:paddingEnd="4.0dp">
+        <ImageButton android:id="@id/btn_reader_back" android:background="?android:selectableItemBackgroundBorderless" android:layout_width="@dimen/touch_target" android:layout_height="@dimen/touch_target" android:src="@drawable/ic_back" android:contentDescription="@string/action_back" />
+        <TextView android:textSize="@dimen/text_row_summary" android:textColor="?colorTextSecondary" android:ellipsize="end" android:id="@id/tv_reader_toolbar_title" android:layout_width="0.0dp" android:layout_height="wrap_content" android:minWidth="0.0dp" android:maxLines="1" android:layout_weight="1.0" android:paddingEnd="8.0dp" android:layout_marginStart="8.0dp" />
+        <ImageButton android:id="@id/btn_reader_bookmark" android:background="?android:selectableItemBackgroundBorderless" android:layout_width="@dimen/touch_target" android:layout_height="@dimen/touch_target" android:src="@drawable/ic_bookmark" android:contentDescription="@string/action_bookmark" />
+        <ImageButton android:id="@id/btn_reader_tts" android:background="?android:selectableItemBackgroundBorderless" android:layout_width="@dimen/touch_target" android:layout_height="@dimen/touch_target" android:src="@drawable/ic_tts" android:contentDescription="@string/action_tts" />
+        <ImageButton android:id="@id/btn_reader_appearance" android:background="?android:selectableItemBackgroundBorderless" android:layout_width="@dimen/touch_target" android:layout_height="@dimen/touch_target" android:src="@drawable/ic_theme" android:contentDescription="@string/action_appearance" />
+        <ImageButton android:id="@id/btn_reader_more" android:background="?android:selectableItemBackgroundBorderless" android:layout_width="@dimen/touch_target" android:layout_height="@dimen/touch_target" android:src="@drawable/ic_settings_list" android:contentDescription="@string/action_more" />
     </LinearLayout>
-
-    <!-- Collapsible TTS Audio Control Bar -->
-    <LinearLayout
-        android:id="@+id/layout_tts_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar_reader"
-        android:background="@color/surface_elevated"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="8dp"
-        android:visibility="gone">
-
-        <ImageButton
-            android:id="@+id/btn_tts_play_pause"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:background="@drawable/bg_pill_button"
-            android:src="@drawable/ic_play"
-            android:tint="@color/white"
-            android:contentDescription="@string/action_tts" />
-
-        <ImageButton
-            android:id="@+id/btn_tts_stop"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginStart="8dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_stop"
-            android:tint="@color/text_secondary"
-            android:contentDescription="@string/action_cancel" />
-
-        <TextView
-            android:id="@+id/tv_tts_status"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="10dp"
-            android:text="Audio Reader Ready"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp"
-            android:singleLine="true"
-            android:ellipsize="end" />
-
-        <TextView
-            android:id="@+id/tv_tts_speed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_chip"
-            android:text="1.0x"
-            android:textColor="@color/primary_light"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp" />
-
-        <ImageButton
-            android:id="@+id/btn_tts_close"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginStart="4dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_delete"
-            android:tint="@color/text_muted"
-            android:contentDescription="@string/action_cancel" />
-    </LinearLayout>
-
-    <!-- Scrollable Article Reader Body -->
-    <ScrollView
-        android:id="@+id/scroll_reader"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/layout_tts_bar"
-        android:fillViewport="true"
-        android:scrollbars="vertical">
-
-        <LinearLayout
-            android:id="@+id/layout_reader_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp"
-            android:paddingTop="20dp"
-            android:paddingBottom="64dp">
-
-            <!-- Title -->
-            <TextView
-                android:id="@+id/tv_reader_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Article Title"
-                android:textColor="@color/text_primary"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                android:lineSpacingMultiplier="1.2" />
-
-            <!-- Byline & Metadata -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:id="@+id/tv_reader_meta"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Author • Source • 5 min read"
-                    android:textColor="@color/text_muted"
-                    android:textSize="13sp" />
-            </LinearLayout>
-
-            <View
-                android:id="@+id/view_reader_divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="20dp"
-                android:background="@color/divider" />
-
-            <!-- Main Text Content -->
-            <TextView
-                android:id="@+id/tv_reader_body"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Article content will appear here..."
-                android:textColor="@color/text_primary"
-                android:textSize="18sp"
-                android:lineSpacingMultiplier="1.5"
-                android:textIsSelectable="true" />
-
-            <!-- Bottom Actions -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <Button
-                    android:id="@+id/btn_reader_mark_completed"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@drawable/bg_primary_button"
-                    android:text="Mark as Finished &amp; Archive"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/btn_reader_open_source"
-                    android:layout_width="match_parent"
-                    android:layout_height="44dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_secondary_button"
-                    android:text="Open Original Web Link"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="14sp" />
+    <ProgressBar android:id="@id/progress_reader_scroll" android:layout_width="match_parent" android:layout_height="2.0dp" android:max="100" android:progressTint="?colorAccent" android:progressBackgroundTint="?colorDivider" style="?android:progressBarStyleHorizontal" />
+    <ScrollView android:id="@id/scroll_reader" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_weight="1.0">
+        <LinearLayout android:gravity="center_horizontal" android:orientation="vertical" android:id="@id/reader_measure" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:orientation="vertical" android:id="@id/reader_column" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <TextView android:textSize="@dimen/article_title_size" android:textStyle="bold" android:textColor="?colorTextPrimary" android:id="@id/tv_reader_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:includeFontPadding="false" android:lineSpacingMultiplier="1.2" />
+                <TextView android:textSize="@dimen/article_meta_size" android:textColor="?colorTextSecondary" android:id="@id/tv_reader_meta" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/header_block_gap" />
+                <TextView android:textSize="@dimen/article_meta_size" android:textColor="?colorTextMuted" android:id="@id/tv_reader_tags" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6.0dp" />
+                <ImageView android:id="@id/img_reader_lead" android:background="@drawable/bg_image_frame" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/header_bottom_gap" android:scaleType="fitCenter" android:adjustViewBounds="true" android:maxHeight="@dimen/cover_image_max_height" android:contentDescription="@null" />
+                <View android:id="@id/view_reader_rule" android:background="?colorDivider" android:layout_width="match_parent" android:layout_height="1.0dp" android:layout_marginTop="@dimen/header_bottom_gap" />
+                <LinearLayout android:orientation="vertical" android:id="@id/reader_blocks" android:paddingTop="@dimen/block_paragraph_gap" android:layout_width="match_parent" android:layout_height="wrap_content" />
+                <TextView android:textSize="@dimen/text_row_title" android:textColor="?colorTextMuted" android:gravity="center" android:id="@id/tv_reader_empty" android:paddingTop="40.0dp" android:paddingBottom="40.0dp" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reader_no_text" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-</RelativeLayout>
+    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/layout_tts_bar" android:paddingTop="6.0dp" android:paddingBottom="6.0dp" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="8.0dp" android:paddingEnd="8.0dp">
+        <TextView android:textSize="@dimen/text_row_summary" android:textColor="?colorTextSecondary" android:ellipsize="end" android:id="@id/tv_tts_status" android:layout_width="0.0dp" android:layout_height="wrap_content" android:maxLines="2" android:layout_weight="1.0" android:layout_marginStart="8.0dp" />
+        <ImageButton android:id="@id/btn_tts_prev" android:background="?android:selectableItemBackgroundBorderless" android:layout_width="@dimen/touch_target" android:layout_height="@dimen/touch_target" android:src="@drawable/ic_back" android:contentDescription="@string/action_prev_sentence" />
+        <ImageButton android:id="@id/btn_tts_play_pause" android:background="?android:selectableItemBackgroundBorderless" android:layout_width="@dimen/touch_target" android:layout_height="@dimen/touch_target" android:src="@drawable/ic_play" android:contentDescription="@string/action_tts" />
+        <ImageButton android:id="@id/btn_tts_stop" android:background="?android:selectableItemBackgroundBorderless" android:layout_width="@dimen/touch_target" android:layout_height="@dimen/touch_target" android:src="@drawable/ic_stop" android:contentDescription="@string/action_stop" />
+        <TextView android:textSize="@dimen/text_row_summary" android:textColor="?colorTextSecondary" android:gravity="center" android:id="@id/btn_tts_speed" android:background="@drawable/bg_chip" android:paddingTop="6.0dp" android:paddingBottom="6.0dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="52.0dp" android:minHeight="36.0dp" android:text="@string/speed_100" android:contentDescription="@string/pref_tts_speed" android:paddingStart="10.0dp" android:paddingEnd="10.0dp" android:layout_marginStart="4.0dp" android:layout_marginEnd="4.0dp" />
+    </LinearLayout>
+</LinearLayout>
